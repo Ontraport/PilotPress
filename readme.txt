@@ -62,12 +62,12 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 == Changelog ==
 
 = 1.5.7 =
-* Invalid login inputs on custom login pages now stay at the custom login page
+* Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
 
 = 1.5.7 =
-* Invalid login inputs on custom login pages now stay at the custom login page
+* Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Using your WordPress site as a Membership Site (aka Protecting and revealing content) ==
 
