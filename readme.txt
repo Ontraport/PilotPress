@@ -1,6 +1,6 @@
 === PilotPress ===
 Contributors: officeautopilot
-Tags: officeautopilot, sendpepper, moonray, ontraport, pilotpress, oap
+Tags: officeautopilot, sendpepper, moonray, ontraport, pilotpress, oap, membership site, customer center, affiliate center, integration
 Requires at least: 3.2
 Tested up to: 3.4.1
 Stable tag: trunk

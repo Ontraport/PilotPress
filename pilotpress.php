@@ -29,7 +29,6 @@ Copyright: 2011, MoonRay, LLC
 		const URL_JSWPCSS = "https://forms.moon-ray.com/v2.4/include/scripts/moonrayJS/moonrayJS-only-wp-forms.css";
 		const URL_MRCSS = "https://forms.moon-ray.com/v2.4/include/minify/?g=moonrayCSS";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
-		const URL_DWNLD = "http://www1.moon-ray.com/v2.4/pilotpress.zip";
 
 		public $system_pages = array();
 	
