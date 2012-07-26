@@ -172,7 +172,7 @@ __Show Content Based if Contact is Identified__
 
 == Creating the Sign-Up Page == 
 
-[Video: __Creating a Sign Up Page and Adding Forms__ (2:32)](http://pseudo01.hddn.com/vod/moonray.moonray/PilotPress_6_Create_Signup_pg_and_post_form_to_wp.mp4)
+[Video: __Creating a Sign Up Page and Adding Forms__ (2:32)](http://pseudo01.hddn.com/vod/moonray.moonray/PilotPress%20_6_Create_Signup_pg_and_post_form_to_wp.mp4)
 
 This is where your prospects/clients purchase their membership. It's the page that any sales emails, sales letters, and sales videos would point to.
 
