@@ -95,7 +95,7 @@ __Setting up your system to release new content__
 
 4. Then, when you create your order form, you will set it so the order form itself subscribes your contacts to the sequence that will first send them a welcome email containing their login info, and which will also control their membership levels (if there are any). For example, moving them along from week to week, or month to month, etc. 
 
-5. For now, title the sequence something like "membership progression sequence" if you're planning to have this be a week-by-week content, or simply "membership login info", if you're going with the silver, gold, platinum format or simply a one membership level format. Set this sequence to be a ‘step' sequence.  You will go back and actually flesh out the steps of the sequence afterward in the autopilot tab. 
+5. For now, title the sequence something like "membership progression sequence" if you're planning to have this be a week-by-week content, or simply "membership login info", if you're going with the silver, gold, platinum format or simply a one membership level format. Set this sequence to be a 'step' sequence.  You will go back and actually flesh out the steps of the sequence afterward in the autopilot tab. 
 
 6. Create an Order Form that has an Active Response Rule which makes new members to your site
 
@@ -117,14 +117,14 @@ __Setting up your system to release new content__
 
 - Merge the the login info into the very first email
 
-- - Insert their username as a merge field and insert their password as a merge field as well.  Important Note: The 'User Name' and ‘password merge field' is site- specific, so, find the website in question, then the select the "password" merge field underneath that specific site.  Also in this email, you would welcome them and remember to send them the link to the login page. Another Important Note Regarding the Password: The password merge field is unique and can only be sent once. In order to retrieve a password after this, a contact will have to retrieve their password from their login page, using the "forgot your password" link, or you can manually reset a contact's password in their contact record under "website subscribers". 
+- - Insert their username as a merge field and insert their password as a merge field as well.  Important Note: The 'User Name' and 'password merge field' is site- specific, so, find the website in question, then the select the "password" merge field underneath that specific site.  Also in this email, you would welcome them and remember to send them the link to the login page. Another Important Note Regarding the Password: The password merge field is unique and can only be sent once. In order to retrieve a password after this, a contact will have to retrieve their password from their login page, using the "forgot your password" link, or you can manually reset a contact's password in their contact record under "website subscribers". 
 
 - Add Rule Steps to the "Membership Progression Sequence"
 If you are creating sequential content, as opposed to just the silver, gold, platinum type format, you will need to create rule steps that change your customers' membership levels forward, from say, week to week, as the weeks go by.
  
-- - To do this, set a rule step to fire 7 days after that first email step. For example, add a rule to the sequence which moves them on to week 2, by changing their ‘membership level' from week one, to week two. 
+- - To do this, set a rule step to fire 7 days after that first email step. For example, add a rule to the sequence which moves them on to week 2, by changing their 'membership level' from week one, to week two. 
 
-- - For this rule, you would set the "What Should Happen" section to "Change Field to Value" and then select the "Membership Level" field as the one to have changed. Then, set it to change to the next specific level of membership, in this case, we'd set it to ‘Week 2'. It would be the same moving forward to week 3, etc. 
+- - For this rule, you would set the "What Should Happen" section to "Change Field to Value" and then select the "Membership Level" field as the one to have changed. Then, set it to change to the next specific level of membership, in this case, we'd set it to 'Week 2'. It would be the same moving forward to week 3, etc. 
 
 - - Next , you could create an email step to fire immediately after the rule step to notify your contact that they are able to log in and access week 2's content, you may repeat this as many time as you wish. And, you don't have to do it all at once. You might add the first three weeks to start, then add a week or twos worth of additional content at a time later on. The process is the same either way. 
 
