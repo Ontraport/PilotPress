@@ -57,7 +57,7 @@ Content that relates to your business, and content that you can successfully sel
 
 = What if I don't have a Login page? =
 
-If you have Pilotpress installed, you can create a new page and simply enter "[login_page] "(excluding quotes) and that page will then have a login box for users to use.
+If you have Pilotpress installed, you can create a new page and simply enter "[login_page]" (excluding quotes) and that page will then have a login box for users to use.
 
 == Changelog ==
 
