@@ -41,11 +41,11 @@ You can retrieve these in the Admin Menu of your Office AutoPilot account by cli
 
 = Where can I get further help? =
 
-You can reach support Monday thru Thursday from 7:00am – 9:00pm PST. On Friday, we are available from 7:00am to 3:00pm PST. For weekend support, our hours are Saturday 9:00am – 1:00pm and Sunday 5:00pm – 9:00pm.
+You can reach support Monday thru Thursday from 7:00am to 9:00pm PST. On Friday, we are available from 7:00am to 3:00pm PST. For weekend support, our hours are Saturday 9:00am to 1:00pm and Sunday 5:00pm to 9:00pm.
 
 Most questions or concerns can be addressed via our wiki which contains detailed information on each and every feature of our software. The address of our wiki is [http://wiki.officeautopilot.com](http://wiki.officeautopilot.com).
 
-For any other question or concern that the wiki does not address, please email us at support@officeautopilot.com, call us at 805.568.1424, login and submit a ticket (in the help section – link in the upper right), or click on the ‘questions’ tab on the left hand side of this page to be connect to one of our live support reps.
+For any other question or concern that the wiki does not address, please email us at support@officeautopilot.com, call us at 805.568.1424, login and submit a ticket (in the help section, link in the upper right), or click on the "questions" tab on the left hand side of this page to be connect to one of our live support reps.
 
 = How will I charge for my membership site? =
 
