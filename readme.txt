@@ -81,35 +81,35 @@ Below are instructions on how to protect content in your membership site. There 
 
 __Setting the Minimum Membership Level to view a page or post on your WordPress site__
 
-Once you have created your membership levels (which you did during the WordPress site creation or when you added the plugin to your existing site), you will notice that those membership levels also appeared in the right-hand margin of your WordPress posts / pages under “PilotPress Options.” These options are used to limit access to the specified page or post. This is where you will set a minimum membership level to view the page or post. Check off the levels that you want, check the 'Show in Navigation' box if you want this page title to appear in your navigation menu, and finally set your 'On Error' redirect. The 'On Error' redirect is that page that your users will be sent to in the case that they don't have the proper membership levels.
+Once you have created your membership levels (which you did during the WordPress site creation or when you added the plugin to your existing site), you will notice that those membership levels also appeared in the right-hand margin of your WordPress posts / pages under "PilotPress Options." These options are used to limit access to the specified page or post. This is where you will set a minimum membership level to view the page or post. Check off the levels that you want, check the 'Show in Navigation' box if you want this page title to appear in your navigation menu, and finally set your 'On Error' redirect. The 'On Error' redirect is that page that your users will be sent to in the case that they don't have the proper membership levels.
 
 For time release posts or pages, you will set the minimum membership needed to view the post off to the right, and then create a sequence right within Office Autopilot that members will be automatically subscribed to when they sign up for your site.  As they move along on the sequence, say from week 1, to week 2, their membership level will change accordingly and they will be able to view the next week’s content.
 
 __Setting up your system to release new content__
 
-1. Go into the Admin menu, then into “WordPress Integration”.   (Make sure you’ve created membership levels for your website. If you haven't, do that first). 
+1. Go into the Admin menu, then into "WordPress Integration".   (Make sure you’ve created membership levels for your website. If you haven't, do that first). 
 
-2. Next, go to the Admin menu once again and click on “Product and Order Forms” to set up a new product if you haven’t done so already. 
+2. Next, go to the Admin menu once again and click on "Product and Order Forms" to set up a new product if you haven’t done so already. 
 
 3. The product, in this case, is the membership to your membership site. If you were selling a silver, gold, and platinum membership to your site, each of those would be its own separate product, and, each should have its own order form. If on the other hand, you’re selling only one level of membership, you would only need to create one product. Note that if certain membership levels are free, or membership to the entire site is free, then you would simply set up a smartform for people to fill out to become members rather than an order form. You should also note that when you’re creating your membership level products, you must indicate that the product is a digital product, set the product as a subscription, and set a subscription price and time. 
 
 4. Then, when you create your order form, you will set it so the order form itself subscribes your contacts to the sequence that will first send them a welcome email containing their login info, and which will also control their membership levels (if there are any). For example, moving them along from week to week, or month to month, etc. 
 
-5. For now, title the sequence something like “membership progression sequence” if you’re planning to have this be a week-by-week content, or simply “membership login info”, if you’re going with the silver, gold, platinum format or simply a one membership level format. Set this sequence to be a ‘step’ sequence.  You will go back and actually flesh out the steps of the sequence afterward in the autopilot tab. 
+5. For now, title the sequence something like "membership progression sequence" if you’re planning to have this be a week-by-week content, or simply "membership login info", if you’re going with the silver, gold, platinum format or simply a one membership level format. Set this sequence to be a ‘step’ sequence.  You will go back and actually flesh out the steps of the sequence afterward in the autopilot tab. 
 
 6. Create an Order Form that has an Active Response Rule which makes new members to your site
 
 - Now, you will make a new active response rule that is located on an order form and it will actually turn this new contact into a member of your membership site, once they submit the order form. If you’re unclear of what an active response rule is, please watch the video on active response rules. 
 
-- - First, give the active response rule a title. An example would be, “Make a new Member to my Membership Site. 
+- - First, give the active response rule a title. An example would be, "Make a new Member to my Membership Site. 
 
-- - Next, under “What Should Happen”, select “Change Field to Value”. 
+- - Next, under "What Should Happen", select "Change Field to Value". 
 
-- - Then, set [field] to “membership level” and set [value] to the desired membership level. (Example “week 1” for time release content).
+- - Then, set [field] to "membership level" and set [value] to the desired membership level. (Example "week 1" for time release content).
  
 7. Create the membership Sequence to welcome client AND to deliver their login info:
 
-- Now it’s time to go into the autopilot tab and flesh out your “Membership Progression Sequence”, so it will deliver your new customers’ login info and move them along from week 1, to week 2, etc.
+- Now it’s time to go into the autopilot tab and flesh out your "Membership Progression Sequence", so it will deliver your new customers’ login info and move them along from week 1, to week 2, etc.
 
 - - First, you will locate the step sequence you started (when you created your order form). 
 
@@ -117,14 +117,14 @@ __Setting up your system to release new content__
 
 - Merge the the login info into the very first email
 
-- - Insert their username as a merge field and insert their password as a merge field as well.  Important Note: The 'User Name' and ‘password merge field’ is site- specific, so, find the website in question, then the select the “password” merge field underneath that specific site.  Also in this email, you would welcome them and remember to send them the link to the login page. Another Important Note Regarding the Password: The password merge field is unique and can only be sent once. In order to retrieve a password after this, a contact will have to retrieve their password from their login page, using the “forgot your password” link, or you can manually reset a contact's password in their contact record under “website subscribers”. 
+- - Insert their username as a merge field and insert their password as a merge field as well.  Important Note: The 'User Name' and ‘password merge field’ is site- specific, so, find the website in question, then the select the "password" merge field underneath that specific site.  Also in this email, you would welcome them and remember to send them the link to the login page. Another Important Note Regarding the Password: The password merge field is unique and can only be sent once. In order to retrieve a password after this, a contact will have to retrieve their password from their login page, using the "forgot your password" link, or you can manually reset a contact's password in their contact record under "website subscribers". 
 
-- Add Rule Steps to the “Membership Progression Sequence”
+- Add Rule Steps to the "Membership Progression Sequence"
 If you are creating sequential content, as opposed to just the silver, gold, platinum type format, you will need to create rule steps that change your customers’ membership levels forward, from say, week to week, as the weeks go by.
  
 - - To do this, set a rule step to fire 7 days after that first email step. For example, add a rule to the sequence which moves them on to week 2, by changing their ‘membership level’ from week one, to week two. 
 
-- - For this rule, you would set the “What Should Happen” section to “Change Field to Value” and then select the “Membership Level” field as the one to have changed. Then, set it to change to the next specific level of membership, in this case, we’d set it to ‘Week 2’. It would be the same moving forward to week 3, etc. 
+- - For this rule, you would set the "What Should Happen" section to "Change Field to Value" and then select the "Membership Level" field as the one to have changed. Then, set it to change to the next specific level of membership, in this case, we’d set it to ‘Week 2’. It would be the same moving forward to week 3, etc. 
 
 - - Next , you could create an email step to fire immediately after the rule step to notify your contact that they are able to log in and access week 2’s content, you may repeat this as many time as you wish. And, you don’t have to do it all at once. You might add the first three weeks to start, then add a week or twos worth of additional content at a time later on. The process is the same either way. 
 
@@ -172,26 +172,26 @@ __Show Content Based if Contact is Identified__
 
 == Creating the Sign-Up Page == 
 
-[Video: __Creating a Sign Up Page and Adding Forms__ (2:32)](http://pseudo01.hddn.com/vod/moonray.moonray/PilotPress _6_Create_Signup_pg_and_post_form_to_wp.mp4)
+[Video: __Creating a Sign Up Page and Adding Forms__ (2:32)](http://pseudo01.hddn.com/vod/moonray.moonray/PilotPress_6_Create_Signup_pg_and_post_form_to_wp.mp4)
 
 This is where your prospects/clients purchase their membership. It's the page that any sales emails, sales letters, and sales videos would point to.
 
-1. First, go back to your WordPress account and click on “Pages”, then click on “Add New”.
+1. First, go back to your WordPress account and click on "Pages", then click on "Add New".
 
 2. Give it an appropriate title and write out your content in the text prompt. You might have a sales letter or a sales video. 
 
 3. Once you have added your sales content to the page, you’ll insert the order form your prospects will fill out in order to convert themselves into customers. 
 
-4. You will achieve this by clicking the “Office Autopilot” or "Add Media" button. (If you haven’t already created the order form or forms for your membership site, you need to now, before moving on). 
+4. You will achieve this by clicking the "Office Autopilot" or "Add Media" button. (If you haven’t already created the order form or forms for your membership site, you need to now, before moving on). 
 
 5. Next, you will simply select the order form you created earlier and paste it on the page. If you’re offering multiple levels, like, silver, gold, and platinum, you may want to create separate pages for each that contains the respective order forms. This will give the pages a cleaner look (just link to the order page for each membership level from the main page). 
 
-6. Finish editing the page, proof it, and click on “Publish” (in the right-hand margin). 
+6. Finish editing the page, proof it, and click on "Publish" (in the right-hand margin). 
 
-7. Next, click on “View Page” up at the top center to preview your page. 
-Once filled out, this form will take the customer to the “Thank-you” page which you set when you created the form. This most likely would be a page that thanks them, and tells them to go check their email for their login info and provides a link to the sign-in page. 
+7. Next, click on "View Page" up at the top center to preview your page. 
+Once filled out, this form will take the customer to the "Thank-you" page which you set when you created the form. This most likely would be a page that thanks them, and tells them to go check their email for their login info and provides a link to the sign-in page. 
 
-8. When you’re all through creating your signup page, click “Publish”.  Now you will see that this page is available on your home menu. 
+8. When you’re all through creating your signup page, click "Publish".  Now you will see that this page is available on your home menu. 
 
 == Adding Forms within WordPress ==
 
@@ -201,7 +201,7 @@ To achieve this, you will first need to have added the PilotPress plugin to your
 
 1. Log into your WordPress account.
 
-2. When adding a new post or page, you will notice that there is a new icon for “Add Office Autopilot Form”.
+2. When adding a new post or page, you will notice that there is a new icon for "Add Office Autopilot Form".
 
 3. Click on the icon.
 
