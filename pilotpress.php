@@ -618,21 +618,25 @@ Copyright: 2011, MoonRay, LLC
 		
 		/* update a persons profile */
 		function profile_update($user_id) {
-			$user = get_userdata($user_id);
-			
-			$details = array();
-			$details["site"] = site_url();
-			$details["username"] = $user->user_login;
-			$details["firstname"] = $_POST['first_name'];
-			$details["lastname"] = $_POST['last_name'];
-			$details["nickname"] = $_POST['nickname'];
-			$details["password"] = $_POST["pass1"];	
-			$return = $this->api_call("profile_update", $details);
+			if(isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['nickname']) && isset($_POST['pass1'])) {
+				$user = get_userdata($user_id);
+				
+				$details = array();
+				$details["site"] = site_url();
+				$details["username"] = $user->user_login;
+				$details["firstname"] = $_POST['first_name'];
+				$details["lastname"] = $_POST['last_name'];
+				$details["nickname"] = $_POST['nickname'];
+				$details["password"] = $_POST["pass1"];
+				wp_update_user(array("ID" => $user->ID, "user_pass" => $_POST["pass1"]));
+				$return = $this->api_call("profile_update", $details);
+			}
 		}
 
 		function user_lockout() {
 			global $current_user;
 			if(!current_user_can('manage_options') && $this->get_setting("wp_userlockout") && !isset($_POST["action"])) {
+				
 				$customer = $this->get_setting("pilotpress_customer_plr");
 				if(!empty($customer) && $customer != "-1") {
 					wp_redirect(get_permalink($customer));
@@ -1406,7 +1410,6 @@ Copyright: 2011, MoonRay, LLC
 		}
 
 		static function end_session($logout = false) {
-			
 			if($logout) {
 				/* redirect the user to where they logged in from */
 				if(isset($_SESSION["loginURL"]))
@@ -1565,7 +1568,6 @@ Copyright: 2011, MoonRay, LLC
 				$redirect = get_post_meta($id, self::NSPACE."redirect_location", true);
 
 				if(!empty($redirect)) {
-					
 					if($redirect == "-1") {						
 						wp_redirect(site_url());
 						die;
