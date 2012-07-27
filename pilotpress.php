@@ -618,8 +618,7 @@ Copyright: 2011, MoonRay, LLC
 		
 		/* update a persons profile */
 		function profile_update($user_id) {
-			
-			$user = get_userdata($_POST["user_id"]);
+			$user = get_userdata($user_id);
 			
 			$details = array();
 			$details["site"] = site_url();
@@ -627,8 +626,7 @@ Copyright: 2011, MoonRay, LLC
 			$details["firstname"] = $_POST['first_name'];
 			$details["lastname"] = $_POST['last_name'];
 			$details["nickname"] = $_POST['nickname'];
-			$details["password"] = $_POST["pass1"];
-			wp_update_user(array("ID" => $user->ID, "user_pass" => $_POST["pass1"]));			
+			$details["password"] = $_POST["pass1"];	
 			$return = $this->api_call("profile_update", $details);
 		}
 
