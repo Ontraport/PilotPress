@@ -61,6 +61,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
+= 1.5.8 =
+* Fixed a potential bug which would cause logins to fail under certain scenarios
+
 = 1.5.7 =
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
