@@ -101,7 +101,7 @@ Copyright: 2011, MoonRay, LLC
 			
 			$this->system_pages = $this->get_system_pages();
 
-			if(get_transient('pilotpress_cache') && !isset($_SESSION["rehash"])) { 
+			if($this->get_setting("disablecaching") && get_transient('pilotpress_cache') && !isset($_SESSION["rehash"])) { 
 				$this->settings = get_transient('pilotpress_cache');
 				if(get_transient("usertags_".$this->get_setting("contact_id", "user"))) {
 					$tags = get_transient("usertags_".$this->get_setting("contact_id", "user"));
