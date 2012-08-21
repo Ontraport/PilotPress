@@ -3,7 +3,7 @@
 Plugin Name: PilotPress
 Plugin URI: http://officeautopilot.com/
 Description: OfficeAutoPilot / WordPress integration plugin.
-Version: 1.5.8
+Version: 1.5.9
 Author: MoonRay, LLC
 Author URI: http://officeautopilot.com/
 Text Domain: pilotpress
@@ -20,7 +20,7 @@ Copyright: 2011, MoonRay, LLC
 	
 	class PilotPress {
 
-		const VERSION = "1.5.8";
+		const VERSION = "1.5.9";
 		const WP_MIN = "3.0.0";
 		const NSPACE = "_pilotpress_";
 		const URL_API = "https://www1.moon-ray.com/api.php";
@@ -628,7 +628,7 @@ Copyright: 2011, MoonRay, LLC
 				$details["lastname"] = $_POST['last_name'];
 				$details["nickname"] = $_POST['nickname'];
 				$details["password"] = $_POST["pass1"];
-				wp_update_user(array("ID" => $user->ID, "user_pass" => $_POST["pass1"]));
+				
 				$return = $this->api_call("profile_update", $details);
 			}
 		}
