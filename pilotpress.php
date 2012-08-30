@@ -1061,7 +1061,7 @@ Copyright: 2011, MoonRay, LLC
 				});
 				//]]>
 				</script>
-			<?
+			<?php
 		}
 
 		function modify_tinymce() {}

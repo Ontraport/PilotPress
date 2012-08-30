@@ -62,6 +62,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 == Changelog ==
 
 = 1.5.9 =
+* Fixed an error which would cause the plugin to not activate when the PHP Setting short_open_tag is set to off
+
+= 1.5.9 =
 * Fixed a possible issue where editing a users password would fail with PilotPress enabled
 
 = 1.5.8 =
