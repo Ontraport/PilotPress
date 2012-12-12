@@ -3,7 +3,7 @@
 Plugin Name: PilotPress
 Plugin URI: http://officeautopilot.com/
 Description: OfficeAutoPilot / WordPress integration plugin.
-Version: 1.5.9
+Version: 1.5.9b
 Author: MoonRay, LLC
 Author URI: http://officeautopilot.com/
 Text Domain: pilotpress
@@ -20,7 +20,7 @@ Copyright: 2011, MoonRay, LLC
 	
 	class PilotPress {
 
-		const VERSION = "1.5.9";
+		const VERSION = "1.5.9b";
 		const WP_MIN = "3.0.0";
 		const NSPACE = "_pilotpress_";
 		const URL_API = "https://www1.moon-ray.com/api.php";
@@ -780,31 +780,26 @@ Copyright: 2011, MoonRay, LLC
 		/* same but for cc details (setter) */
 		function update_cc_details() {
 			global $wpdb;
-						
+
 			if(wp_verify_nonce($_POST['nonce'], basename(__FILE__))) {
-				
+						
+				$current_user = wp_get_current_user();
 				$return = $this->api_call("update_cc_details", $_POST);
-				
 				if(isset($return["updateUser"])) {
-					$old_user = $_POST["oguser"];
-					if($this->get_setting("newusernamefield") == 1) {
-						$new_user = $_POST["username"];
-					} else {
-						$new_user = $_POST["nickname"];
-					}
-					$user_id = $wpdb->get_var("SELECT ID FROM {$wpdb->users} WHERE user_login = '{$old_user}'");
-					$wpdb->query("UPDATE {$wpdb->users} SET user_login = '{$new_user}' WHERE user_login = '{$old_user}'");
-					$wpdb->query("UPDATE {$wpdb->usermeta} SET meta_value = '{$_POST["nickname"]}' WHERE user_id = {$user_id} AND meta_key = 'nickname'");
+					$wpdb->query("UPDATE {$wpdb->users} SET user_login = '{$_POST["username"]}' WHERE ID = '".$current_user->ID."'");
 					
+					if($_POST["nickname"] == $_POST["oguser"]) {
+						wp_update_user(array("ID" => $current_user->ID, "nickname" => $_POST["username"], "display_name" => $_POST["username"]));
+					}
+					$this->end_session();
+				}
+				else {
+					wp_update_user(array("ID" => $current_user->ID, "user_pass" => $_POST["password"]));
 				}
 
 				echo($return["update"]);
-
-				$this->end_session();
-				
 				die();
 			}
-			
 		}
 	
 		/* grabs form insert code, disables that pesky wpautop */
@@ -1271,6 +1266,10 @@ Copyright: 2011, MoonRay, LLC
 							$this->api_call("create_user_error", array("message" => site_url()));				
 							return false;
 						}
+						
+						if(isset($api_result["nickname"])) {
+							wp_update_user(array("ID" => $create_user, "nickname" => $api_result["nickname"], "display_name" => $api_result["nickname"]));
+						}
 
 					} else {
 						
@@ -1548,10 +1547,6 @@ Copyright: 2011, MoonRay, LLC
 		function post_process() {
 			global $wp, $wpdb, $post;
 
-			if(is_front_page()) {
-				return;
-			}
-
 			if(isset($post->ID)) {
 				$id = $post->ID;
 			} else {
@@ -1559,11 +1554,9 @@ Copyright: 2011, MoonRay, LLC
 				if (!$id){
 					$id = get_option('page_on_front');
 				}
-			} 
-			
-			
+			}
 
-			if(!$this->is_viewable($id) && !is_home() && !is_front_page()) {
+			if(!$this->is_viewable($id) && !is_home()) {
 			
 				$redirect = get_post_meta($id, self::NSPACE."redirect_location", true);
 
@@ -1608,7 +1601,11 @@ Copyright: 2011, MoonRay, LLC
 				$this->do_login = false;
 			} else {
 				if(isset($_SESSION["loginFailed"])) {
-					$content = $this->login_page(array(), 3);
+					$login_page = $this->login_page(array(), 3);
+					$content = str_replace("[login_page]", $login_page, $content, $count);
+					if($count == 0) {
+						$content = $login_page;
+					}
 					unset($_SESSION["loginFailed"]);
 				}
 				else {
@@ -1822,11 +1819,10 @@ Copyright: 2011, MoonRay, LLC
 
 			$page_levels = get_post_meta($id, "_pilotpress_level");
 			$user_levels = $this->get_setting("levels","user",true);
-
+			
 			if(!is_array($user_levels)) {
 				$user_levels = array($user_levels);
 			}
-			
 			
 			if(in_array($id, $this->system_pages)) {
 				if(!is_user_logged_in()) {
@@ -1935,7 +1931,7 @@ Copyright: 2011, MoonRay, LLC
 		function login_page($atts, $message = false) {
 
 			global $wpdb;
-
+			
 			$output = "<style type='text/css'>#loginform p { margin: 1px; padding: 0px; } .login-submit { margin-bottom: 0px; } .login_box { padding: 2px; padding-left: 4px; border: 1px solid #E6D855; background-color: lightYellow; }</style>";
 			
 			if(!empty($message)) {
@@ -1978,9 +1974,8 @@ Copyright: 2011, MoonRay, LLC
 			        'value_username' => NULL,
 			        'value_remember' => true);			
 			$output .= wp_login_form($args);
-						
+				
 			return $output;
-
 		}
 		
 		/* the first process... enable the plugin create some values and cleanup "older" PilotPress metadata. could probably do with a redo. */
@@ -2187,5 +2182,3 @@ Copyright: 2011, MoonRay, LLC
 		}
 		die;
 	}
-	
-?>
