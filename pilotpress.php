@@ -3,8 +3,8 @@
 Plugin Name: PilotPress
 Plugin URI: http://officeautopilot.com/
 Description: OfficeAutoPilot / WordPress integration plugin.
-Version: 1.5.9b
-Author: MoonRay, LLC
+Version: 1.6.0
+Author: Ontraport Inc.
 Author URI: http://officeautopilot.com/
 Text Domain: pilotpress
 Copyright: 2011, MoonRay, LLC
@@ -20,14 +20,14 @@ Copyright: 2011, MoonRay, LLC
 	
 	class PilotPress {
 
-		const VERSION = "1.5.9b";
+		const VERSION = "1.6.0";
 		const WP_MIN = "3.0.0";
 		const NSPACE = "_pilotpress_";
 		const URL_API = "https://www1.moon-ray.com/api.php";
 		const BACKUP_URL_API = "https://web.moon-ray.com/api.php";
 		const URL_TJS = "https://www1.moon-ray.com/tracking.js";
-		const URL_JSWPCSS = "https://forms.moon-ray.com/v2.4/include/scripts/moonrayJS/moonrayJS-only-wp-forms.css";
-		const URL_MRCSS = "https://forms.moon-ray.com/v2.4/include/minify/?g=moonrayCSS";
+		const URL_JSWPCSS = "https://forms.ontraport.com/v2.4/include/scripts/moonrayJS/moonrayJS-only-wp-forms.css";
+		const URL_MRCSS = "https://forms.ontraport.com/v2.4/include/minify/?g=moonrayCSS";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
 
 		public $system_pages = array();
@@ -140,7 +140,14 @@ Copyright: 2011, MoonRay, LLC
 				}
 
 				if($this->get_setting("api_key") && $this->get_setting("app_id")) {
-					$api_result = $this->api_call("get_site_settings", array("site" => site_url()));					
+
+					if(isset($_SESSION["contact_id"])) {
+						$api_result = $this->api_call("get_site_settings", array("site" => site_url(), "contact_id" => $_SESSION["contact_id"]));
+					}
+					else {
+						$api_result = $this->api_call("get_site_settings", array("site" => site_url()));
+					}
+
 					if(is_array($api_result)) {
 						$this->settings["oap"] = $api_result;
 						
@@ -153,6 +160,10 @@ Copyright: 2011, MoonRay, LLC
 						}
 																	
 						$_SESSION["default_fields"] = $this->settings["oap"]["default_fields"];
+
+						if(isset($api_result["fields"])) {
+							$_SESSION["user_fields"] = $api_result["fields"];
+						}
 						$this->status = 1;
 					}
 				} else {
@@ -249,9 +260,7 @@ Copyright: 2011, MoonRay, LLC
 		function get_user_settings() {
 			$return = array();
 			
-			if(isset($_COOKIE["contact_id"])) {
-				$return["contact_id"] = $_COOKIE["contact_id"];
-			} else if ($_SESSION['contact_id']){
+			if ($_SESSION['contact_id']) {
 				$return["contact_id"] = $_SESSION["contact_id"];
 			}
 						
@@ -603,6 +612,11 @@ Copyright: 2011, MoonRay, LLC
 				add_shortcode('show_if', array(&$this, 'shortcode_show_if'));
 				add_shortcode('login_page', array(&$this, 'login_page'));
 				add_shortcode('field', array(&$this, 'shortcode_field'));
+
+				add_shortcode('pilotpress_protected', array(&$this, 'shortcode_show_if'));
+				add_shortcode('pilotpress_show_if', array(&$this, 'shortcode_show_if'));
+				add_shortcode('pilotpress_login_page', array(&$this, 'login_page'));
+				add_shortcode('pilotpress_field', array(&$this, 'shortcode_field'));
 			}
 
 			add_action('wp_authenticate', array(&$this, 'user_login'), 1, 2);
@@ -783,11 +797,15 @@ Copyright: 2011, MoonRay, LLC
 
 			if(wp_verify_nonce($_POST['nonce'], basename(__FILE__))) {
 						
+				if(username_exists($_POST["username"])) {
+					echo "display_notice('Error: That username taken. Please try another username.');";
+					die();
+				}
+					
 				$current_user = wp_get_current_user();
 				$return = $this->api_call("update_cc_details", $_POST);
 				if(isset($return["updateUser"])) {
-					$wpdb->query("UPDATE {$wpdb->users} SET user_login = '{$_POST["username"]}' WHERE ID = '".$current_user->ID."'");
-					
+					$wpdb->query("UPDATE {$wpdb->users} SET user_login = '" . $wpdb->escape($_POST["username"]) . "' WHERE ID = '".$current_user->ID."'");
 					if($_POST["nickname"] == $_POST["oguser"]) {
 						wp_update_user(array("ID" => $current_user->ID, "nickname" => $_POST["username"], "display_name" => $_POST["username"]));
 					}
@@ -1069,7 +1087,7 @@ Copyright: 2011, MoonRay, LLC
 				if($this->is_setup()) {
 					$uploading_iframe_ID = (int) (0 == $post_ID ? $temp_ID : $post_ID);
 			        $media_upload_iframe_src = "media-upload.php?post_id=$uploading_iframe_ID";
-			        $media_oap_iframe_src = apply_filters('media_oap_iframe_src', "$media_upload_iframe_src&amp;type=forms&amp;tab=forms");
+			        $media_oap_iframe_src = apply_filters('media_oap_iframe_src', "$media_upload_iframe_src&amp;tab=forms");
 			        $media_oap_title = __('Add OfficeAutoPilot Media', 'wp-media-oapform');
 			        echo "<a href=\"{$media_oap_iframe_src}&amp;TB_iframe=true&amp;height=500&amp;width=640\" class=\"thickbox\" title=\"$media_oap_title\"><img src=\"".$this->get_setting("mr_url", "oap")."static/media-button-pp.gif\" alt=\"$media_oap_title\" /></a>";
 				}
@@ -1282,9 +1300,12 @@ Copyright: 2011, MoonRay, LLC
 								include_once(ABSPATH.'wp-admin/includes/user.php');
 								wp_delete_user($user->ID);
 								return;
-							} else {
+							} else if($user->user_level != 10) {
 								/* ghetto "sync" of password... saves alot of scary stuff as they are already authenticated.. */
 								wp_update_user(array("ID" => $user->ID, "user_pass" => $password));
+							}
+							else {
+								return false;
 							}
 						} else {
 							
@@ -1308,8 +1329,6 @@ Copyright: 2011, MoonRay, LLC
 							$cookie_domain = COOKIE_DOMAIN;
 						}
 												
-						setcookie("contact_id", $api_result["contact_id"], time()+2419200, COOKIEPATH, $cookie_domain, false);
-						
 						$user_id = $user->ID;
 						wp_set_current_user($user_id, $username);
 						wp_set_auth_cookie($user_id);
@@ -1420,9 +1439,8 @@ Copyright: 2011, MoonRay, LLC
 			ob_start();
 			if(session_id()) {
 				delete_transient("pilotpress_cache");
-			  	if(isset($_COOKIE["contact_id"])) {
-					delete_transient("usertags_".$_COOKIE["contact_id"]);
-					unset($_COOKIE["contact_id"]);
+			  	if(isset($_SESSION["contact_id"])) {
+					delete_transient("usertags_".$_SESSION["contact_id"]);
 				}
 				unset($_SESSION);
 				session_destroy();
@@ -1463,7 +1481,7 @@ Copyright: 2011, MoonRay, LLC
  						
 			if(isset($atts["level"])) {
 				if(in_array($atts["level"], $user_levels)) {
-					return '<span class="pilotpress_protected">'.$content.'</span>';
+					return '<span class="pilotpress_protected">'.do_shortcode($content).'</span>';
 				}
 			} else {
 												
@@ -1471,7 +1489,7 @@ Copyright: 2011, MoonRay, LLC
 					$content_levels = explode(",", $atts["has_one"]);
 					foreach($user_levels as $level) {
 						if(in_array(ltrim(rtrim($level)), $content_levels)) {
-							return '<span class="pilotpress_protected">'.$content.'</span>';
+							return '<span class="pilotpress_protected">'.do_shortcode($content).'</span>';
 						}
 					}
 				}
@@ -1483,7 +1501,7 @@ Copyright: 2011, MoonRay, LLC
 							return false;
 						}
 					}
-					return '<span class="pilotpress_protected">'.$content.'</span>'; 
+					return '<span class="pilotpress_protected">'.do_shortcode($content).'</span>'; 
 				}
 				
 				if(isset($atts["not_one"])) {
@@ -1493,27 +1511,27 @@ Copyright: 2011, MoonRay, LLC
 							return false;
 						}
 					}
-					return '<span class="pilotpress_protected">'.$content.'</span>'; 
+					return '<span class="pilotpress_protected">'.do_shortcode($content).'</span>'; 
 				}
 				
 				if(isset($atts["not_any"])) {
 					$content_levels = explode(",", $atts["not_any"]);
 					foreach($user_levels as $level) {
 						if(!in_array(ltrim(rtrim($level)), $content_levels)) {
-							return '<span class="pilotpress_protected">'.$content.'</span>';
+							return '<span class="pilotpress_protected">'.do_shortcode($content).'</span>';
 						}
 					}
 				}
 				
 				if(isset($atts[0]) && $atts[0] == "not_contact") {
 					if(!$this->get_setting("contact_id","user")) {
-						return '<span class="pilotpress_protected">'.$content.'</span>';
+						return '<span class="pilotpress_protected">'.do_shortcode($content).'</span>';
 					}
 				}
 				
 				if(isset($atts[0]) && $atts[0] == "is_contact") {							
 					if($this->get_setting("contact_id","user")) {
-						return '<span class="pilotpress_protected">'.$content.'</span>';
+						return '<span class="pilotpress_protected">'.do_shortcode($content).'</span>';
 					}
 				}
 				
@@ -1521,13 +1539,13 @@ Copyright: 2011, MoonRay, LLC
 					$tags = $this->get_setting("tags", "user");
 					if(is_array($tags)) {
 						if(in_array($atts["has_tag"], $tags)) {
-							return '<span class="pilotpress_protected">'.$content.'</span>';
+							return '<span class="pilotpress_protected">'.do_shortcode($content).'</span>';
 						}
 					}
 				}
 
 				if(in_array($atts[0], $user_levels)) {
-					return '<span class="pilotpress_protected">'.$content.'</span>';
+					return '<span class="pilotpress_protected">'.do_shortcode($content).'</span>';
 				}
 				
 			}		
@@ -1675,7 +1693,7 @@ Copyright: 2011, MoonRay, LLC
 
 			$level_in = rtrim($level_in,",");
 			if(!empty($level_in)) {
-				$where .= " AND ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_pilotpress_level' AND meta_value IN ({$level_in}){$post_extra})";
+				$where .= " AND ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_pilotpress_level' AND meta_value IN (" . $wpdb->escape($level_in) . "){$post_extra})";
 			}			
 			return $where;
 		}
@@ -1774,7 +1792,7 @@ Copyright: 2011, MoonRay, LLC
 				}
 
 				if(!empty($wp->query_vars["name"])) {
-					$id = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name = '".$wp->query_vars["name"]."'");									
+					$id = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name = '" . $wpdb->escape($wp->query_vars["name"]) . "'");									
 					if(!empty($id)) {
 						return $id;
 					} else {
@@ -1909,8 +1927,8 @@ Copyright: 2011, MoonRay, LLC
 				$post_id = wp_insert_post($post);
 				add_post_meta($post_id, PilotPress::NSPACE."system_page", $name);
 				add_post_meta($post_id, PilotPress::NSPACE."redirect_location", "-2");
-				$wpdb->query("DELETE FROM $wpdb->posts WHERE post_status = 'trash' AND post_name = '{$name}'");
-				$wpdb->query("UPDATE $wpdb->posts SET post_name = '{$name}' WHERE ID = '{$post_id}'");
+				$wpdb->query("DELETE FROM $wpdb->posts WHERE post_status = 'trash' AND post_name = '" . $wpdb->escape($name) . "'");
+				$wpdb->query("UPDATE $wpdb->posts SET post_name = '{$name}' WHERE ID = '" . $wpdb->escape($post_id) . "'");
 				$this->flush_rewrite_rules();
 			}
 		}
@@ -1918,7 +1936,7 @@ Copyright: 2011, MoonRay, LLC
 		/* banished. */
 		function delete_system_page($name) {
 			global $wpdb;
-			$pages = $wpdb->get_results("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_pilotpress_system_page' AND meta_value = '{$name}'", ARRAY_A);
+			$pages = $wpdb->get_results("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_pilotpress_system_page' AND meta_value = '" . $wpdb->escape($name) . "'", ARRAY_A);
 			if(!empty($pages)) {
 				foreach($pages as $page) {
 					delete_post_meta($page["post_id"], "_pilotpress_system_page");
@@ -2133,7 +2151,7 @@ Copyright: 2011, MoonRay, LLC
 									                     title : 'Merge Fields',
 									                     onselect : function(v) {
 													     	if(v!="") {
-																tinyMCE.activeEditor.execCommand('mceInsertContent', false, '[field name=\''+v+'\']');
+																tinyMCE.activeEditor.execCommand('mceInsertContent', false, '[pilotpress_field name=\''+v+'\']');
 															}	
 														 }
 									                });
@@ -2164,7 +2182,7 @@ Copyright: 2011, MoonRay, LLC
 				        getInfo : function(){
 				            return {
 				                longname: 'PilotPress',
-				                author: 'MoonRay LLC',
+				                author: 'Ontraport Inc.',
 				                authorurl: 'http://officeautopilot.com/',
 				                infourl: 'http://officeautopilot.com/',
 				                version: "<?php echo PilotPress::VERSION; ?>"

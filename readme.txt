@@ -1,8 +1,8 @@
 === PilotPress ===
-Contributors: officeautopilot
+Contributors: ontraport
 Tags: officeautopilot, sendpepper, moonray, ontraport, pilotpress, oap, membership site, customer center, affiliate center, integration
 Requires at least: 3.2
-Tested up to: 3.4.1
+Tested up to: 3.5.1
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -41,11 +41,11 @@ You can retrieve these in the Admin Menu of your Office AutoPilot account by cli
 
 = Where can I get further help? =
 
-You can reach support Monday thru Thursday from 7:00am to 9:00pm PST. On Friday, we are available from 7:00am to 3:00pm PST. For weekend support, our hours are Saturday 9:00am to 1:00pm and Sunday 5:00pm to 9:00pm.
+You can reach support Monday thru Friday from 7:00am – 9:00pm PST. Saturday, we’re available from 9:00am – 1:00pm and Sundays 5:00pm – 9:00pm PST.
 
 Most questions or concerns can be addressed via our wiki which contains detailed information on each and every feature of our software. The address of our wiki is [http://wiki.officeautopilot.com](http://wiki.officeautopilot.com).
 
-For any other question or concern that the wiki does not address, please email us at support@officeautopilot.com, call us at 805.568.1424, login and submit a ticket (in the help section, link in the upper right), or click on the "questions" tab on the left hand side of this page to be connect to one of our live support reps.
+For any other question or concern that the wiki does not address, please email us at support@officeautopilot.com, call us at 805.568.1424, login and submit a ticket (in the help section, link in the upper right).
 
 = How will I charge for my membership site? =
 
@@ -60,6 +60,13 @@ Content that relates to your business, and content that you can successfully sel
 If you have Pilotpress installed, you can create a new page and simply enter "[login_page]" (excluding quotes) and that page will then have a login box for users to use.
 
 == Changelog ==
+
+= 1.6.0 =
+* Important security updates.
+* Merge fields can now be nested within pilotpress_show_if blocks.
+* Merge fields are now updated in real time and do not require the user to logout and login.
+* The following shortcodes can now be used: pilotpress_show_if, pilotpress_login_page, pilotpress_field. These shortcodes should be used to avoid conflicts with other plugins. The existing shortcodes will continue to function.
+* Fixed the "From Computer" and "From URL" tab on the "Add OfficeAutoPilot Media" page.
 
 = 1.5.9b =
 * Newly created users synced from OAP have the nickname field in WordPress properly set
@@ -81,6 +88,13 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+
+= 1.6.0 =
+* Important security updates.
+* Merge fields can now be nested within pilotpress_show_if blocks.
+* Merge fields are now updated in real time and do not require the user to logout and login.
+* The following shortcodes can now be used: pilotpress_show_if, pilotpress_login_page, pilotpress_field. These shortcodes should be used to avoid conflicts with other plugins. The existing shortcodes will continue to function.
+* Fixed the "From Computer" and "From URL" tab on the "Add OfficeAutoPilot Media" page.
 
 = 1.5.9b =
 * Newly created users synced from OAP have the nickname field in WordPress properly set
