@@ -3,7 +3,7 @@
 Plugin Name: PilotPress
 Plugin URI: http://officeautopilot.com/
 Description: OfficeAutoPilot / WordPress integration plugin.
-Version: 1.6.0
+Version: 1.6.0b
 Author: Ontraport Inc.
 Author URI: http://officeautopilot.com/
 Text Domain: pilotpress
@@ -20,7 +20,7 @@ Copyright: 2011, MoonRay, LLC
 	
 	class PilotPress {
 
-		const VERSION = "1.6.0";
+		const VERSION = "1.6.0b";
 		const WP_MIN = "3.0.0";
 		const NSPACE = "_pilotpress_";
 		const URL_API = "https://www1.moon-ray.com/api.php";
@@ -142,7 +142,7 @@ Copyright: 2011, MoonRay, LLC
 				if($this->get_setting("api_key") && $this->get_setting("app_id")) {
 
 					if(isset($_SESSION["contact_id"])) {
-						$api_result = $this->api_call("get_site_settings", array("site" => site_url(), "contact_id" => $_SESSION["contact_id"]));
+						$api_result = $this->api_call("get_site_settings", array("site" => site_url(), "contact_id" => $_SESSION["contact_id"], "username" => $_SESSION["user_name"]));
 					}
 					else {
 						$api_result = $this->api_call("get_site_settings", array("site" => site_url()));
@@ -163,6 +163,9 @@ Copyright: 2011, MoonRay, LLC
 
 						if(isset($api_result["fields"])) {
 							$_SESSION["user_fields"] = $api_result["fields"];
+						}
+						if(isset($api_result["membership_level"])) {
+							$_SESSION["user_levels"] = $api_result["membership_level"];
 						}
 						$this->status = 1;
 					}
@@ -1428,6 +1431,7 @@ Copyright: 2011, MoonRay, LLC
 		}
 
 		static function end_session($logout = false) {
+
 			if($logout) {
 				/* redirect the user to where they logged in from */
 				if(isset($_SESSION["loginURL"]))
@@ -1805,7 +1809,7 @@ Copyright: 2011, MoonRay, LLC
 		}
 	
 		/* the most important function for content hiding. this finally decides if something can be seen or not. */
-		function is_viewable($id) {				
+		function is_viewable($id) {	
 			global $wpdb, $post;
 
 			$ref = get_query_var("ref");
@@ -1841,7 +1845,7 @@ Copyright: 2011, MoonRay, LLC
 			if(!is_array($user_levels)) {
 				$user_levels = array($user_levels);
 			}
-			
+
 			if(in_array($id, $this->system_pages)) {
 				if(!is_user_logged_in()) {
 					return false;

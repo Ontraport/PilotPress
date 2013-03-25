@@ -61,6 +61,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
+= 1.6.0b =
+* Membership levels are now updated inr eal time and do not require the user to logout and login.
+
 = 1.6.0 =
 * Important security updates.
 * Merge fields can now be nested within pilotpress_show_if blocks.
@@ -88,6 +91,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+
+= 1.6.0b =
+* Membership levels are now updated inr eal time and do not require the user to logout and login.
 
 = 1.6.0 =
 * Important security updates.
