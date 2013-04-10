@@ -2,12 +2,12 @@
 /*
 Plugin Name: PilotPress
 Plugin URI: http://officeautopilot.com/
-Description: OfficeAutoPilot / WordPress integration plugin.
-Version: 1.6.0b
+Description: OfficeAutoPilot / Ontraport WordPress integration plugin.
+Version: 1.6.0c
 Author: Ontraport Inc.
 Author URI: http://officeautopilot.com/
 Text Domain: pilotpress
-Copyright: 2011, MoonRay, LLC
+Copyright: 2013, Ontraport
 */
 		
 	if(defined("ABSPATH")) {
@@ -20,18 +20,21 @@ Copyright: 2011, MoonRay, LLC
 	
 	class PilotPress {
 
-		const VERSION = "1.6.0b";
+		const VERSION = "1.6.0c";
 		const WP_MIN = "3.0.0";
 		const NSPACE = "_pilotpress_";
-		const URL_API = "https://www1.moon-ray.com/api.php";
-		const BACKUP_URL_API = "https://web.moon-ray.com/api.php";
-		const URL_TJS = "https://www1.moon-ray.com/tracking.js";
-		const URL_JSWPCSS = "https://forms.ontraport.com/v2.4/include/scripts/moonrayJS/moonrayJS-only-wp-forms.css";
-		const URL_MRCSS = "https://forms.ontraport.com/v2.4/include/minify/?g=moonrayCSS";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
 
 		public $system_pages = array();
 	
+		public static $brand = "OfficeAutoPilot";
+		public static $brand_url = "OfficeAutoPilot.com";
+		public static $url_api = "https://www1.moon-ray.com/api.php";
+		public static $backup_url_api = "https://web.moon-ray.com/api.php";
+		public static $url_tjs = "https://www1.moon-ray.com/tracking.js";
+		public static $url_jswpcss = "https://forms.moon-ray.com/v2.4/include/scripts/moonrayJS/moonrayJS-only-wp-forms.css";
+		public static $url_mrcss = "https://forms.moon-ray.com/v2.4/include/minify/?g=moonrayCSS";
+
 		/* Various runtime, shared variables */
 		private $uri;
 		private $metaboxes;
@@ -140,6 +143,22 @@ Copyright: 2011, MoonRay, LLC
 				}
 
 				if($this->get_setting("api_key") && $this->get_setting("app_id")) {
+
+					$app_id = explode("_", $this->get_setting("app_id"));
+					if(count($app_id) == 3) {
+						if($app_id[1] > 20000) {
+							self::$brand = "ONTRAPORT";
+							self::$brand_url = "ontraport.com";
+
+							self::$url_api = "https://api.ontraport.com/pilotpress.php";
+							self::$backup_url_api = "https://api.ontraport.com/pilotpress.php";
+
+							self::$url_tjs = "https://tracking.ontraport.com/tracking.js";
+
+							self::$url_jswpcss = "https://forms.ontraport.com/v2.4/include/scripts/moonrayJS/moonrayJS-only-wp-forms.css";
+							self::$url_mrcss = "https://forms.ontraport.com/v2.4/include/minify/?g=moonrayCSS";
+						}
+					}
 
 					if(isset($_SESSION["contact_id"])) {
 						$api_result = $this->api_call("get_site_settings", array("site" => site_url(), "contact_id" => $_SESSION["contact_id"], "username" => $_SESSION["user_name"]));
@@ -290,7 +309,7 @@ Copyright: 2011, MoonRay, LLC
 			add_settings_field('pilotpress_api_key', __('API Key', 'pilotpress'), array(&$this, 'display_settings_api_key'), 'pilotpress-settings', 'pilotpress-settings-general');
 			add_settings_field('wp_userlockout', __('Lock users out of Profile editor', 'pilotpress'), array(&$this, 'display_settings_userlockout'), 'pilotpress-settings', 'pilotpress-settings-general');
 
-			add_settings_section('settings_section_oap', __('OfficeAutoPilot Integration Settings', 'pilotpress'), array(&$this, 'settings_section_oap'), 'pilotpress-settings'); 
+			add_settings_section('settings_section_oap', __(self::$brand . ' Integration Settings', 'pilotpress'), array(&$this, 'settings_section_oap'), 'pilotpress-settings'); 
 			add_settings_field('customer_center',  __('Enable Customer Center', 'pilotpress'), array(&$this, 'display_settings_cc'), 'pilotpress-settings', 'settings_section_oap');
 			add_settings_field('affiliate_center',  __('Enable Affiliate Center', 'pilotpress'), array(&$this, 'display_settings_ac'), 'pilotpress-settings', 'settings_section_oap');
 
@@ -389,16 +408,16 @@ Copyright: 2011, MoonRay, LLC
 			if (!$this->get_setting('api_key') || !$this->get_setting('app_id')) {
 
 				echo '<div class="error" style="padding-top: 5px; padding-bottom: 5px;">';
-				_e('PilotPress must be configured with an OfficeAutoPilot API Key and App ID.', 'pilotpress');
+				_e('PilotPress must be configured with an ' . self::$brand . ' API Key and App ID.', 'pilotpress');
 
 				if($_GET['page'] != 'pilotpress-settings') {
 					_e(sprintf('Go to the <a href="%s" title="PilotPress Admin Page">PilotPress Admin Page</a> to finish setting up your site!', 'options-general.php?page=pilotpress-settings'), 'pilotpress');
 					echo ' ' ;
-					_e(sprintf('You need an <a href="%s" title="Visit OfficeAutoPilot.com">OfficeAutoPilot</a> account to use this plugin.', 'http://officeautopilot.com'));
+					_e(sprintf('You need an <a href="%s" title="Visit '. self::$brand_url .'">' . self::$brand . '</a> account to use this plugin.', 'http://' . self::$brand_url));
 					echo ' ';
 					_e('Don\'t have one yet?', 'pilotpress');
 					echo ' ';
-					_e(sprintf('<a href="%s" title="OfficeAutoPilot SignUp">Sign up</a> now!', 'https://www.moon-ray.com/officeautopilot_signup.php', 'pilotpress'));				
+					_e(sprintf('<a href="%s" title="' . self::$brand . ' SignUp">Sign up</a> now!', 'http://' . self::$brand_url, 'pilotpress'));				
 				}
 
 				echo '</div>';
@@ -406,7 +425,7 @@ Copyright: 2011, MoonRay, LLC
 
 			if(!$this->is_setup() && $this->get_setting('api_key') && $this->get_setting('app_id')) {
 				echo '<div class="error" style="padding-top: 5px; padding-bottom: 5px;">';
-				_e('Either this site <b>'.str_replace("http://","",(string)site_url()).'</b> is not configured in OfficeAutopilot or the <a href="options-general.php?page=pilotpress-settings">API Key / App Id settings</a> are incorrect. ', 'pilotpress');
+				_e('Either this site <b>'.str_replace("http://","",(string)site_url()).'</b> is not configured in ' . self::$brand . ' or the <a href="options-general.php?page=pilotpress-settings">API Key / App Id settings</a> are incorrect. ', 'pilotpress');
 				_e('Most PilotPress features are disabled until this is configured. Please <a href="'.$this->get_setting("setup_url", "oap").'">click here</a> to set it up or visit the <a href="'.$this->get_setting("help_url", "oap").'">online help</a> for more information.', 'pilotpress');
 				echo '</div>';
 			}
@@ -532,11 +551,11 @@ Copyright: 2011, MoonRay, LLC
 				$post["sslverify"] = 0;
 			}
 			
-			$endpoint = sprintf(PilotPress::URL_API.'/%s/%s/%s', "json", "pilotpress", $method);
+			$endpoint = sprintf(self::$url_api.'/%s/%s/%s', "json", "pilotpress", $method);
 			$response = wp_remote_post($endpoint, $post);
-			
+
 			if ($response->errors['http_request_failed']){
-				$endpoint = sprintf(PilotPress::BACKUP_URL_API.'/%s/%s/%s', "json", "pilotpress", $method);
+				$endpoint = sprintf(self::$backup_url_api.'/%s/%s/%s', "json", "pilotpress", $method);
 				$response = wp_remote_post($endpoint, $post);
 			}
 
@@ -588,7 +607,7 @@ Copyright: 2011, MoonRay, LLC
 				add_filter('tiny_mce_before_init', array(&$this, 'mce_valid_elements'));
 				add_filter('tiny_mce_version', array(&$this, 'tiny_mce_version') );
 				add_filter("mce_external_plugins", array(&$this, "mce_external_plugins"));
-				add_filter('mce_buttons', array(&$this, 'mce_buttons'));
+				add_filter('mce_buttons_3', array(&$this, 'mce_buttons'));
 
 				add_filter('manage_posts_columns', array(&$this, 'page_list_col'));
 				add_action('manage_posts_custom_column', array(&$this, 'page_list_col_value'), 10, 2);
@@ -666,17 +685,17 @@ Copyright: 2011, MoonRay, LLC
 	
 		/* please load scripts here vs. printing. it's so much healthier */
 		function load_scripts() {
-			wp_register_script("mr_tracking", self::URL_TJS);
+			wp_register_script("mr_tracking", self::$url_tjs);
 			wp_enqueue_script("mr_tracking");
 			wp_enqueue_script("jquery");
 		}
 
 		function stylesheets() {
 
-			wp_register_style("mrjswp", self::URL_JSWPCSS);
+			wp_register_style("mrjswp", self::$url_jswpcss);
 			wp_enqueue_style("mrjswp");
 
-			wp_register_style("mrcss", self::URL_MRCSS);
+			wp_register_style("mrcss", self::$url_mrcss);
 			wp_enqueue_style("mrcss");
 
 			wp_register_style("jqcss", self::URL_JQCSS);
@@ -799,8 +818,9 @@ Copyright: 2011, MoonRay, LLC
 			global $wpdb;
 
 			if(wp_verify_nonce($_POST['nonce'], basename(__FILE__))) {
-						
-				if(username_exists($_POST["username"])) {
+					
+
+				if(($_POST["oguser"] != $_POST["username"]) && username_exists($_POST["username"])) {
 					echo "display_notice('Error: That username taken. Please try another username.');";
 					die();
 				}
@@ -1091,7 +1111,7 @@ Copyright: 2011, MoonRay, LLC
 					$uploading_iframe_ID = (int) (0 == $post_ID ? $temp_ID : $post_ID);
 			        $media_upload_iframe_src = "media-upload.php?post_id=$uploading_iframe_ID";
 			        $media_oap_iframe_src = apply_filters('media_oap_iframe_src', "$media_upload_iframe_src&amp;tab=forms");
-			        $media_oap_title = __('Add OfficeAutoPilot Media', 'wp-media-oapform');
+			        $media_oap_title = __('Add ' . self::$brand . ' Media', 'wp-media-oapform');
 			        echo "<a href=\"{$media_oap_iframe_src}&amp;TB_iframe=true&amp;height=500&amp;width=640\" class=\"thickbox\" title=\"$media_oap_title\"><img src=\"".$this->get_setting("mr_url", "oap")."static/media-button-pp.gif\" alt=\"$media_oap_title\" /></a>";
 				}
 		}
@@ -1548,10 +1568,9 @@ Copyright: 2011, MoonRay, LLC
 					}
 				}
 
-				if(in_array($atts[0], $user_levels)) {
+				if(isset($atts[0]) && in_array($atts[0], $user_levels)) {
 					return '<span class="pilotpress_protected">'.do_shortcode($content).'</span>';
 				}
-				
 			}		
 		}
 
@@ -2187,8 +2206,8 @@ Copyright: 2011, MoonRay, LLC
 				            return {
 				                longname: 'PilotPress',
 				                author: 'Ontraport Inc.',
-				                authorurl: 'http://officeautopilot.com/',
-				                infourl: 'http://officeautopilot.com/',
+				                authorurl: 'http://<?php echo self::$brand_url ?>',
+				                infourl: 'http://<?php echo self::$brand_url ?>/',
 				                version: "<?php echo PilotPress::VERSION; ?>"
 				            };
 				        }

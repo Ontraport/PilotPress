@@ -61,6 +61,10 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
+= 1.6.0c =
+* Fixed a bug where the show_if shortcode would always display the hidden content if the contact has no membership levels.
+* Support for ONTRAPORT accounts.
+
 = 1.6.0b =
 * Membership levels are now updated in real time and do not require the user to logout and login.
 
@@ -91,6 +95,10 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+
+= 1.6.0c =
+* Fixed a bug where the show_if shortcode would always display the hidden content if the contact has no membership levels.
+* Support for ONTRAPORT accounts.
 
 = 1.6.0b =
 * Membership levels are now updated in real time and do not require the user to logout and login.
