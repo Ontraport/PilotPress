@@ -20,7 +20,7 @@ Copyright: 2013, Ontraport
 	
 	class PilotPress {
 
-		const VERSION = "1.6.0d";
+		const VERSION = "1.6.0e";
 		const WP_MIN = "3.0.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
@@ -1497,6 +1497,10 @@ Copyright: 2013, Ontraport
 	
 		/* shortcodes for conditional ifs */
 		function shortcode_show_if($atts, $content = null) {
+			if(!is_user_logged_in()) {
+				return;
+			}
+
 			$user_levels = $this->get_setting("levels","user", true);
 
 			if(!is_array($user_levels)) {
