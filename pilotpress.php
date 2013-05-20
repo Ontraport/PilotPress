@@ -3,7 +3,7 @@
 Plugin Name: PilotPress
 Plugin URI: http://officeautopilot.com/
 Description: OfficeAutoPilot / Ontraport WordPress integration plugin.
-Version: 1.6.0d
+Version: 1.6.0e
 Author: Ontraport Inc.
 Author URI: http://officeautopilot.com/
 Text Domain: pilotpress
@@ -1606,9 +1606,19 @@ Copyright: 2013, Ontraport
 				$redirect = get_post_meta($id, self::NSPACE."redirect_location", true);
 
 				if(!empty($redirect)) {
-					if($redirect == "-1") {						
-						wp_redirect(site_url());
-						die;
+					if($redirect == "-1") {
+						$current_url = $_SERVER["SCRIPT_URI"];
+						if(substr($current_url, -1) == "/") {
+							$current_url = substr($current_url, 0, -1);
+						}
+
+						if($current_url != site_url()) {
+							wp_redirect(site_url());
+							die;
+						}
+						else {
+							return;
+						}
 					}
 
 					if($redirect == "-2"){
