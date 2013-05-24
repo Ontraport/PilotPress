@@ -1279,7 +1279,7 @@ Copyright: 2013, Ontraport
 		function user_login($username, $password) {
 			if(isset($_POST["wp-submit"])) {
 				$api_result = $this->api_call("authenticate_user", array("site" => site_url(), "username" => $username, "password" => $password));
-	
+
 				/* user does exist */
 				if(is_array($api_result)) {
 
@@ -2098,7 +2098,7 @@ Copyright: 2013, Ontraport
 
 		public function redirect($url) {
 			// Workaround for trac bug #21602
-			$current_url = $_SERVER["SCRIPT_URI"];
+			$current_url = $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
 			if(substr($current_url, -1) == "/") {
 				$current_url = substr($current_url, 0, -1);
 			}
