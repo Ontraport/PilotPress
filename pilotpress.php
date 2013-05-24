@@ -2099,9 +2099,13 @@ Copyright: 2013, Ontraport
 		public function redirect($url) {
 			// Workaround for trac bug #21602
 			$current_url = $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
+
 			if(substr($current_url, -1) == "/") {
 				$current_url = substr($current_url, 0, -1);
 			}
+			$url = str_replace("https://", "", $url);
+			$url = str_replace("http://", "", $url);
+			
 			if($current_url != $url) {
 				return wp_redirect($url);
 			}
