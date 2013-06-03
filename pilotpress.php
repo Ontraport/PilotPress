@@ -715,7 +715,7 @@ Copyright: 2013, Ontraport
 		
 		/* load up our marshalled plugin code (see comment prefixed: Xevious) */
 		function mce_external_plugins($plugin_array) {
-			$plugin_array['pilotpress']  =  plugins_url('/pilotpress/pilotpress.php?ping=js');
+			$plugin_array['pilotpress']  =  plugins_url('/' . plugin_basename(__FILE__) . '?ping=js');
 			return $plugin_array;
 		}
 	
