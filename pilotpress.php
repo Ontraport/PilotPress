@@ -2103,10 +2103,10 @@ Copyright: 2013, Ontraport
 			if(substr($current_url, -1) == "/") {
 				$current_url = substr($current_url, 0, -1);
 			}
-			$url = str_replace("https://", "", $url);
-			$url = str_replace("http://", "", $url);
+			$compare_url = str_replace("https://", "", $url);
+			$compare_url = str_replace("http://", "", $compare_url);
 			
-			if($current_url != $url) {
+			if($current_url != $compare_url) {
 				return wp_redirect($url);
 			}
 		}
