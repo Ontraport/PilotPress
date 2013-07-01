@@ -704,7 +704,7 @@ Copyright: 2013, Ontraport
 	
 		/* except this one. */
 		function tracking() {
-			echo "<script>_mri = \"".$this->get_setting('tracking','oap')."\";mrtracking();</script>";
+			echo "<script>_mri = \"".$this->get_setting('tracking','oap')."\";_mr_domain = \"".$this->get_setting('tracking_url','oap')."\"; mrtracking();</script>";
 		}
 	
 		/* first of a few tinymce functions, this registers some of our buttons */
