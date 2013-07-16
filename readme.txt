@@ -63,6 +63,8 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 = 1.6.0e =
 * Fixed a bug where the show_if shortcode would display content to users who were not logged in.
+* Fixed a bug where PilotPress could enter an infinite redirect loop.
+* Fixed a bug where some PilotPress features would break when the plugin files lived in a non-default directory.
 
 = 1.6.0d =
 * Fixed a bug introduced in 1.6.0c that broke the merge fields drop down in the page editor.
@@ -104,6 +106,8 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 = 1.6.0e =
 * Fixed a bug where the show_if shortcode would display content to users who were not logged in.
+* Fixed a bug where PilotPress could enter an infinite redirect loop.
+* Fixed a bug where some PilotPress features would break when the plugin files lived in a non-default directory.
 
 = 1.6.0d =
 * Fixed a bug introduced in 1.6.0c that broke the merge fields drop down in the page editor.
