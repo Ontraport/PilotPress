@@ -3,7 +3,7 @@
 Plugin Name: PilotPress
 Plugin URI: http://officeautopilot.com/
 Description: OfficeAutoPilot / Ontraport WordPress integration plugin.
-Version: 1.6.0e
+Version: 1.6.0f
 Author: Ontraport Inc.
 Author URI: http://officeautopilot.com/
 Text Domain: pilotpress
@@ -20,7 +20,7 @@ Copyright: 2013, Ontraport
 	
 	class PilotPress {
 
-		const VERSION = "1.6.0e";
+		const VERSION = "1.6.0f";
 		const WP_MIN = "3.0.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
@@ -1455,9 +1455,9 @@ Copyright: 2013, Ontraport
 			if($logout) {
 				/* redirect the user to where they logged in from */
 				if(isset($_SESSION["loginURL"]))
-					$this->redirect($_SESSION["loginURL"]);
+					self::redirect($_SESSION["loginURL"]);
 				else
-					$this->redirect(site_url());
+					self::redirect(site_url());
 			}
 					
 			ob_start();
@@ -2096,7 +2096,7 @@ Copyright: 2013, Ontraport
 			$return = $this->api_call("disable_pilotpress", $data);
 		}
 
-		public function redirect($url) {
+		public static function redirect($url) {
 			// Workaround for trac bug #21602
 			$current_url = $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
 
