@@ -3,7 +3,7 @@
 Plugin Name: PilotPress
 Plugin URI: http://officeautopilot.com/
 Description: OfficeAutoPilot / Ontraport WordPress integration plugin.
-Version: 1.6.0e
+Version: 1.6.0f
 Author: Ontraport Inc.
 Author URI: http://officeautopilot.com/
 Text Domain: pilotpress
@@ -20,7 +20,7 @@ Copyright: 2013, Ontraport
 	
 	class PilotPress {
 
-		const VERSION = "1.6.0e";
+		const VERSION = "1.6.0f";
 		const WP_MIN = "3.0.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
@@ -675,9 +675,9 @@ Copyright: 2013, Ontraport
 				
 				$customer = $this->get_setting("pilotpress_customer_plr");
 				if(!empty($customer) && $customer != "-1") {
-					$this->redirect(get_permalink($customer));
+					self::redirect(get_permalink($customer));
 				} else {
-					$this->redirect($this->homepage_url);
+					self::redirect($this->homepage_url);
 				}
 				die;
 			}
@@ -1380,7 +1380,7 @@ Copyright: 2013, Ontraport
 							}
 							
 							unset($_SESSION["redirect_to"]);
-							$this->redirect($redirect_to);
+							self::redirect($redirect_to);
 							die;
 						}
 	
@@ -1388,21 +1388,21 @@ Copyright: 2013, Ontraport
 						if(isset($api_result["program_id"])) {							
 							$aff_plr = $this->get_setting("pilotpress_affiliate_plr");
 							if($aff_plr && $aff_plr != "-1") {
-								$this->redirect(get_permalink($aff_plr));
+								self::redirect(get_permalink($aff_plr));
 								die;
 								exit;
 							} else {								
-								$this->redirect(site_url());
+								self::redirect(site_url());
 								die;
 							}
 						} else {
 														
 							$cust_plr = $this->get_setting("pilotpress_customer_plr");							
 							if($cust_plr && $cust_plr != "-1") {
-								$this->redirect(get_permalink($cust_plr));
+								self::redirect(get_permalink($cust_plr));
 								die;
 							} else {
-								$this->redirect(site_url());
+								self::redirect(site_url());
 								die;
 							}
 						}
@@ -1417,7 +1417,7 @@ Copyright: 2013, Ontraport
 			$referrer = $_SERVER['HTTP_REFERER'];
 			if(!empty($referrer) && !strstr($referrer, "wp-login") && !strstr($referrer, "wp-admin") ) {
 				$_SESSION["loginFailed"] = true;
-				$this->redirect($referrer);
+				self::redirect($referrer);
 				die;
 			}
 		}
@@ -1433,7 +1433,7 @@ Copyright: 2013, Ontraport
 			else
 			{
 				/* notify user of e-mail, end the rest of WP's processing */
-				$this->redirect(site_url() . "/wp-login.php?checkemail=confirm");
+				self::redirect(site_url() . "/wp-login.php?checkemail=confirm");
 				die;
 			}
 		}
@@ -1455,9 +1455,9 @@ Copyright: 2013, Ontraport
 			if($logout) {
 				/* redirect the user to where they logged in from */
 				if(isset($_SESSION["loginURL"]))
-					$this->redirect($_SESSION["loginURL"]);
+					self::redirect($_SESSION["loginURL"]);
 				else
-					$this->redirect(site_url());
+					self::redirect(site_url());
 			}
 					
 			ob_start();
@@ -1607,20 +1607,20 @@ Copyright: 2013, Ontraport
 
 				if(!empty($redirect)) {
 					if($redirect == "-1") {
-						$this->redirect(site_url());
+						self::redirect(site_url());
 					}
 					else if($redirect == "-2") {
 						if(!empty($id)) {
 							$_SESSION["redirect_to"] = $id;
 						}
-						$this->redirect(wp_login_url());
+						self::redirect(wp_login_url());
 					}
 					else {
-						$this->redirect(get_permalink($redirect));
+						self::redirect(get_permalink($redirect));
 					}
 
 				} else {
-					$this->redirect($this->homepage_url);
+					self::redirect($this->homepage_url);
 				}
 			}
 		}
@@ -1833,14 +1833,14 @@ Copyright: 2013, Ontraport
 					case "customer_center":
 						$page_id = $wpdb->get_var("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_pilotpress_system_page' AND meta_value = 'customer_center'", ARRAY_A);
 						if($page_id) {
-							$this->redirect(get_permalink($page_id));
+							self::redirect(get_permalink($page_id));
 							die;
 						}
 					break;
 					case "affiliate_center":
 						$page_id = $wpdb->get_var("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_pilotpress_system_page' AND meta_value = 'affiliate_center'", ARRAY_A);
 						if($page_id) {
-							$this->redirect(get_permalink($page_id));
+							self::redirect(get_permalink($page_id));
 							die;
 						}
 					break;
@@ -2096,7 +2096,7 @@ Copyright: 2013, Ontraport
 			$return = $this->api_call("disable_pilotpress", $data);
 		}
 
-		public function redirect($url) {
+		public static function redirect($url) {
 			// Workaround for trac bug #21602
 			$current_url = $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
 
