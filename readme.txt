@@ -61,6 +61,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
+= 1.6.0g =
+* Fixed an issue where inserting multiple videos into one page could break flowplayer functionality.
+
 = 1.6.0f =
 * Fixed a bug introduced in 1.6.0e where logging out would result in an HTTP 500 error.
 
@@ -106,6 +109,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+
+= 1.6.0g =
+* Fixed an issue where inserting multiple videos into one page could break flowplayer functionality.
 
 = 1.6.0f =
 * Fixed a bug introduced in 1.6.0e where logging out would result in an HTTP 500 error.
