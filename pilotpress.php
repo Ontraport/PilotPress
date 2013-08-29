@@ -3,7 +3,7 @@
 Plugin Name: PilotPress
 Plugin URI: http://officeautopilot.com/
 Description: OfficeAutoPilot / Ontraport WordPress integration plugin.
-Version: 1.6.0f
+Version: 1.6.0g
 Author: Ontraport Inc.
 Author URI: http://officeautopilot.com/
 Text Domain: pilotpress
@@ -20,7 +20,7 @@ Copyright: 2013, Ontraport
 	
 	class PilotPress {
 
-		const VERSION = "1.6.0f";
+		const VERSION = "1.6.0g";
 		const WP_MIN = "3.0.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
@@ -29,7 +29,7 @@ Copyright: 2013, Ontraport
 	
 		public static $brand = "OfficeAutoPilot";
 		public static $brand_url = "OfficeAutoPilot.com";
-		public static $url_api = "https://www1.moon-ray.com/api.php";
+		public static $url_api = "http://qabox.moon-ray.com/api.php";
 		public static $backup_url_api = "https://web.moon-ray.com/api.php";
 		public static $url_tjs = "https://www1.moon-ray.com/tracking.js";
 		public static $url_jswpcss = "https://forms.moon-ray.com/v2.4/include/scripts/moonrayJS/moonrayJS-only-wp-forms.css";
@@ -169,6 +169,7 @@ Copyright: 2013, Ontraport
 
 					if(is_array($api_result)) {
 						$this->settings["oap"] = $api_result;
+                        var_dump($api_result);
 						
 						if(isset($this->settings["user"])) {
 							unset($this->settings["user"]);
@@ -856,7 +857,15 @@ Copyright: 2013, Ontraport
 		/* grabs video code */
 		function get_insert_video_html(){
 		 	if(isset($_POST["video_id"])) {
-				$api_result = $this->api_call("get_video", array("video_id" => $_POST["video_id"], "width" => '480', "height" => "320", "player" => $_POST["use_player"], "autoplay" => $_POST["use_autoplay"], "viral" => $_POST["use_viral"]));
+				$api_result = $this->api_call("get_video", array(
+                    "video_id" => $_POST["video_id"],
+                    "width" => '480',
+                    "height" => "320",
+                    "player" => $_POST["use_player"],
+                    "autoplay" => $_POST["use_autoplay"],
+                    "viral" => $_POST["use_viral"],
+                    "omit_flowplayerjs" => (bool) $_POST["omit_flowplayerjs"]
+                ));
 				echo $api_result["code"];
 				die;
 			}
@@ -995,8 +1004,13 @@ Copyright: 2013, Ontraport
 					var player = $('#player_'+the_video_id).val();
 					var autoplay = $('#autoplay_'+the_video_id).val();
 					var viral = $('#viral_'+the_video_id).val();
+                    var omit_flowplayerjs = false;
 
-					$.post("<?php echo $this->homepage_url; ?>/wp-admin/admin-ajax.php", { action: "pp_insert_video", video_id: the_video_id, use_viral: viral, use_player: player, use_autoplay: autoplay, 'cookie': encodeURIComponent(document.cookie) },
+                    if($("textarea.wp-editor-area", top.document).val().indexOf("flowplayer-3.2.4.min.js") !== -1) {
+                        omit_flowplayerjs = true;
+                    }
+
+					$.post("<?php echo $this->homepage_url; ?>/wp-admin/admin-ajax.php", { action: "pp_insert_video", video_id: the_video_id, use_viral: viral, use_player: player, use_autoplay: autoplay, 'cookie': encodeURIComponent(document.cookie), "omit_flowplayerjs": omit_flowplayerjs },
 					 function(str){						
 						var ed;
 						if(typeof top.tinyMCE != 'undefined' && (ed = top.tinyMCE.activeEditor)) {
