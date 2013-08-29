@@ -169,7 +169,6 @@ Copyright: 2013, Ontraport
 
 					if(is_array($api_result)) {
 						$this->settings["oap"] = $api_result;
-                        var_dump($api_result);
 						
 						if(isset($this->settings["user"])) {
 							unset($this->settings["user"]);
