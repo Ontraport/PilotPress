@@ -61,6 +61,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
+= 1.6.0f =
+* Fixed a bug introduced in 1.6.0e where logging out would result in an HTTP 500 error.
+
 = 1.6.0e =
 * Fixed a bug where the show_if shortcode would display content to users who were not logged in.
 * Fixed a bug where PilotPress could enter an infinite redirect loop.
@@ -103,6 +106,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+
+= 1.6.0f =
+* Fixed a bug introduced in 1.6.0e where logging out would result in an HTTP 500 error.
 
 = 1.6.0e =
 * Fixed a bug where the show_if shortcode would display content to users who were not logged in.
