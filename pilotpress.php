@@ -685,9 +685,9 @@ Copyright: 2013, Ontraport
 	
 		/* please load scripts here vs. printing. it's so much healthier */
 		function load_scripts() {
+			wp_enqueue_script("jquery");
 			wp_register_script("mr_tracking", self::$url_tjs);
 			wp_enqueue_script("mr_tracking");
-			wp_enqueue_script("jquery");
 		}
 
 		function stylesheets() {
