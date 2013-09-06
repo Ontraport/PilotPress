@@ -1364,6 +1364,8 @@ Copyright: 2013, Ontraport
 						} else {
 							$cookie_domain = COOKIE_DOMAIN;
 						}
+
+                        setcookie("contact_id", $api_result["contact_id"], (time() + 2419200), COOKIEPATH, $cookie_domain, false);
 												
 						$user_id = $user->ID;
 						wp_set_current_user($user_id, $username);
