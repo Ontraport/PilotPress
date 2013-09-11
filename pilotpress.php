@@ -863,7 +863,7 @@ Copyright: 2013, Ontraport
                     "player" => $_POST["use_player"],
                     "autoplay" => $_POST["use_autoplay"],
                     "viral" => $_POST["use_viral"],
-                    "omit_flowplayerjs" => (bool) $_POST["omit_flowplayerjs"]
+                    "omit_flowplayerjs" => ($_POST["omit_flowplayerjs"] == "true" ? true : false)
                 ));
 				echo $api_result["code"];
 				die;
