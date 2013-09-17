@@ -158,18 +158,13 @@ Copyright: 2013, Ontraport
 							self::$url_jswpcss = "https://forms.ontraport.com/v2.4/include/scripts/moonrayJS/moonrayJS-only-wp-forms.css";
 							self::$url_mrcss = "https://forms.ontraport.com/v2.4/include/minify/?g=moonrayCSS";
 						}
+
+                        // for debugging
+                        if(is_file(ABSPATH . "/pp_debug_include.php"))
+                        {
+                            include_once(ABSPATH . "/pp_debug_include.php");
+                        }
 					}
-
-                    // debugging
-                    if(is_file("/home/moonray/sql_lclhst_override"))
-                    {
-                        self::$url_api = "http://oap.local/v2.4/include/MoonRayAPI/api_endpoint.php";
-
-                        self::$url_tjs = "http://oap.local/v2.4/analytics/tracking.js";
-
-                        self::$url_jswpcss = "http://oap.local/v2.4/include/scripts/moonrayJS/moonrayJS-only-wp-forms.css";
-                        self::$url_mrcss = "http://oap.local/v2.4/include/minify/?g=moonrayCSS";
-                    }
 
 					if(isset($_SESSION["contact_id"])) {
 						$api_result = $this->api_call("get_site_settings", array("site" => site_url(), "contact_id" => $_SESSION["contact_id"], "username" => $_SESSION["user_name"]));
