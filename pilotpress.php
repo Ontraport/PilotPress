@@ -622,6 +622,8 @@ Copyright: 2013, Ontraport
 				add_filter('user_has_cap', array(&$this, 'lock_delete'), 0, 3);
 				add_filter('media_upload_tabs', array(&$this, 'modify_media_tab'));
 				add_action('wp_loaded', array(&$this, 'update_post_types'));
+
+				add_action('admin_head', array(&$this, 'include_form_admin_options'));
 				
 				//add_action('admin_print_footer_scripts', array(&$this, 'tinymce_autop'), 50);
 
@@ -651,6 +653,7 @@ Copyright: 2013, Ontraport
 			add_action("wp_login_failed", array(&$this, 'user_login_failed'));
 			add_action("lostpassword_post", array(&$this, 'user_lostpassword'));
 			add_action('wp_logout', array(&$this, 'user_logout'));
+			add_action('init', array(&$this, 'pp_login_button'));
 
 		}
 
@@ -1989,9 +1992,576 @@ Copyright: 2013, Ontraport
 		function login_page($atts, $message = false) {
 
 			global $wpdb;
+
+			// This section allows the users to add custom styling by adding custom attributes to the shortcode [login_page]
+			// STYLING - Setting variables to adjust the styling
+			// Form general styling options
+			if ( isset($atts['width']) ) 
+			{ 
+				$width = $atts['width'];
+				$width = 'max-width: '.$width.'!important;';
+			}
+			else
+			{
+				$width = '';
+			}
+
+			if ( isset($atts['formalign']) ) 
+			{ 
+				$formalign = $atts['formalign'];
+
+				if ( $formalign == 'left' ) 
+				{
+					$formalign = 'margin: 30px 30px 30px 0px; float: left;';
+				}
+				else if ( $formalign == 'center' ) 
+				{
+					$formalign = 'margin: 30px auto!important;';
+				}
+				else if ( $formalign == 'right' ) 
+				{
+					$formalign = 'margin: 30px 0px 30px 30px; float: right;';
+				}
+				else 
+				{
+					$formalign = 'margin: 30px 0px;';
+				}
+			}
+			else
+			{
+				$formalign = 'margin: 30px 0px; width: 100%;';
+			}
+
+			if ( isset($atts['bgcolor']) ) 
+			{ 
+				$bgcolor = $atts['bgcolor'];
+				$bgcolor = 'background-color: '.$bgcolor.'!important;';
+			}
+			else
+			{
+				$bgcolor = 'background-color: #fff;';
+			}
+
+			if ( isset($atts['textcolor']) ) 
+			{ 
+				$textcolor = $atts['textcolor'];
+				$textcolor = 'color: '.$textcolor.'!important;';
+			}
+			else
+			{
+				$textcolor = '';
+			}
+
+			// Header Text styling
+			if ( isset($atts['headertextalignment']) ) 
+			{ 
+				$headertextalignment = $atts['headertextalignment'];
+				$headertextalignment = 'text-align: '.$headertextalignment.'!important;';
+			}
+			else
+			{
+				$headertextalignment = '';
+			}
+
+			if ( isset($atts['headertextfont']) ) 
+			{ 
+				$headertextfont = $atts['headertextfont'];
+				$headertextfont = 'font-family: '.$headertextfont.'!important;';
+			}
+			else
+			{
+				$headertextfont = '';
+			}
+
+			if ( isset($atts['headertextfontsize']) ) 
+			{ 
+				$headertextfontsize = $atts['headertextfontsize'];
+				$headertextfontsize = 'font-size: '.$headertextfontsize.'!important;';
+			}
+			else
+			{
+				$headertextfontsize = 'font-size: 20pt;';
+			}
+
+			if ( isset($atts['headertextfontcolor']) ) 
+			{ 
+				$headertextfontcolor = $atts['headertextfontcolor'];
+				$headertextfontcolor = 'color: '.$headertextfontcolor.'!important;';
+			}
+			else
+			{
+				$headertextfontcolor = 'color: #222;';
+			}
+
+			// Supporting Text styling
+			if ( isset($atts['supportingtextfont']) ) 
+			{ 
+				$supportingtextfont = $atts['supportingtextfont'];
+				$supportingtextfont = 'font-family: '.$supportingtextfont.'!important;';
+			}
+			else
+			{
+				$supportingtextfont = '';
+			}
+
+			if ( isset($atts['supportingtextfontsize']) ) 
+			{ 
+				$supportingtextfontsize = $atts['supportingtextfontsize'];
+				$supportingtextfontsize = 'font-size: '.$supportingtextfontsize.'!important;';
+			}
+			else
+			{
+				$supportingtextfontsize = 'font-size: 12pt;';
+			}
+
+			if ( isset($atts['supportingtextfontcolor']) ) 
+			{ 
+				$supportingtextfontcolor = $atts['supportingtextfontcolor'];
+				$supportingtextfontcolor = 'color: '.$supportingtextfontcolor.'!important;';
+			}
+			else
+			{
+				$supportingtextfontcolor = 'color: #555;';
+			}
+
+			// Form Input styling
+			if ( isset($atts['inputcolor']) ) 
+			{ 
+				$inputcolor = $atts['inputcolor'];
+				$inputcolor = 'background-color: '.$inputcolor.'!important;';
+			}
+			else
+			{
+				$inputcolor = '';
+			}
+
+			if ( isset($atts['inputtextcolor']) ) 
+			{ 
+				$inputtextcolor = $atts['inputtextcolor'];
+				$inputtextcolor = 'color: '.$inputtextcolor.'!important;';
+			}
+			else
+			{
+				$inputtextcolor = '';
+			}
+
+			if ( isset($atts['inputbordercolor']) ) 
+			{ 
+				$inputbordercolor = $atts['inputbordercolor'];
+				$inputbordercolor = 'border: 1px solid '.$inputbordercolor.'!important;';
+			}
+			else
+			{
+				$inputbordercolor = '';
+			}
+
+			if ( isset($atts['inputfieldsize']) ) 
+			{ 
+				$inputfieldsize = $atts['inputfieldsize'];
+				if ( $inputfieldsize == 'large' ) 
+				{
+					$inputfieldsize = 'padding: 16px!important; font-size: 15pt;';
+				}
+				if ( $inputfieldsize == 'medium' ) 
+				{
+					$inputfieldsize = 'padding: 9px!important; font-size: 12pt;';
+				}
+				if ( $inputfieldsize == 'small' ) 
+				{
+					$inputfieldsize = 'padding: 6px!important; font-size: 10pt;';
+				}
+			}
+			else
+			{
+				$inputfieldsize = 'padding: 6px!important; font-size: 10pt;';
+			}
+
+			// Form Button styling
+			if ( isset($atts['buttonbgcolor']) ) 
+			{ 
+				$buttonbgcolor = $atts['buttonbgcolor'];
+				$buttonbgcolor = 'background-color: '.$buttonbgcolor.'!important; background-image: none!important;';
+			}
+			else
+			{
+				$buttonbgcolor = '';
+			}
+
+			if ( isset($atts['buttontextcolor']) ) 
+			{ 
+				$buttontextcolor = $atts['buttontextcolor'];
+				$buttontextcolor = 'color: '.$buttontextcolor.'!important;';
+			}
+			else
+			{
+				$buttontextcolor = '';
+			}
+
+			if ( isset($atts['buttonbordercolor']) ) 
+			{ 
+				$buttonbordercolor = $atts['buttonbordercolor'];
+				$buttonbordercolor = 'border: 1px solid '.$buttonbordercolor.'!important;';
+			}
+			else
+			{
+				$buttonbordercolor = '';
+			}
+
+			if ( isset($atts['buttonfont']) ) 
+			{ 
+				$buttonfont = $atts['buttonfont'];
+				$buttonfont = 'font-family: '.$buttonfont.'!important;';
+			}
+			else
+			{
+				$buttonfont = '';
+			}
+
+			if ( isset($atts['buttonfontsize']) ) 
+			{ 
+				$buttonfontsize = $atts['buttonfontsize'];
+				$buttonfontsize = 'font-size: '.$buttonfontsize.'!important;';
+			}
+			else
+			{
+				$buttonfontsize = 'font-size: 11pt;';
+			}
+
+			if ( isset($atts['buttonhovertextcolor']) ) 
+			{ 
+				$buttonhovertextcolor = $atts['buttonhovertextcolor'];
+				$buttonhovertextcolor = 'color: '.$buttonhovertextcolor.'!important;';
+			}
+			else
+			{
+				$buttonhovertextcolor = '';
+			}
+
+			if ( isset($atts['buttonhoverbgcolor']) ) 
+			{ 
+				$buttonhoverbgcolor = $atts['buttonhoverbgcolor'];
+				$buttonhoverbgcolor = 'background-color: '.$buttonhoverbgcolor.'!important;';
+			}
+			else
+			{
+				$buttonhoverbgcolor = '';
+			}
+
+			if ( isset($atts['buttonhoverbordercolor']) ) 
+			{ 
+				$buttonhoverbordercolor = $atts['buttonhoverbordercolor'];
+				$buttonhoverbordercolor = 'border: 1px solid '.$buttonhoverbordercolor.'!important;';
+			}
+			else
+			{
+				$buttonhoverbordercolor = '';
+			}
+
+			if ( isset($atts['buttonsize']) ) 
+			{ 
+				$buttonsize = $atts['buttonsize'];
+				switch ($buttonsize) 
+				{
+					case 'extralarge':
+						$buttonsize = 'padding: 25px!important; font-size: 23pt;';
+					break;
+
+					case 'large':
+						$buttonsize = 'padding: 18px!important; font-size: 18pt;';
+					break;
+
+					case 'medium':
+						$buttonsize = 'padding: 10px!important; font-size: 13pt;';
+					break;
+
+					case 'small':
+						$buttonsize = 'padding: 6px!important; font-size: 10pt;';
+					break;
+				}
+			}
+			else
+			{
+				$buttonsize = 'padding: 10px!important; font-size: 13pt;';
+			}
+
+			// Form Style - Responsible for the full width or side by side form style
+			$fullwidthstyle = '#loginform .login-username LABEL
+					{
+						max-width: 100%!important;
+						width: 100%!important;
+					}
+					#loginform .login-username INPUT
+					{
+						max-width: 100%!important;
+						width: 100%!important;
+					}
+					#loginform .login-password LABEL
+					{
+						max-width: 100%!important;
+						width: 100%!important;
+					}
+					#loginform .login-password INPUT
+					{
+						max-width: 100%!important;
+						width: 100%!important;
+					}';
+
+			if ( isset($atts['style']) ) 
+			{ 
+				$style = $atts['style'];
+
+				if ( $style != 'sidebyside' || $style == 'fullwidth' ) 
+				{
+					$style = $fullwidthstyle;
+				}
+			}
+			else
+			{
+				$style = $fullwidthstyle;
+			}
+
 			
-			$output = "<style type='text/css'>#loginform p { margin: 1px; padding: 0px; } .login-submit { margin-bottom: 0px; } .login_box { padding: 2px; padding-left: 4px; border: 1px solid #E6D855; background-color: lightYellow; }</style>";
+			// TEXT - Options to change the form text
+			if ( isset($atts['headertext']) ) 
+			{ 
+				$headertext = $atts['headertext'];
+			}
+			else
+			{
+				$headertext = '';
+			}
+
+			if ( isset($atts['supportingtext']) ) 
+			{ 
+				$supportingtext = $atts['supportingtext'];
+			}
+			else
+			{
+				$supportingtext = '';
+			}
+
+			if ( isset($atts['usernametext']) ) 
+			{ 
+				$usernametext = $atts['usernametext'];
+				$usernametext = __($usernametext);
+			}
+			else
+			{
+				$usernametext = __('Username');
+			}
+
+			if ( isset($atts['passwordtext']) ) 
+			{ 
+				$passwordtext = $atts['passwordtext'];
+				$passwordtext = __($passwordtext);
+			}
+			else
+			{
+				$passwordtext = __('Password');
+			}
+
+			if ( isset($atts['remembertext']) ) 
+			{ 
+				$remembertext = $atts['remembertext'];
+				$remembertext = __($remembertext);
+			}
+			else
+			{
+				$remembertext = __('Remember me');
+			}
+
+			if ( isset($atts['buttontext']) ) 
+			{ 
+				$buttontext = $atts['buttontext'];
+				$buttontext = __($buttontext);
+			}
+			else
+			{
+				$buttontext = __('Log In');
+			}
+
 			
+			// New style for the [login_page] forms with variables for user customization
+			$output = "<style type='text/css'>
+				.op-login-form
+				{
+					".$formalign."
+					padding: 30px;
+					box-sizing: border-box;
+					-webkit-box-sizing: border-box;
+					-moz-box-sizing: border-box;
+					-moz-box-shadow: 0px 0px 2px 1px rgba(51,51,51,0.27);
+					-webkit-box-shadow: 0px 0px 2px 1px rgba(51,51,51,0.27);
+					box-shadow: 0px 0px 2px 1px rgba(51, 51, 51, 0.27);
+					-ms-filter: 'progid:DXImageTransform.Microsoft.Glow(Color=#ff333333,Strength=3)';
+					filter: progid:DXImageTransform.Microsoft.Glow(Color=#ff333333,Strength=3);
+					".$bgcolor."
+					".$width."
+				}
+				.op-header-text-container
+				{
+					margin-bottom: 25px;
+					width: 100%;
+					".$headertextalignment."
+				}
+				.op-header-text
+				{
+					line-height: 1.2;
+					margin-bottom: 4px;
+					".$headertextfont."
+					".$headertextfontsize."
+					".$headertextfontcolor."
+				}
+				.op-supporting-text
+				{
+					line-height: 1.2;
+					".$supportingtextfont."
+					".$supportingtextfontsize."
+					".$supportingtextfontcolor."
+				}
+				#loginform P
+				{
+					width: 100%;
+					display: table;
+					margin: 0px 0px 4px;
+					padding: 0px;
+				}
+				#loginform LABEL,
+				#loginform INPUT
+				{
+					display: table-cell;
+					box-sizing: border-box;
+					-webkit-box-sizing: border-box;
+					-moz-box-sizing: border-box;
+					line-height: 1.3;
+				}
+				#loginform .login-username
+				{
+					position: relative;
+				}
+				#loginform .login-username LABEL
+				{
+					width: 100%;
+					max-width: 25%;
+					min-width: 90px;
+					padding-right: 3%;
+					float: left;
+					".$textcolor."
+				}
+				
+				#loginform .login-username INPUT
+				{
+					width: 100%;
+					max-width: 75%;
+					float: right;
+					border-radius: 3px;
+					".$inputcolor."
+					".$inputtextcolor."
+					".$inputbordercolor."
+					".$inputfieldsize."
+				}
+				#loginform .login-password LABEL
+				{
+					width: 100%;
+					max-width: 25%;
+					min-width: 90px;
+					padding-right: 3%;
+					float: left;
+					".$textcolor."
+				}
+				#loginform .login-password INPUT
+				{
+					width: 100%;
+					max-width: 75%;
+					float: right;
+					border-radius: 3px;
+					".$inputcolor."
+					".$inputtextcolor."
+					".$inputbordercolor."
+					".$inputfieldsize."
+				}
+				#loginform .login-remember
+				{
+					text-align: right;
+					font-style: italic;
+					cursor: pointer;
+					".$textcolor."
+				}
+				#loginform .login-remember INPUT
+				{
+					float: right;
+					margin-left: 10px;
+					margin-top: 5px;
+					cursor: pointer;
+				}
+				#loginform .login-remember LABEL
+				{
+					cursor: pointer;
+				}
+				#loginform #wp-submit
+				{
+					width: 100%;
+					padding: 10px;
+					margin-top: 15px;
+					margin-bottom: 0px;
+					white-space: pre-wrap;
+					border-radius: 3px;
+					".$buttonbgcolor."
+					".$buttontextcolor."
+					".$buttonbordercolor."
+					".$buttonfont."
+					".$buttonfontsize."
+					".$buttonsize."
+				}
+				#loginform #wp-submit:hover
+				{
+					transition: background-color 1s ease, color 1s ease;
+					-moz-transition: background-color 1s ease, color 1s ease;
+					-webkit-transition: background-color 1s ease, color 1s ease;
+					".$buttonhovertextcolor."
+					".$buttonhoverbgcolor."
+					".$buttonhoverbordercolor."
+				}
+				.login_box
+				{
+					margin-top: 6px;
+					padding: 5px;
+					border: 1px solid #E6D855;
+					background-color: #FFFFE0;
+					box-sizing: border-box;
+					-webkit-box-sizing: border-box;
+					-moz-box-sizing: border-box;
+				}
+				@media screen and (max-width: 480px) 
+				{
+					#loginform .login-username LABEL
+					{
+						max-width: 100%!important;
+					}
+					#loginform .login-username INPUT
+					{
+						max-width: 100%!important;
+					}
+					#loginform .login-password LABEL
+					{
+						max-width: 100%!important;
+					}
+					#loginform .login-password INPUT
+					{
+						max-width: 100%!important;
+					}
+				}
+				".$style."
+				</style>";
+
+			// Start Form output
+			$output .= '<div class="op-login-form">';
+
+			if ( isset($atts['headertext']) || isset($atts['supporting']) ) 
+			{ 
+				$output .= '<div class="op-header-text-container"><div class="op-header-text">'.$headertext.'</div><div class="op-supporting-text">'.$supportingtext.'</div></div>';
+			}
+
 			if(!empty($message)) {
 				switch($message) {
 					case "1":
@@ -2010,20 +2580,30 @@ Copyright: 2013, Ontraport
 				$output .= "<p class='login_box' id='login_message_normal'>{$output_message}</p>";
 			}
 			
-			if(isset($_SESSION["redirect_to"]) && !empty($_SESSION["redirect_to"])) {
-				$redirect = get_permalink($_SESSION["redirect_to"]);
-			} else {
-				$redirect = site_url($_SERVER['REQUEST_URI']);
+			if ( isset($atts['redirect']) ) 
+			{ 
+				$redirect = $atts['redirect'];
 			}
-			
+			else
+			{
+				if(isset($_SESSION["redirect_to"]) && !empty($_SESSION["redirect_to"])) 
+				{
+					$redirect = get_permalink($_SESSION["redirect_to"]);
+				} 
+				else 
+				{
+					$redirect = site_url($_SERVER['REQUEST_URI']);
+				}
+			}
+
 			$args = array(
 			        'echo' => false,
 			        'redirect' => $redirect, 
 			        'form_id' => 'loginform',
-			        'label_username' => __('Username'),
-			        'label_password' => __('Password'),
-			        'label_remember' => __('Remember Me'),
-			        'label_log_in' => __('Log In'),
+			        'label_username' => $usernametext,
+			        'label_password' => $passwordtext,
+			        'label_remember' => $remembertext,
+			        'label_log_in' => $buttontext,
 			        'id_username' => 'user_login',
 			        'id_password' => 'user_pass',
 			        'id_remember' => 'rememberme',
@@ -2032,9 +2612,41 @@ Copyright: 2013, Ontraport
 			        'value_username' => NULL,
 			        'value_remember' => true);			
 			$output .= wp_login_form($args);
+
+			$output .= '</div>';
 				
 			return $output;
+
 		}
+
+		public function include_form_admin_options() 
+		{
+			include_once( ABSPATH.'wp-content\plugins\pilotpress\login-button.php' );
+		}
+
+		public function register_login_button( $buttons ) 
+		{
+			array_push( $buttons, "|", "addloginform" );
+   			return $buttons;
+		}
+
+		public function add_login_button( $plugin_array ) 
+		{
+		   $plugin_array['addloginform'] = plugins_url( 'login-button.js' , __FILE__ );
+		   return $plugin_array;
+		}
+
+		public function pp_login_button() 
+		{
+		    if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages') ) {
+		    	return;
+		    }
+		    if ( get_user_option('rich_editing') == 'true' ) {
+		      	add_filter( 'mce_external_plugins', array(&$this, 'add_login_button') );
+		      	add_filter( 'mce_buttons', array(&$this, 'register_login_button') );
+		    }
+		}
+
 		
 		/* the first process... enable the plugin create some values and cleanup "older" PilotPress metadata. could probably do with a redo. */
 		public function do_enable() {
