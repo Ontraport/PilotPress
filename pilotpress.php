@@ -42,6 +42,7 @@ Copyright: 2013, Ontraport
 		private $status = 0;
 		private $do_login = false;
 		private $homepage_url;
+		private $incrementalnumber = 1;
 	
 		function __construct() {
 	
@@ -1989,12 +1990,12 @@ Copyright: 2013, Ontraport
 		}
 	
 		/* renders cute login page */
-		function login_page($atts, $message = false) {
+		function login_page ($atts, $message = false) {
+			// Allows shortcodes to be put in text widgets
+			add_filter('widget_text', 'do_shortcode');
 
 			global $wpdb;
-
 			// This section allows the users to add custom styling by adding custom attributes to the shortcode [login_page]
-			// STYLING - Setting variables to adjust the styling
 			// Form general styling options
 			if ( isset($atts['width']) ) 
 			{ 
@@ -2003,7 +2004,7 @@ Copyright: 2013, Ontraport
 			}
 			else
 			{
-				$width = '';
+				$width = 'max-width: 320px;';
 			}
 
 			if ( isset($atts['formalign']) ) 
@@ -2285,39 +2286,43 @@ Copyright: 2013, Ontraport
 			}
 
 			// Form Style - Responsible for the full width or side by side form style
-			$fullwidthstyle = '#loginform .login-username LABEL
-					{
-						max-width: 100%!important;
-						width: 100%!important;
-					}
-					#loginform .login-username INPUT
-					{
-						max-width: 100%!important;
-						width: 100%!important;
-					}
-					#loginform .login-password LABEL
-					{
-						max-width: 100%!important;
-						width: 100%!important;
-					}
-					#loginform .login-password INPUT
-					{
-						max-width: 100%!important;
-						width: 100%!important;
-					}';
+			$default = '#pp-loginform .login-username LABEL
+				{
+					max-width: 100%!important;
+					width: 100%!important;
+				}
+				#pp-loginform .login-username INPUT
+				{
+					max-width: 100%!important;
+					width: 100%!important;
+				}
+				#pp-loginform .login-password LABEL
+				{
+					max-width: 100%!important;
+					width: 100%!important;
+				}
+				#pp-loginform .login-password INPUT
+				{
+					max-width: 100%!important;
+					width: 100%!important;
+				}';
 
 			if ( isset($atts['style']) ) 
 			{ 
 				$style = $atts['style'];
 
-				if ( $style != 'sidebyside' || $style == 'fullwidth' ) 
+				if ( $style == 'default' ) 
 				{
-					$style = $fullwidthstyle;
+					$style = $default;
+				}
+				else if ( $style == 'fullwidth' ) 
+				{
+					$style = $default . '.op-login-form { max-width: 100%!important; }';
 				}
 			}
 			else
 			{
-				$style = $fullwidthstyle;
+				$style = $default;
 			}
 
 			
@@ -2383,7 +2388,7 @@ Copyright: 2013, Ontraport
 			
 			// New style for the [login_page] forms with variables for user customization
 			$output = "<style type='text/css'>
-				.op-login-form
+				.op-login-form-".$this->incrementalnumber."
 				{
 					".$formalign."
 					padding: 30px;
@@ -2398,13 +2403,13 @@ Copyright: 2013, Ontraport
 					".$bgcolor."
 					".$width."
 				}
-				.op-header-text-container
+				.op-login-form-".$this->incrementalnumber." .op-header-text-container
 				{
 					margin-bottom: 25px;
 					width: 100%;
 					".$headertextalignment."
 				}
-				.op-header-text
+				.op-login-form-".$this->incrementalnumber." .op-header-text
 				{
 					line-height: 1.2;
 					margin-bottom: 4px;
@@ -2412,22 +2417,22 @@ Copyright: 2013, Ontraport
 					".$headertextfontsize."
 					".$headertextfontcolor."
 				}
-				.op-supporting-text
+				.op-login-form-".$this->incrementalnumber." .op-supporting-text
 				{
 					line-height: 1.2;
 					".$supportingtextfont."
 					".$supportingtextfontsize."
 					".$supportingtextfontcolor."
 				}
-				#loginform P
+				.op-login-form-".$this->incrementalnumber." #pp-loginform P
 				{
 					width: 100%;
 					display: table;
 					margin: 0px 0px 4px;
 					padding: 0px;
 				}
-				#loginform LABEL,
-				#loginform INPUT
+				.op-login-form-".$this->incrementalnumber." LABEL,
+				.op-login-form-".$this->incrementalnumber." INPUT
 				{
 					display: table-cell;
 					box-sizing: border-box;
@@ -2435,11 +2440,11 @@ Copyright: 2013, Ontraport
 					-moz-box-sizing: border-box;
 					line-height: 1.3;
 				}
-				#loginform .login-username
+				.op-login-form-".$this->incrementalnumber." .login-username
 				{
 					position: relative;
 				}
-				#loginform .login-username LABEL
+				.op-login-form-".$this->incrementalnumber." .login-username LABEL
 				{
 					width: 100%;
 					max-width: 25%;
@@ -2449,10 +2454,10 @@ Copyright: 2013, Ontraport
 					".$textcolor."
 				}
 				
-				#loginform .login-username INPUT
+				.op-login-form-".$this->incrementalnumber." .login-username INPUT
 				{
 					width: 100%;
-					max-width: 75%;
+					max-width: 72%;
 					float: right;
 					border-radius: 3px;
 					".$inputcolor."
@@ -2460,7 +2465,7 @@ Copyright: 2013, Ontraport
 					".$inputbordercolor."
 					".$inputfieldsize."
 				}
-				#loginform .login-password LABEL
+				.op-login-form-".$this->incrementalnumber." .login-password LABEL
 				{
 					width: 100%;
 					max-width: 25%;
@@ -2469,10 +2474,10 @@ Copyright: 2013, Ontraport
 					float: left;
 					".$textcolor."
 				}
-				#loginform .login-password INPUT
+				.op-login-form-".$this->incrementalnumber." .login-password INPUT
 				{
 					width: 100%;
-					max-width: 75%;
+					max-width: 72%;
 					float: right;
 					border-radius: 3px;
 					".$inputcolor."
@@ -2480,25 +2485,25 @@ Copyright: 2013, Ontraport
 					".$inputbordercolor."
 					".$inputfieldsize."
 				}
-				#loginform .login-remember
+				.op-login-form-".$this->incrementalnumber." .login-remember
 				{
 					text-align: right;
 					font-style: italic;
 					cursor: pointer;
 					".$textcolor."
 				}
-				#loginform .login-remember INPUT
+				.op-login-form-".$this->incrementalnumber." .login-remember INPUT
 				{
 					float: right;
 					margin-left: 10px;
 					margin-top: 5px;
 					cursor: pointer;
 				}
-				#loginform .login-remember LABEL
+				.op-login-form-".$this->incrementalnumber." .login-remember LABEL
 				{
 					cursor: pointer;
 				}
-				#loginform #wp-submit
+				.op-login-form-".$this->incrementalnumber." #wp-submit
 				{
 					width: 100%;
 					padding: 10px;
@@ -2513,7 +2518,7 @@ Copyright: 2013, Ontraport
 					".$buttonfontsize."
 					".$buttonsize."
 				}
-				#loginform #wp-submit:hover
+				.op-login-form-".$this->incrementalnumber." #wp-submit:hover
 				{
 					transition: background-color 1s ease, color 1s ease;
 					-moz-transition: background-color 1s ease, color 1s ease;
@@ -2522,7 +2527,7 @@ Copyright: 2013, Ontraport
 					".$buttonhoverbgcolor."
 					".$buttonhoverbordercolor."
 				}
-				.login_box
+				.op-login-form-".$this->incrementalnumber." .login_box
 				{
 					margin-top: 6px;
 					padding: 5px;
@@ -2534,19 +2539,19 @@ Copyright: 2013, Ontraport
 				}
 				@media screen and (max-width: 480px) 
 				{
-					#loginform .login-username LABEL
+					.op-login-form-".$this->incrementalnumber." .login-username LABEL
 					{
 						max-width: 100%!important;
 					}
-					#loginform .login-username INPUT
+					.op-login-form-".$this->incrementalnumber." .login-username INPUT
 					{
 						max-width: 100%!important;
 					}
-					#loginform .login-password LABEL
+					.op-login-form-".$this->incrementalnumber." .login-password LABEL
 					{
 						max-width: 100%!important;
 					}
-					#loginform .login-password INPUT
+					.op-login-form-".$this->incrementalnumber." .login-password INPUT
 					{
 						max-width: 100%!important;
 					}
@@ -2555,15 +2560,18 @@ Copyright: 2013, Ontraport
 				</style>";
 
 			// Start Form output
-			$output .= '<div class="op-login-form">';
+			$output .= '<div class="op-login-form-'.$this->incrementalnumber.'">';
 
+			// Setting header text
 			if ( isset($atts['headertext']) || isset($atts['supporting']) ) 
 			{ 
 				$output .= '<div class="op-header-text-container"><div class="op-header-text">'.$headertext.'</div><div class="op-supporting-text">'.$supportingtext.'</div></div>';
 			}
 
-			if(!empty($message)) {
-				switch($message) {
+			if(!empty($message)) 
+			{
+				switch($message) 
+				{
 					case "1":
 						$output_message = "Must be logged in to see this page.";
 					break;
@@ -2599,7 +2607,7 @@ Copyright: 2013, Ontraport
 			$args = array(
 			        'echo' => false,
 			        'redirect' => $redirect, 
-			        'form_id' => 'loginform',
+			        'form_id' => 'pp-loginform',
 			        'label_username' => $usernametext,
 			        'label_password' => $passwordtext,
 			        'label_remember' => $remembertext,
@@ -2613,30 +2621,49 @@ Copyright: 2013, Ontraport
 			        'value_remember' => true);			
 			$output .= wp_login_form($args);
 
+			// Adds functionality for Lost Passwords
+			if ( isset($atts['forgotpw']) && $atts['forgotpw'] == 'true' )
+			{
+				$output .= '<div class="pp-lf-forgot-username" style="text-align: right;"><a id="pp-lf-forgotpw" href="javascript://">Forgotten password?</a></div>';
+
+				$output .= '<script>
+						jQuery(".op-login-form-'.$this->incrementalnumber.' #pp-lf-forgotpw").click(function()
+							{ 
+								jQuery(".op-login-form-'.$this->incrementalnumber.' .login-password, .op-login-form-'.$this->incrementalnumber.' .login-remember").hide(300);
+								jQuery(".op-login-form-'.$this->incrementalnumber.' #pp-loginform").attr( "action", "http://'.$_SERVER["SERVER_NAME"].'/wp-login.php?action=lostpassword");
+								jQuery(".op-login-form-'.$this->incrementalnumber.' .login-username label").text("Enter your Username or Email");
+								jQuery(".op-login-form-'.$this->incrementalnumber.' .login-username input").attr("name", "user_login");
+								jQuery(".op-login-form-'.$this->incrementalnumber.' #wp-submit").attr("value", "Send me my Password!");
+							});
+						</script>';
+			}
+
 			$output .= '</div>';
+
+			$this->incrementalnumber++;
 				
 			return $output;
 
 		}
 
-		public function include_form_admin_options() 
+		public function include_form_admin_options () 
 		{
 			include_once( ABSPATH.'wp-content\plugins\pilotpress\login-button.php' );
 		}
 
-		public function register_login_button( $buttons ) 
+		public function register_login_button ( $buttons ) 
 		{
 			array_push( $buttons, "|", "addloginform" );
    			return $buttons;
 		}
 
-		public function add_login_button( $plugin_array ) 
+		public function add_login_button ( $plugin_array ) 
 		{
 		   $plugin_array['addloginform'] = plugins_url( 'login-button.js' , __FILE__ );
 		   return $plugin_array;
 		}
 
-		public function pp_login_button() 
+		public function pp_login_button () 
 		{
 		    if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages') ) {
 		    	return;
