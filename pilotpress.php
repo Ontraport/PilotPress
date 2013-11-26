@@ -3,7 +3,7 @@
 Plugin Name: PilotPress
 Plugin URI: http://officeautopilot.com/
 Description: OfficeAutoPilot / Ontraport WordPress integration plugin.
-Version: 1.6.0f
+Version: 1.6.0g
 Author: Ontraport Inc.
 Author URI: http://officeautopilot.com/
 Text Domain: pilotpress
@@ -20,7 +20,7 @@ Copyright: 2013, Ontraport
 	
 	class PilotPress {
 
-		const VERSION = "1.6.0f";
+		const VERSION = "1.6.0g";
 		const WP_MIN = "3.0.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
@@ -158,6 +158,12 @@ Copyright: 2013, Ontraport
 							self::$url_jswpcss = "https://forms.ontraport.com/v2.4/include/scripts/moonrayJS/moonrayJS-only-wp-forms.css";
 							self::$url_mrcss = "https://forms.ontraport.com/v2.4/include/minify/?g=moonrayCSS";
 						}
+
+                        // for debugging
+                        if(is_file(ABSPATH . "/pp_debug_include.php"))
+                        {
+                            include_once(ABSPATH . "/pp_debug_include.php");
+                        }
 					}
 
 					if(isset($_SESSION["contact_id"])) {
@@ -685,9 +691,9 @@ Copyright: 2013, Ontraport
 	
 		/* please load scripts here vs. printing. it's so much healthier */
 		function load_scripts() {
+			wp_enqueue_script("jquery");
 			wp_register_script("mr_tracking", self::$url_tjs);
 			wp_enqueue_script("mr_tracking");
-			wp_enqueue_script("jquery");
 		}
 
 		function stylesheets() {
@@ -704,7 +710,7 @@ Copyright: 2013, Ontraport
 	
 		/* except this one. */
 		function tracking() {
-			echo "<script>_mri = \"".$this->get_setting('tracking','oap')."\";_mr_domain = \"reed.ontraport.net\"; mrtracking();</script>";
+			echo "<script>_mri = \"".$this->get_setting('tracking','oap')."\";_mr_domain = \"" . $this->get_setting('tracking_url', 'oap') . "\"; mrtracking();</script>";
 		}
 	
 		/* first of a few tinymce functions, this registers some of our buttons */
@@ -856,7 +862,15 @@ Copyright: 2013, Ontraport
 		/* grabs video code */
 		function get_insert_video_html(){
 		 	if(isset($_POST["video_id"])) {
-				$api_result = $this->api_call("get_video", array("video_id" => $_POST["video_id"], "width" => '480', "height" => "320", "player" => $_POST["use_player"], "autoplay" => $_POST["use_autoplay"], "viral" => $_POST["use_viral"]));
+				$api_result = $this->api_call("get_video", array(
+                    "video_id" => $_POST["video_id"],
+                    "width" => '480',
+                    "height" => "320",
+                    "player" => $_POST["use_player"],
+                    "autoplay" => $_POST["use_autoplay"],
+                    "viral" => $_POST["use_viral"],
+                    "omit_flowplayerjs" => ($_POST["omit_flowplayerjs"] == "true" ? true : false)
+                ));
 				echo $api_result["code"];
 				die;
 			}
@@ -995,8 +1009,13 @@ Copyright: 2013, Ontraport
 					var player = $('#player_'+the_video_id).val();
 					var autoplay = $('#autoplay_'+the_video_id).val();
 					var viral = $('#viral_'+the_video_id).val();
+                    var omit_flowplayerjs = false;
 
-					$.post("<?php echo $this->homepage_url; ?>/wp-admin/admin-ajax.php", { action: "pp_insert_video", video_id: the_video_id, use_viral: viral, use_player: player, use_autoplay: autoplay, 'cookie': encodeURIComponent(document.cookie) },
+                    if($("textarea.wp-editor-area", top.document).val().indexOf("clientvids/flowplayer") !== -1) {
+                        omit_flowplayerjs = true;
+                    }
+
+					$.post("<?php echo $this->homepage_url; ?>/wp-admin/admin-ajax.php", { action: "pp_insert_video", video_id: the_video_id, use_viral: viral, use_player: player, use_autoplay: autoplay, 'cookie': encodeURIComponent(document.cookie), "omit_flowplayerjs": omit_flowplayerjs },
 					 function(str){						
 						var ed;
 						if(typeof top.tinyMCE != 'undefined' && (ed = top.tinyMCE.activeEditor)) {
@@ -1351,6 +1370,8 @@ Copyright: 2013, Ontraport
 						} else {
 							$cookie_domain = COOKIE_DOMAIN;
 						}
+
+                        setcookie("contact_id", $api_result["contact_id"], (time() + 2419200), COOKIEPATH, $cookie_domain, false);
 												
 						$user_id = $user->ID;
 						wp_set_current_user($user_id, $username);
