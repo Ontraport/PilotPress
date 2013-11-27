@@ -624,6 +624,7 @@ Copyright: 2013, Ontraport
 				add_filter('media_upload_tabs', array(&$this, 'modify_media_tab'));
 				add_action('wp_loaded', array(&$this, 'update_post_types'));
 
+				// For login_form
 				add_action('admin_head', array(&$this, 'include_form_admin_options'));
 				
 				//add_action('admin_print_footer_scripts', array(&$this, 'tinymce_autop'), 50);
@@ -2411,7 +2412,7 @@ Copyright: 2013, Ontraport
 				}
 				.op-login-form-".$this->incrementalnumber." .op-header-text
 				{
-					line-height: 1.2;
+					line-height: 1.2!important;
 					margin-bottom: 4px;
 					".$headertextfont."
 					".$headertextfontsize."
@@ -2419,7 +2420,7 @@ Copyright: 2013, Ontraport
 				}
 				.op-login-form-".$this->incrementalnumber." .op-supporting-text
 				{
-					line-height: 1.2;
+					line-height: 1.2!important;
 					".$supportingtextfont."
 					".$supportingtextfontsize."
 					".$supportingtextfontcolor."
@@ -2502,6 +2503,7 @@ Copyright: 2013, Ontraport
 				.op-login-form-".$this->incrementalnumber." .login-remember LABEL
 				{
 					cursor: pointer;
+					".$textcolor."
 				}
 				.op-login-form-".$this->incrementalnumber." #wp-submit
 				{
@@ -2670,7 +2672,7 @@ Copyright: 2013, Ontraport
 		    }
 		    if ( get_user_option('rich_editing') == 'true' ) {
 		      	add_filter( 'mce_external_plugins', array(&$this, 'add_login_button') );
-		      	add_filter( 'mce_buttons', array(&$this, 'register_login_button') );
+		      	add_filter( 'mce_buttons_3', array(&$this, 'register_login_button') );
 		    }
 		}
 
