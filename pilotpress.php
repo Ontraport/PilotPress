@@ -3,7 +3,7 @@
 Plugin Name: PilotPress
 Plugin URI: http://officeautopilot.com/
 Description: OfficeAutoPilot / Ontraport WordPress integration plugin.
-Version: 1.6.0g
+Version: 1.6.0h
 Author: Ontraport Inc.
 Author URI: http://officeautopilot.com/
 Text Domain: pilotpress
@@ -20,7 +20,7 @@ Copyright: 2013, Ontraport
 	
 	class PilotPress {
 
-		const VERSION = "1.6.0g";
+		const VERSION = "1.6.0h";
 		const WP_MIN = "3.0.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
@@ -1991,7 +1991,8 @@ Copyright: 2013, Ontraport
 		}
 	
 		/* renders cute login page */
-		function login_page ($atts, $message = false) {
+		function login_page ($atts, $message = false) 
+		{
 			// Allows shortcodes to be put in text widgets
 			add_filter('widget_text', 'do_shortcode');
 
@@ -2667,10 +2668,12 @@ Copyright: 2013, Ontraport
 
 		public function pp_login_button () 
 		{
-		    if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages') ) {
+		    if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages') ) 
+		    {
 		    	return;
 		    }
-		    if ( get_user_option('rich_editing') == 'true' ) {
+		    if ( get_user_option('rich_editing') == 'true' ) 
+		    {
 		      	add_filter( 'mce_external_plugins', array(&$this, 'add_login_button') );
 		      	add_filter( 'mce_buttons_3', array(&$this, 'register_login_button') );
 		    }
