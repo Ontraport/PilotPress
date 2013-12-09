@@ -2657,7 +2657,7 @@ Copyright: 2013, Ontraport
 
 		public function include_form_admin_options () 
 		{
-			include_once( ABSPATH.'wp-content\plugins\pilotpress\login-button.php' );
+			include_once(plugin_dir_path(__FILE__) . "/login-button.php");
 		}
 
 		public function register_login_button ( $buttons ) 
