@@ -30,7 +30,7 @@ Copyright: 2013, Ontraport
 	
 		public static $brand = "OfficeAutoPilot";
 		public static $brand_url = "OfficeAutoPilot.com";
-		public static $url_api = "http://qabox.moon-ray.com/v2.4/include/MoonRayAPI/api_endpoint.php";
+		public static $url_api = "https://www1.moon-ray.com/api.php";
 		public static $backup_url_api = "https://web.moon-ray.com/api.php";
 		public static $url_tjs = "https://www1.moon-ray.com/tracking.js";
 		public static $url_jswpcss = "https://forms.moon-ray.com/v2.4/include/scripts/moonrayJS/moonrayJS-only-wp-forms.css";
