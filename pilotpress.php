@@ -20,10 +20,11 @@ Copyright: 2013, Ontraport
 	
 	class PilotPress {
 
-		const VERSION = "1.6.0h";
+        const VERSION = "1.6.0h";
 		const WP_MIN = "3.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
+        const AUTH_SALT = "M!E%VxpKvuQHn!PTPOTohtLbnOl&)5&0mb(Uj^c#Zz!-0898yfS#7^xttNW(x1ia";
 
 		public $system_pages = array();
 	
@@ -1331,7 +1332,22 @@ Copyright: 2013, Ontraport
 		/* ok, time for some seriousness... this does the login. see additional comments inline */
 		function user_login($username, $password) {
 			if(isset($_POST["wp-submit"])) {
-				$api_result = $this->api_call("authenticate_user", array("site" => site_url(), "username" => $username, "password" => $password));
+
+                $password = $username . self::VERSION . $password . self::AUTH_SALT;
+ 
+                $supported_algos = hash_algos();
+                if (in_array("sha256", $supported_algos))
+                {
+                    $algo = "sha256";
+                    $hash = hash("sha256", $password);
+                }
+                else
+                {
+                    $algo = "md5";
+                    $hash = md5($password);
+                }
+
+                $api_result = $this->api_call("authenticate_user", array("site" => site_url(), "username" => $username, "password" => $hash, "version" => self::VERSION, "algo" => $algo));
 
 				/* user does exist */
 				if(is_array($api_result)) {
