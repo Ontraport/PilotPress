@@ -20,8 +20,8 @@ Copyright: 2013, Ontraport
 	
 	class PilotPress {
 
-		const VERSION = "1.6.0i";
-		const WP_MIN = "3.0.0";
+        const VERSION = "1.6.0h";
+		const WP_MIN = "3.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
         const AUTH_SALT = "M!E%VxpKvuQHn!PTPOTohtLbnOl&)5&0mb(Uj^c#Zz!-0898yfS#7^xttNW(x1ia";
@@ -700,6 +700,35 @@ Copyright: 2013, Ontraport
 			wp_enqueue_script("jquery");
 			wp_register_script("mr_tracking", self::$url_tjs);
 			wp_enqueue_script("mr_tracking");
+
+			// Here to determine if the automattic color picker 'iris' is included with wordpress... if not, include and use it
+			$version = get_bloginfo('version');
+			if ($version < 3.5)
+			{
+			    wp_register_style('irisstyle', plugins_url( '/js/iris.css' , __FILE__ )); 
+			    wp_enqueue_style('irisstyle');
+			    wp_register_style('jquery-ui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery.ui.all.css');
+			    wp_enqueue_style('jquery-ui');
+
+			    wp_deregister_script('jquery-color');
+			    wp_register_script('jquery-color', plugins_url( 'color.js' , __FILE__ ));
+			    wp_enqueue_script('jquery-color');
+			    wp_enqueue_script('jquery-ui-core');
+			    wp_enqueue_script('jquery-ui-draggable');
+			    wp_enqueue_script('jquery-ui-slider');
+			    wp_enqueue_script('jquery-ui-widget');
+			    wp_enqueue_script('jquery-ui-mouse');
+			    wp_enqueue_script('jquery-ui-tabs');
+			    wp_register_script('iris', plugins_url( '/js/iris.js' , __FILE__ ), array( 'jquery', 'jquery-color', 'jquery-ui-core', 'jquery-ui-widget', 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-ui-mouse', 'jquery-ui-tabs' )); 
+			    wp_enqueue_script('iris'); 
+			}
+			else
+			{
+			    wp_register_style('jquery-ui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery.ui.all.css');
+			    wp_enqueue_style('jquery-ui');
+			    wp_enqueue_style( 'wp-color-picker' );
+			    wp_enqueue_script('iris'); 
+			}
 		}
 
 		function stylesheets() {
@@ -2678,7 +2707,7 @@ Copyright: 2013, Ontraport
 
 		public function add_login_button ( $plugin_array ) 
 		{
-		   $plugin_array['addloginform'] = plugins_url( 'login-button.js' , __FILE__ );
+		   $plugin_array['addloginform'] = plugins_url( '/js/login-button.js' , __FILE__ );
 		   return $plugin_array;
 		}
 

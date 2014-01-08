@@ -1,13 +1,4 @@
-<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.min.css" />
-
 <?php 
-wp_enqueue_style( 'wp-color-picker' );
-
-wp_enqueue_script('jquery');
-wp_enqueue_script('jquery-ui-core');
-wp_enqueue_script('jquery-ui-slider'); 
-wp_enqueue_script('iris'); 
-wp_enqueue_script('jquery-ui-tabs'); 
 
 // Provides a range of font sizes for use within the form options
 function fontsize()
