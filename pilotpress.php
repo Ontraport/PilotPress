@@ -1568,6 +1568,13 @@ Copyright: 2013, Ontraport
 	
 		/* shortcodes for conditional ifs */
 		function shortcode_show_if($atts, $content = null) {
+
+            if(isset($atts[0]) && $atts[0] == "not_contact") {
+                if(!$this->get_setting("contact_id","user")) {
+                    return '<span class="pilotpress_protected">'.do_shortcode($content).'</span>';
+                }
+            }
+                
 			if(!is_user_logged_in()) {
 				return;
 			}
@@ -1619,12 +1626,6 @@ Copyright: 2013, Ontraport
 						if(!in_array(ltrim(rtrim($level)), $content_levels)) {
 							return '<span class="pilotpress_protected">'.do_shortcode($content).'</span>';
 						}
-					}
-				}
-				
-				if(isset($atts[0]) && $atts[0] == "not_contact") {
-					if(!$this->get_setting("contact_id","user")) {
-						return '<span class="pilotpress_protected">'.do_shortcode($content).'</span>';
 					}
 				}
 				
