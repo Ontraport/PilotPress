@@ -726,6 +726,7 @@ Copyright: 2013, Ontraport
 			{
 			    wp_register_style('jquery-ui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery.ui.all.css');
 			    wp_enqueue_style('jquery-ui');
+			    wp_enqueue_script('jquery-ui-tabs');
 			    wp_enqueue_style( 'wp-color-picker' );
 			    wp_enqueue_script('iris'); 
 			}
