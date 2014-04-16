@@ -1333,18 +1333,18 @@ Copyright: 2013, Ontraport
 		function user_login($username, $password) {
 			if(isset($_POST["wp-submit"])) {
 
-                $password = $username . self::VERSION . $password . self::AUTH_SALT;
+                $hashed_password = $username . self::VERSION . $password . self::AUTH_SALT;
  
                 $supported_algos = hash_algos();
                 if (in_array("sha256", $supported_algos))
                 {
                     $algo = "sha256";
-                    $hash = hash("sha256", $password);
+                    $hash = hash("sha256", $hashed_password);
                 }
                 else
                 {
                     $algo = "md5";
-                    $hash = md5($password);
+                    $hash = md5($hashed_password);
                 }
 
                 $api_result = $this->api_call("authenticate_user", array("site" => site_url(), "username" => $username, "password" => $hash, "version" => self::VERSION, "algo" => $algo));
