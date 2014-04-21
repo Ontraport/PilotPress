@@ -586,7 +586,7 @@ Copyright: 2013, Ontraport
 
 			add_action("init", array(&$this, "load_scripts"));
 			add_action('wp_print_styles', array(&$this, 'stylesheets'));
-			add_action('wp_head', array(&$this, 'tracking'));
+			add_action('wp_print_footer_scripts', array(&$this, 'tracking'));
 			add_action('retrieve_password', array(&$this, 'retrieve_password'));
 			add_action('profile_update', array(&$this, 'profile_update'));
 			
@@ -698,7 +698,7 @@ Copyright: 2013, Ontraport
 		/* please load scripts here vs. printing. it's so much healthier */
 		function load_scripts() {
 			wp_enqueue_script("jquery");
-			wp_register_script("mr_tracking", self::$url_tjs);
+			wp_register_script("mr_tracking", self::$url_tjs, array(), false, true);
 			wp_enqueue_script("mr_tracking");
 
 			// Here to determine if the automattic color picker 'iris' is included with wordpress... if not, include and use it
