@@ -1662,41 +1662,47 @@ Copyright: 2013, Ontraport
 		}
 		
 		/* the big nasty content hiding function... tread carefully */
-		function post_process() {
-			global $wp, $wpdb, $post;
+        function post_process ()
+        {
+            global $wp, $wpdb, $post;
 
-			if(isset($post->ID)) {
-				$id = $post->ID;
-			} else {
-				$id = $this->get_postid_by_url();
-				if (!$id){
-					$id = get_option('page_on_front');
-				}
-			}
+            if (isset($post->ID))
+            {
+                $id = $post->ID;
+            }
+            else
+            {
+                $id = $this->get_postid_by_url();
+                if (!$id)
+                {
+                    $id = get_option('page_on_front');
+                }
+            }
 
-			if(!$this->is_viewable($id) && !is_home()) {
-			
-				$redirect = get_post_meta($id, self::NSPACE."redirect_location", true);
-
-				if(!empty($redirect)) {
-					if($redirect == "-1") {
-						self::redirect(site_url());
-					}
-					else if($redirect == "-2") {
-						if(!empty($id)) {
-							$_SESSION["redirect_to"] = $id;
-						}
-						self::redirect(wp_login_url());
-					}
-					else {
-						self::redirect(get_permalink($redirect));
-					}
-
-				} else {
-					self::redirect($this->homepage_url);
-				}
-			}
-		}
+            if (!$this->is_viewable($id) && !is_home())
+            {
+                $redirect = get_post_meta($id, self::NSPACE."redirect_location", true);
+                if (!empty($redirect))
+                {
+                    if ($redirect == "-1")
+                    {
+                        return self::redirect(site_url());
+                    }
+                    else if ($redirect == "-2")
+                    {
+                        if (!empty($id))
+                        { 
+                            $_SESSION["redirect_to"] = $id;
+                        }
+                    }
+                    return self::redirect(get_permalink($redirect));
+                }
+                else
+                {
+                    return self::redirect($this->homepage_url);
+                }
+            }
+        }
 	
 		/* is this a special page? if so render such */
 		function content_process($content) {
