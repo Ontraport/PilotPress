@@ -758,7 +758,16 @@ Copyright: 2013, Ontraport
 		/* load up our marshalled plugin code (see comment prefixed: Xevious) */
 		function mce_external_plugins($plugin_array) {
 			global $wp_version;
-			$plugin_array['pilotpress']  =  plugins_url('/' . plugin_basename(__FILE__) . '?ping=js&wp_version='.$wp_version);
+			$version = 3.9;
+			//test for wordpress version to load proper plugin scripts
+			if ( version_compare( $wp_version, $version, '>=' ) ) {
+				$plugin_array['pilotpress']  =  plugins_url('/' . plugin_basename(__FILE__) . '?ping=js39');
+			} 
+			else 
+			{
+				$plugin_array['pilotpress']  =  plugins_url('/' . plugin_basename(__FILE__) . '?ping=js');
+			}
+
 			return $plugin_array;
 		}
 	
@@ -2884,13 +2893,11 @@ Copyright: 2013, Ontraport
 			case "s":
 				echo json_encode(array("version" => PilotPress::VERSION));
 			break;
-			case "js":
+			case "js39":
 
 				PilotPress::start_session();
 				header("Content-Type: text/javascript");
-				$current_version = $_GET['wp_version'];
-				$version = 3.9;
-				if ( version_compare( $current_version, $version, '>=' ) ) {
+
 				?>
 
 				  tinymce.PluginManager.add('pilotpress', function(editor, url) {
@@ -2933,9 +2940,13 @@ Copyright: 2013, Ontraport
 				<?php
 
 
-			} 
-			else //revert to older way of init tinymce plugins
-			{  ?>
+			break;
+			case "js":  
+
+				PilotPress::start_session();
+				header("Content-Type: text/javascript");
+
+				?>
 				(function(){
 
 				    tinymce.PluginManager.requireLangPack('pilotpress');
@@ -2992,7 +3003,7 @@ Copyright: 2013, Ontraport
 				    tinymce.PluginManager.add('pilotpress', tinymce.plugins.pilotpress);
 				})();	
 				<?php
-			}
+			
 			break;
 			default:
 				echo "goodPing();";
