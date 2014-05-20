@@ -3,7 +3,7 @@
 Plugin Name: PilotPress
 Plugin URI: http://officeautopilot.com/
 Description: OfficeAutoPilot / Ontraport WordPress integration plugin.
-Version: 1.6.0h
+Version: 1.6.0j
 Author: Ontraport Inc.
 Author URI: http://officeautopilot.com/
 Text Domain: pilotpress
@@ -20,7 +20,7 @@ Copyright: 2013, Ontraport
 	
 	class PilotPress {
 
-        const VERSION = "1.6.0h";
+        const VERSION = "1.6.0j";
 		const WP_MIN = "3.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
@@ -757,7 +757,8 @@ Copyright: 2013, Ontraport
 		
 		/* load up our marshalled plugin code (see comment prefixed: Xevious) */
 		function mce_external_plugins($plugin_array) {
-			$plugin_array['pilotpress']  =  plugins_url('/' . plugin_basename(__FILE__) . '?ping=js');
+			global $wp_version;
+			$plugin_array['pilotpress']  =  plugins_url('/' . plugin_basename(__FILE__) . '?ping=js&wp_version='.$wp_version);
 			return $plugin_array;
 		}
 	
@@ -2887,7 +2888,54 @@ Copyright: 2013, Ontraport
 
 				PilotPress::start_session();
 				header("Content-Type: text/javascript");
+				$current_version = $_GET['wp_version'];
+				$version = 3.9;
+				if ( version_compare( $current_version, $version, '>=' ) ) {
 				?>
+
+				  tinymce.PluginManager.add('pilotpress', function(editor, url) {
+				    // Add a button that opens a window
+
+				    editor.addButton('merge_fields', {
+				        type: 'listbox',
+					
+				        text: 'Merge Fields',
+				        icon: false,
+				        classes: 'fixed-width btn widget',
+				        onselect: function(e) {
+				            if (this.value() != "" ) 
+					    {
+				                editor.insertContent("[pilotpress_field name='"+this.value()+"']");
+				            } 
+				        },
+				        values: [
+						<?php
+							$fields = $_SESSION["default_fields"];
+							if(!empty($fields) && is_array($fields)) {
+								foreach($fields as $group => $items) {
+									
+									echo "{text: '".addslashes($group)."' , value: ''},";
+									foreach($items as $key => $value) {
+										
+										 echo "{text: ' + ".addslashes($key)."' , value: '".addslashes($key)."'},";
+									}
+									
+								}
+							}
+						?>
+				        ],
+				        onPostRender: function() {
+				            // Select the second item by default
+				        }
+				    });
+				});
+				
+				<?php
+
+
+			} 
+			else //revert to older way of init tinymce plugins
+			{  ?>
 				(function(){
 
 				    tinymce.PluginManager.requireLangPack('pilotpress');
@@ -2942,8 +2990,9 @@ Copyright: 2013, Ontraport
 				        }
 				    });
 				    tinymce.PluginManager.add('pilotpress', tinymce.plugins.pilotpress);
-				})();
+				})();	
 				<?php
+			}
 			break;
 			default:
 				echo "goodPing();";
