@@ -3,7 +3,7 @@
 Plugin Name: PilotPress
 Plugin URI: http://officeautopilot.com/
 Description: OfficeAutoPilot / Ontraport WordPress integration plugin.
-Version: 1.6.0j
+Version: 1.6.0h
 Author: Ontraport Inc.
 Author URI: http://officeautopilot.com/
 Text Domain: pilotpress
@@ -20,7 +20,7 @@ Copyright: 2013, Ontraport
 	
 	class PilotPress {
 
-        const VERSION = "1.6.0j";
+        const VERSION = "1.6.0h";
 		const WP_MIN = "3.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
@@ -2900,8 +2900,8 @@ Copyright: 2013, Ontraport
 
 				?>
 
-				  tinymce.PluginManager.add('pilotpress', function(editor, url) {
-				    // Add a button that opens a window
+				  tinymce.PluginManager.add('pilotpress', function(editor, url) 
+				  { 
 
 				    editor.addButton('merge_fields', {
 				        type: 'listbox',
@@ -2918,13 +2918,14 @@ Copyright: 2013, Ontraport
 				        values: [
 						<?php
 							$fields = $_SESSION["default_fields"];
-							if(!empty($fields) && is_array($fields)) {
-								foreach($fields as $group => $items) {
-									
-									echo "{text: '".addslashes($group)."' , value: ''},";
-									foreach($items as $key => $value) {
-										
-										 echo "{text: ' + ".addslashes($key)."' , value: '".addslashes($key)."'},";
+							if(!empty($fields) && is_array($fields)) 
+							{
+								foreach($fields as $group => $items) 
+								{
+									echo json_encode(array( "text" => $group , "value" => "") ) . " , ";
+									foreach($items as $key => $value) 
+									{
+										echo json_encode( array( "text" => " + " . $key , "value" => $key) ) . " , ";
 									}
 									
 								}
@@ -2970,11 +2971,14 @@ Copyright: 2013, Ontraport
 
 									<?php
 										$fields = $_SESSION["default_fields"];
-										if(!empty($fields) && is_array($fields)) {
-											foreach($fields as $group => $items) {
+										if(!empty($fields) && is_array($fields)) 
+										{
+											foreach($fields as $group => $items) 
+											{
 												echo "                                    ";
 												echo "mlb.add('".addslashes($group)."', '');\n";
-												foreach($items as $key => $value) {
+												foreach($items as $key => $value) 
+												{
 													 echo "                                    ";
 													 echo "mlb.add(' + ".addslashes($key)."', '".addslashes($key)."');\n";
 												}
