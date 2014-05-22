@@ -757,7 +757,17 @@ Copyright: 2013, Ontraport
 		
 		/* load up our marshalled plugin code (see comment prefixed: Xevious) */
 		function mce_external_plugins($plugin_array) {
-			$plugin_array['pilotpress']  =  plugins_url('/' . plugin_basename(__FILE__) . '?ping=js');
+			global $wp_version;
+			$version = 3.9;
+			//test for wordpress version to load proper plugin scripts
+			if ( version_compare( $wp_version, $version, '>=' ) ) {
+				$plugin_array['pilotpress']  =  plugins_url('/' . plugin_basename(__FILE__) . '?ping=js39');
+			} 
+			else 
+			{
+				$plugin_array['pilotpress']  =  plugins_url('/' . plugin_basename(__FILE__) . '?ping=js');
+			}
+
 			return $plugin_array;
 		}
 	
@@ -2883,10 +2893,60 @@ Copyright: 2013, Ontraport
 			case "s":
 				echo json_encode(array("version" => PilotPress::VERSION));
 			break;
-			case "js":
+			case "js39":
 
 				PilotPress::start_session();
 				header("Content-Type: text/javascript");
+
+				?>
+
+				  tinymce.PluginManager.add('pilotpress', function(editor, url) 
+				  { 
+
+				    editor.addButton('merge_fields', {
+				        type: 'listbox',
+					
+				        text: 'Merge Fields',
+				        icon: false,
+				        classes: 'fixed-width btn widget',
+				        onselect: function(e) {
+				            if (this.value() != "" ) 
+					    {
+				                editor.insertContent("[pilotpress_field name='"+this.value()+"']");
+				            } 
+				        },
+				        values: [
+						<?php
+							$fields = $_SESSION["default_fields"];
+							if(!empty($fields) && is_array($fields)) 
+							{
+								foreach($fields as $group => $items) 
+								{
+									echo json_encode(array( "text" => $group , "value" => "") ) . " , ";
+									foreach($items as $key => $value) 
+									{
+										echo json_encode( array( "text" => " + " . $key , "value" => $key) ) . " , ";
+									}
+									
+								}
+							}
+						?>
+				        ],
+				        onPostRender: function() {
+				            // Select the second item by default
+				        }
+				    });
+				});
+				
+				<?php
+
+
+			break;
+			case "js":  
+
+				PilotPress::start_session();
+				header("Content-Type: text/javascript");
+
 				?>
 				(function(){
 
@@ -2911,11 +2971,14 @@ Copyright: 2013, Ontraport
 
 									<?php
 										$fields = $_SESSION["default_fields"];
-										if(!empty($fields) && is_array($fields)) {
-											foreach($fields as $group => $items) {
+										if(!empty($fields) && is_array($fields)) 
+										{
+											foreach($fields as $group => $items) 
+											{
 												echo "                                    ";
 												echo "mlb.add('".addslashes($group)."', '');\n";
-												foreach($items as $key => $value) {
+												foreach($items as $key => $value) 
+												{
 													 echo "                                    ";
 													 echo "mlb.add(' + ".addslashes($key)."', '".addslashes($key)."');\n";
 												}
@@ -2942,8 +3005,9 @@ Copyright: 2013, Ontraport
 				        }
 				    });
 				    tinymce.PluginManager.add('pilotpress', tinymce.plugins.pilotpress);
-				})();
+				})();	
 				<?php
+			
 			break;
 			default:
 				echo "goodPing();";
