@@ -780,16 +780,27 @@ Copyright: 2013, Ontraport
 		function mce_valid_elements($in) {
 			$em = '#p[*],p[*],form[*],div[*],span[*],script[*],link[*]';
 			
-			if(!is_array($in)) {
+			if(!is_array($in)) 
+			{
 				$in = array();
 			}
 			
-			if(isset($in["extended_valid_elements"])) {
+			if(isset($in["extended_valid_elements"])) 
+			{
 				$in["extended_valid_elements"] .= ',';
 				$in["extended_valid_elements"] .= $em;
 			} else {
 				$in["extended_valid_elements"] = $em;
 			}
+
+			if (isset($in['valid_children'])) 
+			{
+		        $in['valid_children'] .= ',+body[link]';
+		    }
+		    else 
+		    {
+		        $in['valid_children'] = '+body[link]';
+		    }
 			
 			$in["entity_encoding"] = "raw";			
 			
