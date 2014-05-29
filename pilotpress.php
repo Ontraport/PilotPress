@@ -3,7 +3,7 @@
 Plugin Name: PilotPress
 Plugin URI: http://officeautopilot.com/
 Description: OfficeAutoPilot / Ontraport WordPress integration plugin.
-Version: 1.6.0g
+Version: 1.6.0h
 Author: Ontraport Inc.
 Author URI: http://officeautopilot.com/
 Text Domain: pilotpress
@@ -20,10 +20,11 @@ Copyright: 2013, Ontraport
 	
 	class PilotPress {
 
-		const VERSION = "1.6.0g";
-		const WP_MIN = "3.0.0";
+        const VERSION = "1.6.0h";
+		const WP_MIN = "3.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
+        const AUTH_SALT = "M!E%VxpKvuQHn!PTPOTohtLbnOl&)5&0mb(Uj^c#Zz!-0898yfS#7^xttNW(x1ia";
 
 		public $system_pages = array();
 	
@@ -42,6 +43,7 @@ Copyright: 2013, Ontraport
 		private $status = 0;
 		private $do_login = false;
 		private $homepage_url;
+		private $incrementalnumber = 1;
 	
 		function __construct() {
 	
@@ -584,7 +586,7 @@ Copyright: 2013, Ontraport
 
 			add_action("init", array(&$this, "load_scripts"));
 			add_action('wp_print_styles', array(&$this, 'stylesheets'));
-			add_action('wp_head', array(&$this, 'tracking'));
+			add_action('wp_print_footer_scripts', array(&$this, 'tracking'));
 			add_action('retrieve_password', array(&$this, 'retrieve_password'));
 			add_action('profile_update', array(&$this, 'profile_update'));
 			
@@ -622,6 +624,9 @@ Copyright: 2013, Ontraport
 				add_filter('user_has_cap', array(&$this, 'lock_delete'), 0, 3);
 				add_filter('media_upload_tabs', array(&$this, 'modify_media_tab'));
 				add_action('wp_loaded', array(&$this, 'update_post_types'));
+
+				// For login_form
+				add_action('admin_head', array(&$this, 'include_form_admin_options'));
 				
 				//add_action('admin_print_footer_scripts', array(&$this, 'tinymce_autop'), 50);
 
@@ -651,6 +656,7 @@ Copyright: 2013, Ontraport
 			add_action("wp_login_failed", array(&$this, 'user_login_failed'));
 			add_action("lostpassword_post", array(&$this, 'user_lostpassword'));
 			add_action('wp_logout', array(&$this, 'user_logout'));
+			add_action('init', array(&$this, 'pp_login_button'));
 
 		}
 
@@ -692,8 +698,38 @@ Copyright: 2013, Ontraport
 		/* please load scripts here vs. printing. it's so much healthier */
 		function load_scripts() {
 			wp_enqueue_script("jquery");
-			wp_register_script("mr_tracking", self::$url_tjs);
+			wp_register_script("mr_tracking", self::$url_tjs, array(), false, true);
 			wp_enqueue_script("mr_tracking");
+
+			// Here to determine if the automattic color picker 'iris' is included with wordpress... if not, include and use it
+			$version = get_bloginfo('version');
+			if ($version < 3.5)
+			{
+			    wp_register_style('irisstyle', plugins_url( '/js/iris.css' , __FILE__ )); 
+			    wp_enqueue_style('irisstyle');
+			    wp_register_style('jquery-ui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery.ui.all.css');
+			    wp_enqueue_style('jquery-ui');
+
+			    wp_deregister_script('jquery-color');
+			    wp_register_script('jquery-color', plugins_url( 'color.js' , __FILE__ ));
+			    wp_enqueue_script('jquery-color');
+			    wp_enqueue_script('jquery-ui-core');
+			    wp_enqueue_script('jquery-ui-draggable');
+			    wp_enqueue_script('jquery-ui-slider');
+			    wp_enqueue_script('jquery-ui-widget');
+			    wp_enqueue_script('jquery-ui-mouse');
+			    wp_enqueue_script('jquery-ui-tabs');
+			    wp_register_script('iris', plugins_url( '/js/iris.js' , __FILE__ ), array( 'jquery', 'jquery-color', 'jquery-ui-core', 'jquery-ui-widget', 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-ui-mouse', 'jquery-ui-tabs' )); 
+			    wp_enqueue_script('iris'); 
+			}
+			else
+			{
+			    wp_register_style('jquery-ui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery.ui.all.css');
+			    wp_enqueue_style('jquery-ui');
+			    wp_enqueue_script('jquery-ui-tabs');
+			    wp_enqueue_style( 'wp-color-picker' );
+			    wp_enqueue_script('iris'); 
+			}
 		}
 
 		function stylesheets() {
@@ -721,7 +757,17 @@ Copyright: 2013, Ontraport
 		
 		/* load up our marshalled plugin code (see comment prefixed: Xevious) */
 		function mce_external_plugins($plugin_array) {
-			$plugin_array['pilotpress']  =  plugins_url('/' . plugin_basename(__FILE__) . '?ping=js');
+			global $wp_version;
+			$version = 3.9;
+			//test for wordpress version to load proper plugin scripts
+			if ( version_compare( $wp_version, $version, '>=' ) ) {
+				$plugin_array['pilotpress']  =  plugins_url('/' . plugin_basename(__FILE__) . '?ping=js39');
+			} 
+			else 
+			{
+				$plugin_array['pilotpress']  =  plugins_url('/' . plugin_basename(__FILE__) . '?ping=js');
+			}
+
 			return $plugin_array;
 		}
 	
@@ -734,16 +780,27 @@ Copyright: 2013, Ontraport
 		function mce_valid_elements($in) {
 			$em = '#p[*],p[*],form[*],div[*],span[*],script[*],link[*]';
 			
-			if(!is_array($in)) {
+			if(!is_array($in)) 
+			{
 				$in = array();
 			}
 			
-			if(isset($in["extended_valid_elements"])) {
+			if(isset($in["extended_valid_elements"])) 
+			{
 				$in["extended_valid_elements"] .= ',';
 				$in["extended_valid_elements"] .= $em;
 			} else {
 				$in["extended_valid_elements"] = $em;
 			}
+
+			if (isset($in['valid_children'])) 
+			{
+		        $in['valid_children'] .= ',+body[link]';
+		    }
+		    else 
+		    {
+		        $in['valid_children'] = '+body[link]';
+		    }
 			
 			$in["entity_encoding"] = "raw";			
 			
@@ -1297,7 +1354,22 @@ Copyright: 2013, Ontraport
 		/* ok, time for some seriousness... this does the login. see additional comments inline */
 		function user_login($username, $password) {
 			if(isset($_POST["wp-submit"])) {
-				$api_result = $this->api_call("authenticate_user", array("site" => site_url(), "username" => $username, "password" => $password));
+
+                $hashed_password = $username . self::VERSION . $password . self::AUTH_SALT;
+ 
+                $supported_algos = hash_algos();
+                if (in_array("sha256", $supported_algos))
+                {
+                    $algo = "sha256";
+                    $hash = hash("sha256", $hashed_password);
+                }
+                else
+                {
+                    $algo = "md5";
+                    $hash = md5($hashed_password);
+                }
+
+                $api_result = $this->api_call("authenticate_user", array("site" => site_url(), "username" => $username, "password" => $hash, "version" => self::VERSION, "algo" => $algo));
 
 				/* user does exist */
 				if(is_array($api_result)) {
@@ -1518,6 +1590,13 @@ Copyright: 2013, Ontraport
 	
 		/* shortcodes for conditional ifs */
 		function shortcode_show_if($atts, $content = null) {
+
+            if(isset($atts[0]) && $atts[0] == "not_contact") {
+                if(!$this->get_setting("contact_id","user")) {
+                    return '<span class="pilotpress_protected">'.do_shortcode($content).'</span>';
+                }
+            }
+                
 			if(!is_user_logged_in()) {
 				return;
 			}
@@ -1572,12 +1651,6 @@ Copyright: 2013, Ontraport
 					}
 				}
 				
-				if(isset($atts[0]) && $atts[0] == "not_contact") {
-					if(!$this->get_setting("contact_id","user")) {
-						return '<span class="pilotpress_protected">'.do_shortcode($content).'</span>';
-					}
-				}
-				
 				if(isset($atts[0]) && $atts[0] == "is_contact") {							
 					if($this->get_setting("contact_id","user")) {
 						return '<span class="pilotpress_protected">'.do_shortcode($content).'</span>';
@@ -1610,41 +1683,47 @@ Copyright: 2013, Ontraport
 		}
 		
 		/* the big nasty content hiding function... tread carefully */
-		function post_process() {
-			global $wp, $wpdb, $post;
+        function post_process ()
+        {
+            global $wp, $wpdb, $post;
 
-			if(isset($post->ID)) {
-				$id = $post->ID;
-			} else {
-				$id = $this->get_postid_by_url();
-				if (!$id){
-					$id = get_option('page_on_front');
-				}
-			}
+            if (isset($post->ID))
+            {
+                $id = $post->ID;
+            }
+            else
+            {
+                $id = $this->get_postid_by_url();
+                if (!$id)
+                {
+                    $id = get_option('page_on_front');
+                }
+            }
 
-			if(!$this->is_viewable($id) && !is_home()) {
-			
-				$redirect = get_post_meta($id, self::NSPACE."redirect_location", true);
-
-				if(!empty($redirect)) {
-					if($redirect == "-1") {
-						self::redirect(site_url());
-					}
-					else if($redirect == "-2") {
-						if(!empty($id)) {
-							$_SESSION["redirect_to"] = $id;
-						}
-						self::redirect(wp_login_url());
-					}
-					else {
-						self::redirect(get_permalink($redirect));
-					}
-
-				} else {
-					self::redirect($this->homepage_url);
-				}
-			}
-		}
+            if (!$this->is_viewable($id) && !is_home())
+            {
+                $redirect = get_post_meta($id, self::NSPACE."redirect_location", true);
+                if (!empty($redirect))
+                {
+                    if ($redirect == "-1")
+                    {
+                        return self::redirect(site_url());
+                    }
+                    else if ($redirect == "-2")
+                    {
+                        if (!empty($id))
+                        { 
+                            $_SESSION["redirect_to"] = $id;
+                        }
+                    }
+                    return self::redirect(get_permalink($redirect));
+                }
+                else
+                {
+                    return self::redirect($this->homepage_url);
+                }
+            }
+        }
 	
 		/* is this a special page? if so render such */
 		function content_process($content) {
@@ -1986,14 +2065,590 @@ Copyright: 2013, Ontraport
 		}
 	
 		/* renders cute login page */
-		function login_page($atts, $message = false) {
+		function login_page ($atts, $message = false) 
+		{
+			// Allows shortcodes to be put in text widgets
+			add_filter('widget_text', 'do_shortcode');
 
 			global $wpdb;
+			// This section allows the users to add custom styling by adding custom attributes to the shortcode [login_page]
+			// Form general styling options
+			if ( isset($atts['width']) ) 
+			{ 
+				$width = $atts['width'];
+				$width = 'max-width: '.$width.'!important;';
+			}
+			else
+			{
+				$width = 'max-width: 320px;';
+			}
+
+			if ( isset($atts['formalign']) ) 
+			{ 
+				$formalign = $atts['formalign'];
+
+				if ( $formalign == 'left' ) 
+				{
+					$formalign = 'margin: 30px 30px 30px 0px; float: left;';
+				}
+				else if ( $formalign == 'center' ) 
+				{
+					$formalign = 'margin: 30px auto!important;';
+				}
+				else if ( $formalign == 'right' ) 
+				{
+					$formalign = 'margin: 30px 0px 30px 30px; float: right;';
+				}
+				else 
+				{
+					$formalign = 'margin: 30px 0px;';
+				}
+			}
+			else
+			{
+				$formalign = 'margin: 30px 0px; width: 100%;';
+			}
+
+			if ( isset($atts['bgcolor']) ) 
+			{ 
+				$bgcolor = $atts['bgcolor'];
+				$bgcolor = 'background-color: '.$bgcolor.'!important;';
+			}
+			else
+			{
+				$bgcolor = 'background-color: #fff;';
+			}
+
+			if ( isset($atts['textcolor']) ) 
+			{ 
+				$textcolor = $atts['textcolor'];
+				$textcolor = 'color: '.$textcolor.'!important;';
+			}
+			else
+			{
+				$textcolor = '';
+			}
+
+			// Header Text styling
+			if ( isset($atts['headertextalignment']) ) 
+			{ 
+				$headertextalignment = $atts['headertextalignment'];
+				$headertextalignment = 'text-align: '.$headertextalignment.'!important;';
+			}
+			else
+			{
+				$headertextalignment = '';
+			}
+
+			if ( isset($atts['headertextfont']) ) 
+			{ 
+				$headertextfont = $atts['headertextfont'];
+				$headertextfont = 'font-family: '.$headertextfont.'!important;';
+			}
+			else
+			{
+				$headertextfont = '';
+			}
+
+			if ( isset($atts['headertextfontsize']) ) 
+			{ 
+				$headertextfontsize = $atts['headertextfontsize'];
+				$headertextfontsize = 'font-size: '.$headertextfontsize.'!important;';
+			}
+			else
+			{
+				$headertextfontsize = 'font-size: 20pt;';
+			}
+
+			if ( isset($atts['headertextfontcolor']) ) 
+			{ 
+				$headertextfontcolor = $atts['headertextfontcolor'];
+				$headertextfontcolor = 'color: '.$headertextfontcolor.'!important;';
+			}
+			else
+			{
+				$headertextfontcolor = 'color: #222;';
+			}
+
+			// Supporting Text styling
+			if ( isset($atts['supportingtextfont']) ) 
+			{ 
+				$supportingtextfont = $atts['supportingtextfont'];
+				$supportingtextfont = 'font-family: '.$supportingtextfont.'!important;';
+			}
+			else
+			{
+				$supportingtextfont = '';
+			}
+
+			if ( isset($atts['supportingtextfontsize']) ) 
+			{ 
+				$supportingtextfontsize = $atts['supportingtextfontsize'];
+				$supportingtextfontsize = 'font-size: '.$supportingtextfontsize.'!important;';
+			}
+			else
+			{
+				$supportingtextfontsize = 'font-size: 12pt;';
+			}
+
+			if ( isset($atts['supportingtextfontcolor']) ) 
+			{ 
+				$supportingtextfontcolor = $atts['supportingtextfontcolor'];
+				$supportingtextfontcolor = 'color: '.$supportingtextfontcolor.'!important;';
+			}
+			else
+			{
+				$supportingtextfontcolor = 'color: #555;';
+			}
+
+			// Form Input styling
+			if ( isset($atts['inputcolor']) ) 
+			{ 
+				$inputcolor = $atts['inputcolor'];
+				$inputcolor = 'background-color: '.$inputcolor.'!important;';
+			}
+			else
+			{
+				$inputcolor = '';
+			}
+
+			if ( isset($atts['inputtextcolor']) ) 
+			{ 
+				$inputtextcolor = $atts['inputtextcolor'];
+				$inputtextcolor = 'color: '.$inputtextcolor.'!important;';
+			}
+			else
+			{
+				$inputtextcolor = '';
+			}
+
+			if ( isset($atts['inputbordercolor']) ) 
+			{ 
+				$inputbordercolor = $atts['inputbordercolor'];
+				$inputbordercolor = 'border: 1px solid '.$inputbordercolor.'!important;';
+			}
+			else
+			{
+				$inputbordercolor = '';
+			}
+
+			if ( isset($atts['inputfieldsize']) ) 
+			{ 
+				$inputfieldsize = $atts['inputfieldsize'];
+				if ( $inputfieldsize == 'large' ) 
+				{
+					$inputfieldsize = 'padding: 16px!important; font-size: 15pt;';
+				}
+				if ( $inputfieldsize == 'medium' ) 
+				{
+					$inputfieldsize = 'padding: 9px!important; font-size: 12pt;';
+				}
+				if ( $inputfieldsize == 'small' ) 
+				{
+					$inputfieldsize = 'padding: 6px!important; font-size: 10pt;';
+				}
+			}
+			else
+			{
+				$inputfieldsize = 'padding: 6px!important; font-size: 10pt;';
+			}
+
+			// Form Button styling
+			if ( isset($atts['buttonbgcolor']) ) 
+			{ 
+				$buttonbgcolor = $atts['buttonbgcolor'];
+				$buttonbgcolor = 'background-color: '.$buttonbgcolor.'!important; background-image: none!important;';
+			}
+			else
+			{
+				$buttonbgcolor = '';
+			}
+
+			if ( isset($atts['buttontextcolor']) ) 
+			{ 
+				$buttontextcolor = $atts['buttontextcolor'];
+				$buttontextcolor = 'color: '.$buttontextcolor.'!important;';
+			}
+			else
+			{
+				$buttontextcolor = '';
+			}
+
+			if ( isset($atts['buttonbordercolor']) ) 
+			{ 
+				$buttonbordercolor = $atts['buttonbordercolor'];
+				$buttonbordercolor = 'border: 1px solid '.$buttonbordercolor.'!important;';
+			}
+			else
+			{
+				$buttonbordercolor = '';
+			}
+
+			if ( isset($atts['buttonfont']) ) 
+			{ 
+				$buttonfont = $atts['buttonfont'];
+				$buttonfont = 'font-family: '.$buttonfont.'!important;';
+			}
+			else
+			{
+				$buttonfont = '';
+			}
+
+			if ( isset($atts['buttonfontsize']) ) 
+			{ 
+				$buttonfontsize = $atts['buttonfontsize'];
+				$buttonfontsize = 'font-size: '.$buttonfontsize.'!important;';
+			}
+			else
+			{
+				$buttonfontsize = 'font-size: 11pt;';
+			}
+
+			if ( isset($atts['buttonhovertextcolor']) ) 
+			{ 
+				$buttonhovertextcolor = $atts['buttonhovertextcolor'];
+				$buttonhovertextcolor = 'color: '.$buttonhovertextcolor.'!important;';
+			}
+			else
+			{
+				$buttonhovertextcolor = '';
+			}
+
+			if ( isset($atts['buttonhoverbgcolor']) ) 
+			{ 
+				$buttonhoverbgcolor = $atts['buttonhoverbgcolor'];
+				$buttonhoverbgcolor = 'background-color: '.$buttonhoverbgcolor.'!important;';
+			}
+			else
+			{
+				$buttonhoverbgcolor = '';
+			}
+
+			if ( isset($atts['buttonhoverbordercolor']) ) 
+			{ 
+				$buttonhoverbordercolor = $atts['buttonhoverbordercolor'];
+				$buttonhoverbordercolor = 'border: 1px solid '.$buttonhoverbordercolor.'!important;';
+			}
+			else
+			{
+				$buttonhoverbordercolor = '';
+			}
+
+			if ( isset($atts['buttonsize']) ) 
+			{ 
+				$buttonsize = $atts['buttonsize'];
+				switch ($buttonsize) 
+				{
+					case 'extralarge':
+						$buttonsize = 'padding: 25px!important; font-size: 23pt;';
+					break;
+
+					case 'large':
+						$buttonsize = 'padding: 18px!important; font-size: 18pt;';
+					break;
+
+					case 'medium':
+						$buttonsize = 'padding: 10px!important; font-size: 13pt;';
+					break;
+
+					case 'small':
+						$buttonsize = 'padding: 6px!important; font-size: 10pt;';
+					break;
+				}
+			}
+			else
+			{
+				$buttonsize = 'padding: 10px!important; font-size: 13pt;';
+			}
+
+			// Form Style - Responsible for the full width or side by side form style
+			$default = '#pp-loginform .login-username LABEL
+				{
+					max-width: 100%!important;
+					width: 100%!important;
+				}
+				#pp-loginform .login-username INPUT
+				{
+					max-width: 100%!important;
+					width: 100%!important;
+				}
+				#pp-loginform .login-password LABEL
+				{
+					max-width: 100%!important;
+					width: 100%!important;
+				}
+				#pp-loginform .login-password INPUT
+				{
+					max-width: 100%!important;
+					width: 100%!important;
+				}';
+
+			if ( isset($atts['style']) ) 
+			{ 
+				$style = $atts['style'];
+
+				if ( $style == 'default' ) 
+				{
+					$style = $default;
+				}
+				else if ( $style == 'fullwidth' ) 
+				{
+					$style = $default . '.op-login-form { max-width: 100%!important; }';
+				}
+			}
+			else
+			{
+				$style = $default;
+			}
+
 			
-			$output = "<style type='text/css'>#loginform p { margin: 1px; padding: 0px; } .login-submit { margin-bottom: 0px; } .login_box { padding: 2px; padding-left: 4px; border: 1px solid #E6D855; background-color: lightYellow; }</style>";
+			// TEXT - Options to change the form text
+			if ( isset($atts['headertext']) ) 
+			{ 
+				$headertext = $atts['headertext'];
+			}
+			else
+			{
+				$headertext = '';
+			}
+
+			if ( isset($atts['supportingtext']) ) 
+			{ 
+				$supportingtext = $atts['supportingtext'];
+			}
+			else
+			{
+				$supportingtext = '';
+			}
+
+			if ( isset($atts['usernametext']) ) 
+			{ 
+				$usernametext = $atts['usernametext'];
+				$usernametext = __($usernametext);
+			}
+			else
+			{
+				$usernametext = __('Username');
+			}
+
+			if ( isset($atts['passwordtext']) ) 
+			{ 
+				$passwordtext = $atts['passwordtext'];
+				$passwordtext = __($passwordtext);
+			}
+			else
+			{
+				$passwordtext = __('Password');
+			}
+
+			if ( isset($atts['remembertext']) ) 
+			{ 
+				$remembertext = $atts['remembertext'];
+				$remembertext = __($remembertext);
+			}
+			else
+			{
+				$remembertext = __('Remember me');
+			}
+
+			if ( isset($atts['buttontext']) ) 
+			{ 
+				$buttontext = $atts['buttontext'];
+				$buttontext = __($buttontext);
+			}
+			else
+			{
+				$buttontext = __('Log In');
+			}
+
 			
-			if(!empty($message)) {
-				switch($message) {
+			// New style for the [login_page] forms with variables for user customization
+			$output = "<style type='text/css'>
+				.op-login-form-".$this->incrementalnumber."
+				{
+					".$formalign."
+					padding: 30px;
+					box-sizing: border-box;
+					-webkit-box-sizing: border-box;
+					-moz-box-sizing: border-box;
+					-moz-box-shadow: 0px 0px 2px 1px rgba(51,51,51,0.27);
+					-webkit-box-shadow: 0px 0px 2px 1px rgba(51,51,51,0.27);
+					box-shadow: 0px 0px 2px 1px rgba(51, 51, 51, 0.27);
+					-ms-filter: 'progid:DXImageTransform.Microsoft.Glow(Color=#ff333333,Strength=3)';
+					filter: progid:DXImageTransform.Microsoft.Glow(Color=#ff333333,Strength=3);
+					".$bgcolor."
+					".$width."
+				}
+				.op-login-form-".$this->incrementalnumber." .op-header-text-container
+				{
+					margin-bottom: 25px;
+					width: 100%;
+					".$headertextalignment."
+				}
+				.op-login-form-".$this->incrementalnumber." .op-header-text
+				{
+					line-height: 1.2!important;
+					margin-bottom: 4px;
+					".$headertextfont."
+					".$headertextfontsize."
+					".$headertextfontcolor."
+				}
+				.op-login-form-".$this->incrementalnumber." .op-supporting-text
+				{
+					line-height: 1.2!important;
+					".$supportingtextfont."
+					".$supportingtextfontsize."
+					".$supportingtextfontcolor."
+				}
+				.op-login-form-".$this->incrementalnumber." #pp-loginform P
+				{
+					width: 100%;
+					display: table;
+					margin: 0px 0px 4px;
+					padding: 0px;
+				}
+				.op-login-form-".$this->incrementalnumber." LABEL,
+				.op-login-form-".$this->incrementalnumber." INPUT
+				{
+					display: table-cell;
+					box-sizing: border-box;
+					-webkit-box-sizing: border-box;
+					-moz-box-sizing: border-box;
+					line-height: 1.3;
+				}
+				.op-login-form-".$this->incrementalnumber." .login-username
+				{
+					position: relative;
+				}
+				.op-login-form-".$this->incrementalnumber." .login-username LABEL
+				{
+					width: 100%;
+					max-width: 25%;
+					min-width: 90px;
+					padding-right: 3%;
+					float: left;
+					".$textcolor."
+				}
+				
+				.op-login-form-".$this->incrementalnumber." .login-username INPUT
+				{
+					width: 100%;
+					max-width: 72%;
+					float: right;
+					border-radius: 3px;
+					".$inputcolor."
+					".$inputtextcolor."
+					".$inputbordercolor."
+					".$inputfieldsize."
+				}
+				.op-login-form-".$this->incrementalnumber." .login-password LABEL
+				{
+					width: 100%;
+					max-width: 25%;
+					min-width: 90px;
+					padding-right: 3%;
+					float: left;
+					".$textcolor."
+				}
+				.op-login-form-".$this->incrementalnumber." .login-password INPUT
+				{
+					width: 100%;
+					max-width: 72%;
+					float: right;
+					border-radius: 3px;
+					".$inputcolor."
+					".$inputtextcolor."
+					".$inputbordercolor."
+					".$inputfieldsize."
+				}
+				.op-login-form-".$this->incrementalnumber." .login-remember
+				{
+					text-align: right;
+					font-style: italic;
+					cursor: pointer;
+					".$textcolor."
+				}
+				.op-login-form-".$this->incrementalnumber." .login-remember INPUT
+				{
+					float: right;
+					margin-left: 10px;
+					margin-top: 5px;
+					cursor: pointer;
+				}
+				.op-login-form-".$this->incrementalnumber." .login-remember LABEL
+				{
+					cursor: pointer;
+					".$textcolor."
+				}
+				.op-login-form-".$this->incrementalnumber." #wp-submit
+				{
+					width: 100%;
+					padding: 10px;
+					margin-top: 15px;
+					margin-bottom: 0px;
+					white-space: pre-wrap;
+					border-radius: 3px;
+					".$buttonbgcolor."
+					".$buttontextcolor."
+					".$buttonbordercolor."
+					".$buttonfont."
+					".$buttonfontsize."
+					".$buttonsize."
+				}
+				.op-login-form-".$this->incrementalnumber." #wp-submit:hover
+				{
+					transition: background-color 1s ease, color 1s ease;
+					-moz-transition: background-color 1s ease, color 1s ease;
+					-webkit-transition: background-color 1s ease, color 1s ease;
+					".$buttonhovertextcolor."
+					".$buttonhoverbgcolor."
+					".$buttonhoverbordercolor."
+				}
+				.op-login-form-".$this->incrementalnumber." .login_box
+				{
+					margin-top: 6px;
+					padding: 5px;
+					border: 1px solid #E6D855;
+					background-color: #FFFFE0;
+					box-sizing: border-box;
+					-webkit-box-sizing: border-box;
+					-moz-box-sizing: border-box;
+				}
+				@media screen and (max-width: 480px) 
+				{
+					.op-login-form-".$this->incrementalnumber." .login-username LABEL
+					{
+						max-width: 100%!important;
+					}
+					.op-login-form-".$this->incrementalnumber." .login-username INPUT
+					{
+						max-width: 100%!important;
+					}
+					.op-login-form-".$this->incrementalnumber." .login-password LABEL
+					{
+						max-width: 100%!important;
+					}
+					.op-login-form-".$this->incrementalnumber." .login-password INPUT
+					{
+						max-width: 100%!important;
+					}
+				}
+				".$style."
+				</style>";
+
+			// Start Form output
+			$output .= '<div class="op-login-form-'.$this->incrementalnumber.'">';
+
+			// Setting header text
+			if ( isset($atts['headertext']) || isset($atts['supporting']) ) 
+			{ 
+				$output .= '<div class="op-header-text-container"><div class="op-header-text">'.$headertext.'</div><div class="op-supporting-text">'.$supportingtext.'</div></div>';
+			}
+
+			if(!empty($message)) 
+			{
+				switch($message) 
+				{
 					case "1":
 						$output_message = "Must be logged in to see this page.";
 					break;
@@ -2010,20 +2665,30 @@ Copyright: 2013, Ontraport
 				$output .= "<p class='login_box' id='login_message_normal'>{$output_message}</p>";
 			}
 			
-			if(isset($_SESSION["redirect_to"]) && !empty($_SESSION["redirect_to"])) {
-				$redirect = get_permalink($_SESSION["redirect_to"]);
-			} else {
-				$redirect = site_url($_SERVER['REQUEST_URI']);
+			if ( isset($atts['redirect']) ) 
+			{ 
+				$redirect = $atts['redirect'];
 			}
-			
+			else
+			{
+				if(isset($_SESSION["redirect_to"]) && !empty($_SESSION["redirect_to"])) 
+				{
+					$redirect = get_permalink($_SESSION["redirect_to"]);
+				} 
+				else 
+				{
+					$redirect = site_url($_SERVER['REQUEST_URI']);
+				}
+			}
+
 			$args = array(
 			        'echo' => false,
 			        'redirect' => $redirect, 
-			        'form_id' => 'loginform',
-			        'label_username' => __('Username'),
-			        'label_password' => __('Password'),
-			        'label_remember' => __('Remember Me'),
-			        'label_log_in' => __('Log In'),
+			        'form_id' => 'pp-loginform',
+			        'label_username' => $usernametext,
+			        'label_password' => $passwordtext,
+			        'label_remember' => $remembertext,
+			        'label_log_in' => $buttontext,
 			        'id_username' => 'user_login',
 			        'id_password' => 'user_pass',
 			        'id_remember' => 'rememberme',
@@ -2032,9 +2697,62 @@ Copyright: 2013, Ontraport
 			        'value_username' => NULL,
 			        'value_remember' => true);			
 			$output .= wp_login_form($args);
+
+			// Adds functionality for Lost Passwords
+			if ( isset($atts['forgotpw']) && $atts['forgotpw'] == 'true' )
+			{
+				$output .= '<div class="pp-lf-forgot-username" style="text-align: right;"><a id="pp-lf-forgotpw" href="javascript://">Forgotten password?</a></div>';
+
+				$output .= '<script>
+						jQuery(".op-login-form-'.$this->incrementalnumber.' #pp-lf-forgotpw").click(function()
+							{ 
+								jQuery(".op-login-form-'.$this->incrementalnumber.' .login-password, .op-login-form-'.$this->incrementalnumber.' .login-remember").hide(300);
+								jQuery(".op-login-form-'.$this->incrementalnumber.' #pp-loginform").attr( "action", "http://'.$_SERVER["SERVER_NAME"].'/wp-login.php?action=lostpassword");
+								jQuery(".op-login-form-'.$this->incrementalnumber.' .login-username label").text("Enter your Username or Email");
+								jQuery(".op-login-form-'.$this->incrementalnumber.' .login-username input").attr("name", "user_login");
+								jQuery(".op-login-form-'.$this->incrementalnumber.' #wp-submit").attr("value", "Send me my Password!");
+							});
+						</script>';
+			}
+
+			$output .= '</div>';
+
+			$this->incrementalnumber++;
 				
 			return $output;
+
 		}
+
+		public function include_form_admin_options () 
+		{
+			include_once(plugin_dir_path(__FILE__) . "/login-button.php");
+		}
+
+		public function register_login_button ( $buttons ) 
+		{
+			array_push( $buttons, "|", "addloginform" );
+   			return $buttons;
+		}
+
+		public function add_login_button ( $plugin_array ) 
+		{
+		   $plugin_array['addloginform'] = plugins_url( '/js/login-button.js' , __FILE__ );
+		   return $plugin_array;
+		}
+
+		public function pp_login_button () 
+		{
+		    if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages') ) 
+		    {
+		    	return;
+		    }
+		    if ( get_user_option('rich_editing') == 'true' ) 
+		    {
+		      	add_filter( 'mce_external_plugins', array(&$this, 'add_login_button') );
+		      	add_filter( 'mce_buttons_3', array(&$this, 'register_login_button') );
+		    }
+		}
+
 		
 		/* the first process... enable the plugin create some values and cleanup "older" PilotPress metadata. could probably do with a redo. */
 		public function do_enable() {
@@ -2186,10 +2904,60 @@ Copyright: 2013, Ontraport
 			case "s":
 				echo json_encode(array("version" => PilotPress::VERSION));
 			break;
-			case "js":
+			case "js39":
 
 				PilotPress::start_session();
 				header("Content-Type: text/javascript");
+
+				?>
+
+				  tinymce.PluginManager.add('pilotpress', function(editor, url) 
+				  { 
+
+				    editor.addButton('merge_fields', {
+				        type: 'listbox',
+					
+				        text: 'Merge Fields',
+				        icon: false,
+				        classes: 'fixed-width btn widget',
+				        onselect: function(e) {
+				            if (this.value() != "" ) 
+					    {
+				                editor.insertContent("[pilotpress_field name='"+this.value()+"']");
+				            } 
+				        },
+				        values: [
+						<?php
+							$fields = $_SESSION["default_fields"];
+							if(!empty($fields) && is_array($fields)) 
+							{
+								foreach($fields as $group => $items) 
+								{
+									echo json_encode(array( "text" => $group , "value" => "") ) . " , ";
+									foreach($items as $key => $value) 
+									{
+										echo json_encode( array( "text" => " + " . $key , "value" => $key) ) . " , ";
+									}
+									
+								}
+							}
+						?>
+				        ],
+				        onPostRender: function() {
+				            // Select the second item by default
+				        }
+				    });
+				});
+				
+				<?php
+
+
+			break;
+			case "js":  
+
+				PilotPress::start_session();
+				header("Content-Type: text/javascript");
+
 				?>
 				(function(){
 
@@ -2214,11 +2982,14 @@ Copyright: 2013, Ontraport
 
 									<?php
 										$fields = $_SESSION["default_fields"];
-										if(!empty($fields) && is_array($fields)) {
-											foreach($fields as $group => $items) {
+										if(!empty($fields) && is_array($fields)) 
+										{
+											foreach($fields as $group => $items) 
+											{
 												echo "                                    ";
 												echo "mlb.add('".addslashes($group)."', '');\n";
-												foreach($items as $key => $value) {
+												foreach($items as $key => $value) 
+												{
 													 echo "                                    ";
 													 echo "mlb.add(' + ".addslashes($key)."', '".addslashes($key)."');\n";
 												}
@@ -2245,8 +3016,9 @@ Copyright: 2013, Ontraport
 				        }
 				    });
 				    tinymce.PluginManager.add('pilotpress', tinymce.plugins.pilotpress);
-				})();
+				})();	
 				<?php
+			
 			break;
 			default:
 				echo "goodPing();";

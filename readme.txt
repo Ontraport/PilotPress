@@ -1,8 +1,8 @@
 === PilotPress ===
-Contributors: ontraport
+Contributors: ONTRAPORT
 Tags: OfficeAutoPilot, Sendpepper, Moonray, Ontraport, Pilotpress, Oap, Membership Site, Customer Center, Affiliate Center, Integration
 Requires at least: 3.2
-Tested up to: 3.5.1
+Tested up to: 3.9.1
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -13,28 +13,28 @@ PilotPress allows you to have a website, membership site, customer center, and a
 
 [Video: __Intro and Overview__ (4:36)](http://pseudo01.hddn.com/vod/moonray.moonray/PilotPress_2_intro.mp4)
 
-PilotPress is a WordPress plug-in that brings the power of [OfficeAutoPilot](http://officeautopilot.com) to the WordPress platform, specifically:
+PilotPress is a WordPress plug-in that brings the power of [ONTRAPORT](http://ontraport.com) to the WordPress platform, specifically:
 
 *   Create an Affiliate Network with customized login and reporting
 *   A Customer Center for handling purchases and subscriptions
-*   Insert OfficeAutoPilotForms (such as SmartForms and OrderForms)
+*   Insert ONTRAPORT Forms (such as SmartForms and OrderForms)
 *   Create a Membership Site with Access Levels and Protected Content
         Create Website Subscriber users for Contacts
         Create Signup Forms that create Contacts / Website Subscribers
         Show / Hide Pages based on Membership Level
-*   Track Page Views within OfficeAutoPilot
+*   Track Page Views within ONTRAPORT
 *   Merge Fields for logged-in users
 
-Please note that an [OfficeAutoPilot](http://officeautopilot.com) paid account is required for this plugin to function. Data from your WordPress installation will be sent through our API hosted on moon-ray.com.
+Please note that an [ONTRAPORT](http://ontraport.com) paid account is required for this plugin to function. Data from your WordPress installation will be sent through our API hosted on moon-ray.com.
 
 == Installation ==
 
 [Video: __Installing on an existing WordPress Site__ (3:13)](http://pseudo01.hddn.com/vod/moonray.moonray/PilotPress_3_Installing_to_existin_site.mp4)
 
-1. Upload "pilotpress.php" to the "/wp-content/plugins/" directory
+1. Upload the PilotPress plugin to the "/wp-content/plugins/" directory
 2. Activate the plugin through the "Plugins" menu in WordPress
-3. Configure PilotPress to your OfficeAutoPilot account through "Settings" and "PilotPress" menu in WordPress using your Application ID and API key. 
-You can retrieve these in the Admin Menu of your Office AutoPilot account by clicking on "WordPress Integration" and then on "Integrate Existing WordPress Site" in the left margin. On this page input your WordPress URL and nickname and click save to retrieve the Application ID and API Key to use in WordPress. 
+3. Configure PilotPress to your ONTRAPORT account through "Settings" and "PilotPress" menu in WordPress using your Application ID and API key. 
+You can retrieve these in the Sites Menu of your ONTRAPORT account by clicking on "WordPress" and then click on "Existing WordPress Site" on the left. On this page input your WordPress URL  and click save to retrieve the Application ID and API Key to use in WordPress. 
 4. You can now activate your customer center and affiliate center in the PilotPress settings in WordPress and modify your pages to display to your members based on their membership level.
 
 == Frequently Asked Questions ==
@@ -43,9 +43,7 @@ You can retrieve these in the Admin Menu of your Office AutoPilot account by cli
 
 You can reach support Monday thru Friday from 7:00am – 9:00pm PST. Saturday, we’re available from 9:00am – 1:00pm and Sundays 5:00pm – 9:00pm PST.
 
-Most questions or concerns can be addressed via our wiki which contains detailed information on each and every feature of our software. The address of our wiki is [http://wiki.officeautopilot.com](http://wiki.officeautopilot.com).
-
-For any other question or concern that the wiki does not address, please email us at support@officeautopilot.com, call us at 805.568.1424, login and submit a ticket (in the help section, link in the upper right).
+Please email us at support@ONTRAPORT.com, call us at 805.568.1424, login and submit a ticket (in the help section, link in the upper right).
 
 = How will I charge for my membership site? =
 
@@ -60,6 +58,15 @@ Content that relates to your business, and content that you can successfully sel
 If you have Pilotpress installed, you can create a new page and simply enter "[login_page]" (excluding quotes) and that page will then have a login box for users to use.
 
 == Changelog ==
+
+= 1.6.0h =
+* Fixed merge fields to work in WordPress version 3.9 and later.
+* Fixed a bug where TinyMCE would strip out the Flowplayer code when switching from the visual editor to the text editor and back.
+* Added the ability to customize the log-in page shortcode.
+* Added security upgrade to send passwords hashed to ONTRAPORT for user authentication.
+* Fixed a bug with the "not_contact" shortcode where it would not function if a user was not logged in.
+* Improved page load speeds by moving the ONTRAPORT tracking script into the footer.
+* Fixed a bug where a user not logged in trying to use the affiliate_center would redirect to wp_login.php instead of the PilotPress log in page.
 
 = 1.6.0g =
 * Fixed an issue where inserting multiple videos into one page could break flowplayer functionality.
@@ -109,6 +116,15 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+
+= 1.6.0h =
+* Fixed merge fields to work in WordPress version 3.9 and later.
+* Fixed a bug where TinyMCE would strip out the Flowplayer code when switching from the visual editor to the text editor and back.
+* Added the ability to customize the log-in page shortcode.
+* Added security upgrade to send passwords hashed to ONTRAPORT for user authentication.
+* Fixed a bug with the "not_contact" shortcode where it would not function if a user was not logged in.
+* Improved page load speeds by moving the ONTRAPORT tracking script into the footer.
+* Fixed a bug where a user not logged in trying to use the affiliate_center would redirect to wp_login.php instead of the PilotPress log in page.
 
 = 1.6.0g =
 * Fixed an issue where inserting multiple videos into one page could break flowplayer functionality.
