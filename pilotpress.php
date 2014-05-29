@@ -1596,7 +1596,22 @@ Copyright: 2013, Ontraport
                     return '<span class="pilotpress_protected">'.do_shortcode($content).'</span>';
                 }
             }
-                
+			//make cookie check befor login check to bypass it
+			if ( isset($atts[0]) && $atts[0] == "is_cookied_contact")
+			{
+				if (isset($_SESSION["contact_id"])) 
+				{
+					return '<span class="pilotpress_prtoected">'.do_shortcode($content) . '</span>';
+				}
+			}
+
+			if (isset($atts[0]) && $atts[0] == "not_cookied_contact") 
+			{
+				if (!isset($_SESSION["contact_id"])) 
+				{
+					return '<span class="pilotpress_prtoected">'.do_shortcode($content) . '</span>';
+				}
+			}            
 			if(!is_user_logged_in()) {
 				return;
 			}
