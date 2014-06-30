@@ -60,7 +60,14 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 == Changelog ==
 
 = 1.6.0h =
-* Updated Merge Fields to work in Wordpress version 3.9 and later.
+* Fixed merge fields to work in WordPress version 3.9 and later.
+* Fixed a bug where TinyMCE would strip out the Flowplayer code when switching from the visual editor to the text editor and back.
+* Added the ability to customize the log-in page shortcode.
+* Added security upgrade to send passwords hashed to ONTRAPORT for user authentication.
+* Fixed a bug with the "not_contact" shortcode where it would not function if a user was not logged in.
+* Improved page load speeds by moving the ONTRAPORT tracking script into the footer.
+* Fixed a bug where a user not logged in trying to use the affiliate_center would redirect to wp_login.php instead of the PilotPress log in page.
+* Added two additional shortcode attributes to the show_if shortcode - 'not_cookied_contact' and 'is_cookied_contact'
 
 = 1.6.0g =
 * Fixed an issue where inserting multiple videos into one page could break flowplayer functionality.
@@ -110,6 +117,16 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+
+= 1.6.0h =
+* Fixed merge fields to work in WordPress version 3.9 and later.
+* Fixed a bug where TinyMCE would strip out the Flowplayer code when switching from the visual editor to the text editor and back.
+* Added the ability to customize the log-in page shortcode.
+* Added security upgrade to send passwords hashed to ONTRAPORT for user authentication.
+* Fixed a bug with the "not_contact" shortcode where it would not function if a user was not logged in.
+* Improved page load speeds by moving the ONTRAPORT tracking script into the footer.
+* Fixed a bug where a user not logged in trying to use the affiliate_center would redirect to wp_login.php instead of the PilotPress log in page.
+* Added two additional shortcode attributes to the show_if shortcode - 'not_cookied_contact' and 'is_cookied_contact'
 
 = 1.6.0g =
 * Fixed an issue where inserting multiple videos into one page could break flowplayer functionality.
@@ -252,6 +269,14 @@ __Show Content Based if Contact is Identified__
 [show_if not_contact] content [/show_if]
 
 > Displays content if visitor is __not__ an identified contact in your database 
+
+[show_if is_cookied_contact] content [/show_if]
+
+> Displays content if visitor has been identified as a contact through a previous login , or ONTRAPORT defined action (email click , form fillout , etc)
+
+[show_if not_cookied_contact] content [/show_if]
+
+> Displays content if visitor has __not__  been identified as a contact through a previous login , or ONTRAPORT defined action (email click , form fillout , etc)
 
 == Creating the Sign-Up Page == 
 
