@@ -10,7 +10,7 @@ Text Domain: pilotpress
 Copyright: 2013, Ontraport
 */
 		
-	if(defined("ABSPATH")) {
+	if(defined("ABSPATH") && !defined("W3TC_WP_LOADING") && !defined("W3TC_IN_MINIFY")) { 
 		include_once(ABSPATH.WPINC.'/class-http.php');
 		include_once(ABSPATH.WPINC.'/registration.php');
 		register_activation_hook(__FILE__, "enable_pilotpress");
