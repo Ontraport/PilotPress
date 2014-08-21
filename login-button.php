@@ -80,6 +80,14 @@ li a
     display: inline-block;
     width: 100%;
 }
+#pp-lf-tabs .ui-widget-header
+{
+    border: none!important;
+}
+#pp-lf-tabs .tablinks li a
+{
+    padding: 10px 15px!important;
+}
 #pp-lf-tabs
 {
     display: inline-block;
