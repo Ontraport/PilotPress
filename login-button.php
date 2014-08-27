@@ -80,6 +80,19 @@ li a
     display: inline-block;
     width: 100%;
 }
+#pp-lf-tabs .ui-widget-header
+{
+    border: none!important;
+}
+#pp-lf-tabs .tablinks li a
+{
+    padding: 10px 15px!important;
+    outline: none!important;
+}
+#pp-lf-tabs.ui-tabs .ui-tabs-nav li
+{
+    background: none!important;
+}
 #pp-lf-tabs
 {
     display: inline-block;
@@ -134,12 +147,12 @@ li a
     background: #000;
     opacity: 0.5;
     filter: alpha(opacity=50);
-    z-index: 101;
+    z-index: 10000;
 }
 .pp-lf-form-container 
 {
     position: absolute;
-    z-index: 102;
+    z-index: 10001;
     margin: 50px 0px 50px -22.5%;
     left: 50%;
     width: 45%;

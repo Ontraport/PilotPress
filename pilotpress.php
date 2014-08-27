@@ -2503,17 +2503,11 @@ Copyright: 2013, Ontraport
 				.op-login-form-".$this->incrementalnumber." .op-header-text
 				{
 					line-height: 1.2!important;
-					margin-bottom: 4px;
-					".$headertextfont."
-					".$headertextfontsize."
-					".$headertextfontcolor."
+					margin-bottom: 4px;".$headertextfont.$headertextfontsize.$headertextfontcolor."
 				}
 				.op-login-form-".$this->incrementalnumber." .op-supporting-text
 				{
-					line-height: 1.2!important;
-					".$supportingtextfont."
-					".$supportingtextfontsize."
-					".$supportingtextfontcolor."
+					line-height: 1.2!important;".$supportingtextfont.$supportingtextfontsize.$supportingtextfontcolor."
 				}
 				.op-login-form-".$this->incrementalnumber." #pp-loginform P
 				{
@@ -2541,20 +2535,14 @@ Copyright: 2013, Ontraport
 					max-width: 25%;
 					min-width: 90px;
 					padding-right: 3%;
-					float: left;
-					".$textcolor."
+					float: left;".$textcolor."
 				}
-				
 				.op-login-form-".$this->incrementalnumber." .login-username INPUT
 				{
 					width: 100%;
 					max-width: 72%;
 					float: right;
-					border-radius: 3px;
-					".$inputcolor."
-					".$inputtextcolor."
-					".$inputbordercolor."
-					".$inputfieldsize."
+					border-radius: 3px;".$inputcolor.$inputtextcolor.$inputbordercolor.$inputfieldsize."
 				}
 				.op-login-form-".$this->incrementalnumber." .login-password LABEL
 				{
@@ -2562,26 +2550,20 @@ Copyright: 2013, Ontraport
 					max-width: 25%;
 					min-width: 90px;
 					padding-right: 3%;
-					float: left;
-					".$textcolor."
+					float: left;".$textcolor."
 				}
 				.op-login-form-".$this->incrementalnumber." .login-password INPUT
 				{
 					width: 100%;
 					max-width: 72%;
 					float: right;
-					border-radius: 3px;
-					".$inputcolor."
-					".$inputtextcolor."
-					".$inputbordercolor."
-					".$inputfieldsize."
+					border-radius: 3px;".$inputcolor.$inputtextcolor.$inputbordercolor.$inputfieldsize."
 				}
 				.op-login-form-".$this->incrementalnumber." .login-remember
 				{
 					text-align: right;
 					font-style: italic;
-					cursor: pointer;
-					".$textcolor."
+					cursor: pointer;".$textcolor."
 				}
 				.op-login-form-".$this->incrementalnumber." .login-remember INPUT
 				{
@@ -2592,8 +2574,7 @@ Copyright: 2013, Ontraport
 				}
 				.op-login-form-".$this->incrementalnumber." .login-remember LABEL
 				{
-					cursor: pointer;
-					".$textcolor."
+					cursor: pointer;".$textcolor."
 				}
 				.op-login-form-".$this->incrementalnumber." #wp-submit
 				{
@@ -2602,22 +2583,13 @@ Copyright: 2013, Ontraport
 					margin-top: 15px;
 					margin-bottom: 0px;
 					white-space: pre-wrap;
-					border-radius: 3px;
-					".$buttonbgcolor."
-					".$buttontextcolor."
-					".$buttonbordercolor."
-					".$buttonfont."
-					".$buttonfontsize."
-					".$buttonsize."
+					border-radius: 3px;".$buttonbgcolor.$buttontextcolor.$buttonbordercolor.$buttonfont.$buttonfontsize.$buttonsize."
 				}
 				.op-login-form-".$this->incrementalnumber." #wp-submit:hover
 				{
 					transition: background-color 1s ease, color 1s ease;
 					-moz-transition: background-color 1s ease, color 1s ease;
-					-webkit-transition: background-color 1s ease, color 1s ease;
-					".$buttonhovertextcolor."
-					".$buttonhoverbgcolor."
-					".$buttonhoverbordercolor."
+					-webkit-transition: background-color 1s ease, color 1s ease;".$buttonhovertextcolor.$buttonhoverbgcolor.$buttonhoverbordercolor."
 				}
 				.op-login-form-".$this->incrementalnumber." .login_box
 				{
