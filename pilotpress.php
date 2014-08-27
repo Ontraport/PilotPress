@@ -20,7 +20,7 @@ Copyright: 2013, Ontraport
 	
 	class PilotPress {
 
-        const VERSION = "1.6.0h";
+        const VERSION = "1.6.0i";
 		const WP_MIN = "3.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
@@ -1374,7 +1374,7 @@ Copyright: 2013, Ontraport
 				/* user does exist */
 				if(is_array($api_result)) {
 
-					if(!username_exists($username)) {
+					if(!username_exists($username) && $api_result["status"] != 0) {
 					
 						/* if their email is used (might have been a blog user before OAP perhaps), use alternate name */
 						if(email_exists($api_result["email"])) {
