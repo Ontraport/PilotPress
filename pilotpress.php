@@ -130,6 +130,8 @@ Copyright: 2013, Ontraport
 
 				$this->settings["pilotpress"] = get_option("pilotpress-settings");
 				
+				$this->api_version = get_option("pilotpress_api_version");
+
 				if($this->get_setting("usehome")) {
 					$this->homepage_url = home_url();
 				} else {
@@ -148,7 +150,7 @@ Copyright: 2013, Ontraport
 
 					$app_id = explode("_", $this->get_setting("app_id"));
 					if(count($app_id) == 3) {
-						if($app_id[1] > 20000) {
+						if($app_id[1] > 20000 || $this->api_version ) {
 							self::$brand = "ONTRAPORT";
 							self::$brand_url = "ontraport.com";
 
@@ -195,6 +197,14 @@ Copyright: 2013, Ontraport
 							$_SESSION["user_levels"] = $api_result["membership_level"];
 						}
 						$this->status = 1;
+
+						//Lets store the API version into their options table if available
+						if (isset($api_result["pilotpress_api_version"]))
+						{
+							update_option("pilotpress_api_version" , $api_result["pilotpress_api_version"]) );
+						}
+						
+
 					}
 				} else {
 					$this->status = 0;
