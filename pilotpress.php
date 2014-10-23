@@ -92,9 +92,9 @@ Copyright: 2013, Ontraport
 					"content" => "This content will be replaced by the Customer Center"
 				),
 				"affiliate_center" => array(
-					"title" => "Affiliate Center",
+					"title" => "Partner Center",
 					"slug" => "affiliate-center",
-					"content" => "This content will be replaced by the Affiliate Center"
+					"content" => "This content will be replaced by the Partner Center"
 				),
 			);
 		}
@@ -329,11 +329,11 @@ Copyright: 2013, Ontraport
 
 			add_settings_section('settings_section_oap', __(self::$brand . ' Integration Settings', 'pilotpress'), array(&$this, 'settings_section_oap'), 'pilotpress-settings'); 
 			add_settings_field('customer_center',  __('Enable Customer Center', 'pilotpress'), array(&$this, 'display_settings_cc'), 'pilotpress-settings', 'settings_section_oap');
-			add_settings_field('affiliate_center',  __('Enable Affiliate Center', 'pilotpress'), array(&$this, 'display_settings_ac'), 'pilotpress-settings', 'settings_section_oap');
+			add_settings_field('affiliate_center',  __('Enable Partner Center', 'pilotpress'), array(&$this, 'display_settings_ac'), 'pilotpress-settings', 'settings_section_oap');
 
 			add_settings_section('pilotpress-redirect-display', __('Post Login Redirect Settings', 'pilotpress'), array(&$this, 'settings_section_redirect'), 'pilotpress-settings'); 
 			add_settings_field('pilotpress_customer_plr', __('Customers Redirect To', 'pilotpress'), array(&$this, 'display_settings_customer_plr'), 'pilotpress-settings', 'pilotpress-redirect-display');
-			add_settings_field('pilotpress_affiliate_plr', __('Affiliates Redirect To', 'pilotpress'), array(&$this, 'display_settings_affiliate_plr'), 'pilotpress-settings', 'pilotpress-redirect-display');
+			add_settings_field('pilotpress_affiliate_plr', __('Partners Redirect To', 'pilotpress'), array(&$this, 'display_settings_affiliate_plr'), 'pilotpress-settings', 'pilotpress-redirect-display');
 
 			add_settings_section('pilotpress-settings-advanced', __('Advanced Settings', 'pilotpress'), array(&$this, 'settings_section_advanced'), 'pilotpress-settings'); 
 			add_settings_field('pp_use_cache', __('Disable API Caching', 'pilotpress'), array(&$this, 'display_settings_disablecaching'), 'pilotpress-settings', 'pilotpress-settings-advanced');
@@ -2781,7 +2781,7 @@ Copyright: 2013, Ontraport
 					if(empty($ac_exists)) {
 						delete_post_meta($result->post_id, $result->meta_key);
 						add_post_meta($post_id, PilotPress::NSPACE."system_page", "affiliate_center");
-						wp_update_post(array("ID" => $post_id, "post_content" => "This content will be replaced by the Affiliate Center."));
+						wp_update_post(array("ID" => $post_id, "post_content" => "This content will be replaced by the Partner Center."));
 					}
 				}
 
