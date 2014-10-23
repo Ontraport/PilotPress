@@ -201,7 +201,7 @@ Copyright: 2013, Ontraport
 						//Lets store the API version into their options table if available
 						if (isset($api_result["pilotpress_api_version"]))
 						{
-							update_option("pilotpress_api_version" , $api_result["pilotpress_api_version"]) );
+							update_option("pilotpress_api_version" , $api_result["pilotpress_api_version"]);
 						}
 						
 
