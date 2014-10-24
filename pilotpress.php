@@ -608,6 +608,7 @@ Copyright: 2013, Ontraport
 				add_filter('admin_init', array(&$this, 'clean_meta'));
 				add_filter('admin_init', array(&$this, 'flush_rewrite_rules'));
 				add_filter('admin_init', array(&$this, 'user_lockout'));
+				add_action('admin_init', array(&$this, 'admin_load_scripts'));
 				add_action('admin_notices', array(&$this, 'display_notice'));
 
 				add_action('admin_menu', array(&$this, 'metabox_add'));
@@ -710,7 +711,14 @@ Copyright: 2013, Ontraport
 			wp_enqueue_script("jquery");
 			wp_register_script("mr_tracking", self::$url_tjs, array(), false, true);
 			wp_enqueue_script("mr_tracking");
+		}
 
+		/*
+			@brief only load these scripts if in the admin dashboard
+
+		*/
+		function admin_load_scripts() 
+		{
 			// Here to determine if the automattic color picker 'iris' is included with wordpress... if not, include and use it
 			$version = get_bloginfo('version');
 			if ($version < 3.5)
@@ -740,8 +748,9 @@ Copyright: 2013, Ontraport
 			    wp_enqueue_style( 'wp-color-picker' );
 			    wp_enqueue_script('iris'); 
 			}
-		}
 
+		}
+		
 		function stylesheets() {
 
 			wp_register_style("mrjswp", self::$url_jswpcss);
