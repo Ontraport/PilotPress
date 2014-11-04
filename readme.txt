@@ -59,6 +59,11 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
+= 1.6.0j =
+* Updated action hook for saving posts from save_post to pre_post_update
+* Decreased payload for migrated accounts
+* Moved jQuery-ui to only enqueue on admin pages 
+
 = 1.6.0i =
 * Updated login form editor to fix styling where form was not working in some themes.
 * Updated status bug when membership status was disabled on ONTRAPORT
@@ -121,6 +126,11 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+
+= 1.6.0j =
+* Updated action hook for saving posts from save_post to pre_post_update
+* Decreased payload for migrated accounts
+* Moved jQuery-ui to only enqueue on admin pages 
 
 = 1.6.0i =
 * Updated login form editor to fix styling where form was not working in some themes.
