@@ -612,7 +612,7 @@ Copyright: 2013, Ontraport
 				add_action('admin_notices', array(&$this, 'display_notice'));
 
 				add_action('admin_menu', array(&$this, 'metabox_add'));
-				add_action('save_post', array(&$this, 'metabox_save'));
+				add_action('pre_post_update', array(&$this, 'metabox_save'));
 
 				add_action('media_buttons', array(&$this, 'media_button_add'), 20);
 				add_action('media_upload_forms', array(&$this, 'media_upload_forms'));
