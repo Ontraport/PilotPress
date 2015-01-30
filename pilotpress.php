@@ -9,7 +9,7 @@ Author URI: http://officeautopilot.com/
 Text Domain: pilotpress
 Copyright: 2013, Ontraport
 */
-		
+
 	if(defined("ABSPATH")) {
 		include_once(ABSPATH.WPINC.'/class-http.php');
 		include_once(ABSPATH.WPINC.'/registration.php');
@@ -20,7 +20,7 @@ Copyright: 2013, Ontraport
 	
 	class PilotPress {
 
-        const VERSION = "1.6.0j";
+        const VERSION = "1.7.0";
 		const WP_MIN = "3.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
@@ -32,6 +32,7 @@ Copyright: 2013, Ontraport
 		public static $brand_url = "OfficeAutoPilot.com";
 		public static $url_api = "https://www1.moon-ray.com/api.php";
 		public static $backup_url_api = "https://web.moon-ray.com/api.php";
+		public static $url_api_cdata ="https://api.moon-ray.com/cdata.php";
 		public static $url_tjs = "https://www1.moon-ray.com/tracking.js";
 		public static $url_jswpcss = "https://forms.moon-ray.com/v2.4/include/scripts/moonrayJS/moonrayJS-only-wp-forms.css";
 		public static $url_mrcss = "https://forms.moon-ray.com/v2.4/include/minify/?g=moonrayCSS";
@@ -44,6 +45,7 @@ Copyright: 2013, Ontraport
 		private $do_login = false;
 		private $homepage_url;
 		private $incrementalnumber = 1;
+		private $tagsSequences;
 	
 		function __construct() {
 	
@@ -158,7 +160,7 @@ Copyright: 2013, Ontraport
 							self::$backup_url_api = "https://api.ontraport.com/pilotpress.php";
 
 							self::$url_tjs = "https://tracking.ontraport.com/tracking.js";
-
+							self::$url_api_cdata = "https://api.ontraport.com/cdata.php";
 							self::$url_jswpcss = "https://forms.ontraport.com/v2.4/include/scripts/moonrayJS/moonrayJS-only-wp-forms.css";
 							self::$url_mrcss = "https://forms.ontraport.com/v2.4/include/minify/?g=moonrayCSS";
 						}
@@ -300,7 +302,7 @@ Copyright: 2013, Ontraport
 		function get_user_settings() {
 			$return = array();
 			
-			if ($_SESSION['contact_id']) {
+			if (isset($_SESSION['contact_id'])) {
 				$return["contact_id"] = $_SESSION["contact_id"];
 			}
 						
@@ -335,10 +337,33 @@ Copyright: 2013, Ontraport
 			add_settings_field('pilotpress_customer_plr', __('Customers Redirect To', 'pilotpress'), array(&$this, 'display_settings_customer_plr'), 'pilotpress-settings', 'pilotpress-redirect-display');
 			add_settings_field('pilotpress_affiliate_plr', __('Partners Redirect To', 'pilotpress'), array(&$this, 'display_settings_affiliate_plr'), 'pilotpress-settings', 'pilotpress-redirect-display');
 
+			//Add the Customer Center Settings
+			add_settings_section('pilotpress-customer-center-display', __('Customer Center Settings', 'pilotpress'), array(&$this, 'settings_section_customer_settings'), 'pilotpress-settings'); 
+			add_settings_field('pilotpress_customer_center_header_image', __('Custom Header Image', 'pilotpress'), array(&$this, 'display_settings_customer_center_header_image'), 'pilotpress-settings', 'pilotpress-customer-center-display');
+			add_settings_field('pilotpress_customer_center_primary_color', __('Primary Color', 'pilotpress'), array(&$this, 'display_settings_customer_center_primary_color'), 'pilotpress-settings', 'pilotpress-customer-center-display');
+			add_settings_field('pilotpress_customer_center_secondary_color', __('Secondary (Background) Color', 'pilotpress'), array(&$this, 'display_settings_customer_center_secondary_color'), 'pilotpress-settings', 'pilotpress-customer-center-display');
+
+			//Add the New User Register Settings
+			add_settings_section('pilotpress-new-user-display', __('New User Register Settings', 'pilotpress'), array(&$this, 'settings_section_new_user_settings'), 'pilotpress-settings'); 
+			add_settings_field('pilotpress_add_newly_registered_users', __('Add newly registered WordPress users to your ONTRAPORT contacts', 'pilotpress'), array(&$this, 'display_settings_add_newly_registered_users'), 'pilotpress-settings', 'pilotpress-new-user-display');
+			add_settings_field('pilotpress_newly_registered_tags', __('What tags should they have?', 'pilotpress'), array(&$this, 'display_settings_newly_registered_tags'), 'pilotpress-settings', 'pilotpress-new-user-display');
+			add_settings_field('pilotpress_newly_registered_sequences', __('What sequences should they be on?', 'pilotpress'), array(&$this, 'display_settings_newly_registered_sequences'), 'pilotpress-settings', 'pilotpress-new-user-display');
+
+
+			//Add the Logout Settings
+			add_settings_section('pilotpress-logout-users-display', __('Customer Center Settings', 'pilotpress'), array(&$this, 'settings_section_logout_settings'), 'pilotpress-settings'); 
+			add_settings_field('pilotpress_logout_users', __('Would you like to keep user\'s logged into your site longer than normal?', 'pilotpress'), array(&$this, 'display_settings_logout_users'), 'pilotpress-settings', 'pilotpress-logout-users-display');
+			add_settings_field('pilotpress_logout_duration', __('How long would you like a user to be able to stay logged into your site? <br /> <br /> <i>(*Please note that if the browser is closed for a long period the user will have to log in again.</i>)', 'pilotpress'), array(&$this, 'display_settings_logout_duration'), 'pilotpress-settings', 'pilotpress-logout-users-display');
+			
+
+
 			add_settings_section('pilotpress-settings-advanced', __('Advanced Settings', 'pilotpress'), array(&$this, 'settings_section_advanced'), 'pilotpress-settings'); 
 			add_settings_field('pp_use_cache', __('Disable API Caching', 'pilotpress'), array(&$this, 'display_settings_disablecaching'), 'pilotpress-settings', 'pilotpress-settings-advanced');
 			add_settings_field('pp_sslverify', __('Disable Verify Host SSL', 'pilotpress'), array(&$this, 'display_settings_disablesslverify'), 'pilotpress-settings', 'pilotpress-settings-advanced');
 			add_settings_field('pp_use_home', __('Use WordPress URL instead of Site URL', 'pilotpress'), array(&$this, 'display_settings_usehome'), 'pilotpress-settings', 'pilotpress-settings-advanced');			
+
+
+
 
 		}
 		
@@ -399,8 +424,139 @@ Copyright: 2013, Ontraport
 			}
 			echo "</select>";
 		}
-	
+		
+		/**  @brief settings hook for showing the customer center header image 	*/
+		function display_settings_customer_center_header_image()
+		{
+			$setting = $this->get_setting("pilotpress_customer_center_header_image");
+			if (!$setting){
+				$setting = "";
+			}
+
+			$output = "<input name='pilotpress-settings[pilotpress_customer_center_header_image]' class='pilotpress_customer_center_header_image_url' type='text' name='header_logo' size='60' value='$setting'>
+                <a href='#' class='button pilotpress_header_logo_upload'>Upload</a>";
+
+			echo $output;
+
+		}
+
+		/**  @brief settings hook for showing the customer center primary color	*/
+		function display_settings_customer_center_primary_color()
+		{
+			$setting = $this->get_setting("pilotpress_customer_center_primary_color");
+			if (!$setting){
+				$setting = "";
+			}
+			$output = "<input type='text' name='pilotpress-settings[pilotpress_customer_center_primary_color]' id='primary-color' value='".$setting."' data-default-color='#ffffff' class='pilotpress-color-picker' />";
+
+			echo $output;
+
+		}
+
+		/**  @brief settings hook for showing the customer center secondary (background) color 	*/
+		function display_settings_customer_center_secondary_color()
+		{
+			$setting = $this->get_setting("pilotpress_customer_center_secondary_color");
+			if (!$setting){
+				$setting = "";
+			}
+			$output = "<input type='text' name='pilotpress-settings[pilotpress_customer_center_secondary_color]' id='secondary-color' value='".$setting."' data-default-color='#ffffff' class='pilotpress-color-picker' />";
+
+			echo $output;			
+		}
+
+		/** @brief displays the setting for the option to add new registered users to ONTRAPORT */
+		function display_settings_add_newly_registered_users()
+		{
+			$setting = $this->get_setting("pilotpress_add_newly_registered_users");
+			if (!$setting){
+				$setting = "-1";
+			}
+			echo  "<select name=pilotpress-settings[pilotpress_add_newly_registered_users]>";
+			echo  "<option value='0' ".selected( $setting, 0 ).">No</option>";
+			echo  "<option value='1' ".selected( $setting, 1 ).">Yes</option>";
+			echo  "</select>";
+		}
+
+		/** @brief displays the setting for the sequences that should be added to the new user */
+		function display_settings_newly_registered_sequences() 
+		{
+			$setting = $this->get_setting("pilotpress_newly_registered_sequences");
+			if (!$setting){
+				$setting = "-1";
+			}
+			$output = "<select multiple name=pilotpress-settings[pilotpress_newly_registered_sequences][]>";
+			$sequences = json_decode($this->tagsSequences["sequences"] ,true );
+			foreach($sequences as $sequence)
+			{
+				$selected = "";
+				if(is_array($setting))
+				{
+					if (in_array($sequence["drip_id"] , $setting))
+					{
+						$selected = "selected='selected'";
+					}
+				}
+				$output .= "<option value='".$sequence["drip_id"]."' ".$selected . ">".$sequence["name"]."</option>";
+			}
+			$output .= "</select>";
+			echo $output;			
+		}
+
+		/** @brief displays the setting for the tags to be added to new users */
+		function display_settings_newly_registered_tags() 
+		{
+			$setting = $this->get_setting("pilotpress_newly_registered_tags");
+			if (!$setting){
+				$setting = "";
+			}
+			$output = "<select multiple name=pilotpress-settings[pilotpress_newly_registered_tags][]>";
+			$tags = json_decode($this->tagsSequences["tags"] , true );
+			foreach($tags as $tag)
+			{
+				$selected = "";
+				if(is_array($setting))
+				{
+					if (in_array($tag["tag_name"] , $setting))
+					{
+						$selected = "selected='selected'";
+					}
+				}
+				$output .= "<option value='".$tag["tag_name"]."' ".$selected.">".$tag["tag_name"]."</option>";
+			}
+			$output .= "</select>";
+			echo $output;
+		}
+
+		/** @brief displays the setting for enabling or disabling logout duration settings */
+		function display_settings_logout_users()
+		{
+			$setting = $this->get_setting("pilotpress_logout_users");
+			if (!$setting){
+				$setting = "-1";
+			}
+			echo  "<select name=pilotpress-settings[pilotpress_logout_users]>";
+			echo  "<option value='0' ".selected( $setting, 0 ).">No</option>";
+			echo  "<option value='1' ".selected( $setting, 1 ).">Yes</option>";
+			echo  "</select>";		
+		}
+
+		/** @brief displays the setting for the logout duration */
+		function display_settings_logout_duration()
+		{
+			$setting = $this->get_setting("pilotpress_logout_duration");
+			if (!$setting){
+				$setting = "";
+			}
+			$output = "<input type='text' name='pilotpress-settings[pilotpress_logout_duration]' value='".$setting."' />";
+
+			echo $output;				
+		}
+
 		/* section output, blank for austerity */
+		function settings_section_customer_settings() {}
+		function settings_section_new_user_settings() {}
+		function settings_section_logout_settings() {}
 		function settings_section_general() {}
 		function settings_section_oap() {}
 		function settings_section_redirect() {}
@@ -494,7 +650,6 @@ Copyright: 2013, Ontraport
 			echo ">";
 		}
 		
-		
 		function display_settings_usehome() {
 			echo "<input type='checkbox' name='pilotpress-settings[usehome]'";
 			if($this->get_setting("usehome")) {
@@ -506,6 +661,9 @@ Copyright: 2013, Ontraport
 		/* finally, we register the settings page itself. */
 		function settings_page() {
 
+			//get the sequences and tags...	
+			$this->tagsSequences = $this->api_call("get_tags_sequences", array("site" => site_url()));
+			
 			?>			
 			<div class="wrap"><h2><?php _e('PilotPress Settings', 'pilotpress'); ?></h2><?php
 
@@ -520,15 +678,53 @@ Copyright: 2013, Ontraport
 			
 			<script type="text/javascript">
 				jQuery(document).ready(function() {
-					jQuery(document).find("[name=pilotpress-settings] h3:eq(3)").toggle();
+					jQuery(document).find("[name=pilotpress-settings] h3:eq(6)").toggle();
 					jQuery(document).find(".pilotpress-advanced-warning").toggle();
-					jQuery(document).find("[name=pilotpress-settings] table:eq(3)").toggle();
+					jQuery(document).find("[name=pilotpress-settings] table:eq(6)").toggle();
 					jQuery(document).find("[name=advanced]").click(function() {
-						jQuery(document).find("[name=pilotpress-settings] h3:eq(3)").toggle();
+						jQuery(document).find("[name=pilotpress-settings] h3:eq(6)").toggle();
 						jQuery(document).find(".pilotpress-advanced-warning").toggle();
-						jQuery(document).find("[name=pilotpress-settings] table:eq(3)").toggle();
+						jQuery(document).find("[name=pilotpress-settings] table:eq(6)").toggle();
 					});
+
+					//media uploader
+ 					jQuery('.pilotpress_header_logo_upload').click(function(e) {
+			            e.preventDefault();
+
+			            var custom_uploader = wp.media({
+			                title: 'Customer Center Header Image',
+			                button: {
+			                    text: 'Upload Image'
+			                },
+			                multiple: false  // Set this to true to allow multiple files to be selected
+			            })
+			            .on('select', function() {
+			                var attachment = custom_uploader.state().get('selection').first().toJSON();
+			                jQuery('.pilotpress_customer_center_header_image').attr('src', attachment.url);
+			                jQuery('.pilotpress_customer_center_header_image_url').val(attachment.url);
+
+			            })
+			            .open();
+			        });
+				//primary color picker init
+				jQuery('#primary-color.pilotpress-color-picker').iris();
+				jQuery('#primary-color.pilotpress-color-picker').iris({ change: function(event, ui)
+                {
+                  var colorpickervar = jQuery("#primary-color.pilotpress-color-picker").val()
+                  jQuery("#primary-color.pilotpress-color-picker").siblings('.iris-border').css('background-color', colorpickervar);
+                }
+            	});
+
+				//secondary color picker init
+				jQuery('#secondary-color.pilotpress-color-picker').iris();
+				jQuery('#secondary-color.pilotpress-color-picker').iris({ change: function(event, ui)
+                {
+                  var colorpickervar = jQuery("#secondary-color.pilotpress-color-picker").val()
+                  jQuery("#secondary-color.pilotpress-color-picker").siblings('.iris-border').css('background-color', colorpickervar);
+                }
+            	});
 				});
+
 			</script>
 			
 			<?php
@@ -569,12 +765,16 @@ Copyright: 2013, Ontraport
 				$post["sslverify"] = 0;
 			}
 			
+			self::$url_api  =  "http://localapi.ontraport.com/pilotpress.php";
+
 			$endpoint = sprintf(self::$url_api.'/%s/%s/%s', "json", "pilotpress", $method);
 			$response = wp_remote_post($endpoint, $post);
-
-			if ($response->errors['http_request_failed']){
-				$endpoint = sprintf(self::$backup_url_api.'/%s/%s/%s', "json", "pilotpress", $method);
-				$response = wp_remote_post($endpoint, $post);
+			if(is_object($response))
+			{
+				if ($response->errors['http_request_failed']){
+					$endpoint = sprintf(self::$backup_url_api.'/%s/%s/%s', "json", "pilotpress", $method);
+					$response = wp_remote_post($endpoint, $post);
+				}
 			}
 
 			if(is_wp_error($response) || $response['response']['code'] == 500) {
@@ -595,6 +795,7 @@ Copyright: 2013, Ontraport
 		private function bind_hooks() {
 
 			add_action("init", array(&$this, "load_scripts"));
+			add_action('init', array(&$this,'sessionslap_ping'));
 			add_action('wp_print_styles', array(&$this, 'stylesheets'));
 			add_action('wp_print_footer_scripts', array(&$this, 'tracking'));
 			add_action('retrieve_password', array(&$this, 'retrieve_password'));
@@ -668,6 +869,7 @@ Copyright: 2013, Ontraport
 			add_action("lostpassword_post", array(&$this, 'user_lostpassword'));
 			add_action('wp_logout', array(&$this, 'user_logout'));
 			add_action('init', array(&$this, 'pp_login_button'));
+			add_action('user_register', array(&$this, 'add_new_register_user_to_ONTRAPORT') , 10, 1);
 
 		}
 
@@ -747,6 +949,13 @@ Copyright: 2013, Ontraport
 			    wp_enqueue_script('jquery-ui-tabs');
 			    wp_enqueue_style( 'wp-color-picker' );
 			    wp_enqueue_script('iris'); 
+			}
+			if(function_exists( 'wp_enqueue_media' )){
+			    wp_enqueue_media();
+			}else{
+			    wp_enqueue_style('thickbox');
+			    wp_enqueue_script('media-upload');
+			    wp_enqueue_script('thickbox');
 			}
 
 		}
@@ -903,9 +1112,9 @@ Copyright: 2013, Ontraport
 					
 
 				if(($_POST["oguser"] != $_POST["username"]) && username_exists($_POST["username"])) {
-					echo "display_notice('Error: That username taken. Please try another username.');";
+					echo "display_notice('Error: That username is taken. Please try another username.');";
 					die();
-				}
+				}			
 					
 				$current_user = wp_get_current_user();
 				$return = $this->api_call("update_cc_details", $_POST);
@@ -1554,6 +1763,31 @@ Copyright: 2013, Ontraport
 			$this->end_session(true);
 		}
 
+		/** @brief if possible add th enew user to ONTRAPORT when registered in WordPress */
+		function add_new_register_user_to_ONTRAPORT($user_id) {
+
+			$bAddUser = $this->get_setting("pilotpress_add_newly_registered_users");
+			if (!$bAddUser)
+			{
+				return;
+			}
+
+			$appid = $this->get_setting("app_id");
+			$key = $this->get_setting("api_key");
+			$tagList = $this->get_setting("pilotpress_newly_registered_tags");
+			$sequenceList = $this->get_setting("pilotpress_newly_registered_sequences");
+			$user = get_userdata($user_id);
+			$userData = array(
+				"firstname"=>$user->user_firstname,
+				"lastname"=>$user->user_lastname,
+				"email"=>$user->user_email,
+				"tags"=>$tagList,
+				"sequences"=>$sequenceList
+			);
+
+			$api_result = $this->api_call("add_newly_registered_contact", $userData);
+		}
+
 		static function start_session() {
 			ob_start();
 			if(!session_id()) {
@@ -2038,6 +2272,10 @@ Copyright: 2013, Ontraport
 		function do_system_page($id) {
 
 			$type = get_post_meta($id, self::NSPACE."system_page", true);
+			//send over our colors to style the pages nicely
+			$styles["primary_color"] = $this->get_setting("pilotpress_customer_center_primary_color");
+			$styles["secondary_color"] = $this->get_setting("pilotpress_customer_center_secondary_color");
+			$styles["header_image"] = $this->get_setting("pilotpress_customer_center_header_image");
 
 			if(!is_user_logged_in()) {
 				$return = $this->login_page(array(), 1);
@@ -2045,12 +2283,12 @@ Copyright: 2013, Ontraport
 			}
 
 			if($type == "affiliate_center") {
-				$api_result = $this->api_call("get_".$type, array("username" => $_SESSION["user_name"], "program_id" => $_SESSION["program_id"], "site" => site_url()));
+				$api_result = $this->api_call("get_".$type, array("username" => $_SESSION["user_name"], "program_id" => $_SESSION["program_id"], "site" => site_url()  , "styles"=>$styles ));
 			}  
 
 			if($type == "customer_center"){
-				$api_result = $this->api_call("get_".$type, array("username" => $_SESSION["user_name"], "site" => site_url(), "nonce" => wp_create_nonce(basename(__FILE__))));
-			}	
+				$api_result = $this->api_call("get_".$type, array("username" => $_SESSION["user_name"], "site" => site_url(), "nonce" => wp_create_nonce(basename(__FILE__)) , "styles"=>$styles , "version"=>self::VERSION ));
+			}
 
 			if($api_result) {
 				if($api_result["code"] != "0") {
@@ -2097,7 +2335,29 @@ Copyright: 2013, Ontraport
 				}	
 			}
 		}
-	
+
+		/**
+		 * Ping Logic
+		 * 
+		 * Imports jQuery logic to head which can then be utilized 
+		 * to send ajax calls to the same file to update the PilotPress
+		 * session.
+		 *
+		 *
+		 * @uses add_action()
+		 */
+		function sessionslap_ping(){
+			// Register JavaScript
+			wp_enqueue_script('jquery');
+
+			require_once( plugin_dir_path( __FILE__ ) . "/ping.php");
+			
+			// Append dynamic js to both admin and regular users head.
+			add_action( "admin_head", "sessionslap_face" );
+			add_action( "wp_head", "sessionslap_face" );
+			
+		}
+			
 		/* renders cute login page */
 		function login_page ($atts, $message = false) 
 		{
