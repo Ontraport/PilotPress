@@ -772,7 +772,7 @@ Copyright: 2013, Ontraport
 					$response = wp_remote_post($endpoint, $post);
 				}
 			}
-
+		
 			if(is_wp_error($response) || $response['response']['code'] == 500) {
 				return false;
 			} else {
@@ -1865,6 +1865,26 @@ Copyright: 2013, Ontraport
 				return;
 			}
 
+			if ($found = self::DoShortcodeMagic($atts,$content))
+			{
+				return $found;
+			}
+
+			//if we fail to find something lets make sure Wordpress hasnt encoded the tags and membership levels.
+			foreach ($atts as $key => $att)
+			{
+				$atts[$key] = html_entity_decode($atts[$key]);
+			}
+			//process shortcodes with decoded entities
+			return self::DoShortcodeMagic($atts,$content);
+		}
+
+		/* 
+		 *	@brief Process additional shortoced logic here
+		 * 
+		 **/
+		function DoShortcodeMagic($atts,$content)
+		{
 			$user_levels = $this->get_setting("levels","user", true);
 
 			if(!is_array($user_levels)) {
@@ -1933,7 +1953,7 @@ Copyright: 2013, Ontraport
 				if(isset($atts[0]) && in_array($atts[0], $user_levels)) {
 					return '<span class="pilotpress_protected">'.do_shortcode($content).'</span>';
 				}
-			}		
+			}
 		}
 
 		function shortcode_field($atts, $content = null) {
