@@ -32,7 +32,6 @@ Copyright: 2013, Ontraport
 		public static $brand_url = "OfficeAutoPilot.com";
 		public static $url_api = "https://www1.moon-ray.com/api.php";
 		public static $backup_url_api = "https://web.moon-ray.com/api.php";
-		public static $url_api_cdata ="https://api.moon-ray.com/cdata.php";
 		public static $url_tjs = "https://www1.moon-ray.com/tracking.js";
 		public static $url_jswpcss = "https://forms.moon-ray.com/v2.4/include/scripts/moonrayJS/moonrayJS-only-wp-forms.css";
 		public static $url_mrcss = "https://forms.moon-ray.com/v2.4/include/minify/?g=moonrayCSS";
@@ -160,7 +159,6 @@ Copyright: 2013, Ontraport
 							self::$backup_url_api = "https://api.ontraport.com/pilotpress.php";
 
 							self::$url_tjs = "https://tracking.ontraport.com/tracking.js";
-							self::$url_api_cdata = "https://api.ontraport.com/cdata.php";
 							self::$url_jswpcss = "https://forms.ontraport.com/v2.4/include/scripts/moonrayJS/moonrayJS-only-wp-forms.css";
 							self::$url_mrcss = "https://forms.ontraport.com/v2.4/include/minify/?g=moonrayCSS";
 						}
@@ -764,8 +762,6 @@ Copyright: 2013, Ontraport
 			if($ssl_verify) {
 				$post["sslverify"] = 0;
 			}
-			
-			self::$url_api  =  "http://localapi.ontraport.com/pilotpress.php";
 
 			$endpoint = sprintf(self::$url_api.'/%s/%s/%s', "json", "pilotpress", $method);
 			$response = wp_remote_post($endpoint, $post);
