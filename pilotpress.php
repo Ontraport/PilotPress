@@ -1880,7 +1880,7 @@ Copyright: 2013, Ontraport
 		}
 
 		/* 
-		 *	@brief Process additional shortoced logic here
+		 *	@brief Process additional shortcode logic here
 		 * 
 		 **/
 		function DoShortcodeMagic($atts,$content)
