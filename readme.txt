@@ -65,7 +65,7 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Updated Cutomer Center to be on one page instead of using tabs
 * Added the ability to link to Invoices in the Customer Center
 * Merged the Plugin Session Slap into PilotPress to keep sessions alive
-* added ability to sort tables in Customer Center
+* Added ability to sort table headers in Customer Center
 * Fixed bug with the show_if shortcode not working properly if a membership level or tag has an HTML Entity;
 
 = 1.6.0j =
@@ -142,7 +142,7 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Updated Cutomer Center to be on one page instead of using tabs
 * Added the ability to link to Invoices in the Customer Center
 * Merged the Plugin Session Slap into PilotPress to keep sessions alive
-* added ability to sort tables in Customer Center
+* Added ability to sort tables in Customer Center
 * Fixed bug with the show_if shortcode not working properly if a membership level or tag has an HTML Entity;
 
 = 1.6.0j =
