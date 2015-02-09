@@ -61,8 +61,8 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 = 1.7.0 =
 * Added new admin option to add new WordPress registered users to ONTRAPORT with the option to add Tags or Sequences
-* Added the ability to style the Customer Center with three new options (Primary Color , Scondary Color and Header Image)
-* Updated Cutomer Center to be on one page instead of using tabs
+* Added the ability to style the Customer Center with three new options (Primary Color , Secondary Color and Header Image)
+* Updated Customer Center to be on one page instead of using tabs
 * Added the ability to link to Invoices in the Customer Center
 * Merged the Plugin Session Slap into PilotPress to keep sessions alive
 * Added ability to sort table headers in Customer Center
@@ -138,8 +138,8 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 = 1.7.0 =
 * Added new admin option to add new WordPress registered users to ONTRAPORT with the option to add Tags or Sequences
-* Added the ability to style the Customer Center with three new options (Primary Color , Scondary Color and Header Image)
-* Updated Cutomer Center to be on one page instead of using tabs
+* Added the ability to style the Customer Center with three new options (Primary Color , Secondary Color and Header Image)
+* Updated Customer Center to be on one page instead of using tabs
 * Added the ability to link to Invoices in the Customer Center
 * Merged the Plugin Session Slap into PilotPress to keep sessions alive
 * Added ability to sort tables in Customer Center
