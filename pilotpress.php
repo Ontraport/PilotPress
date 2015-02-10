@@ -349,7 +349,7 @@ Copyright: 2013, Ontraport
 
 
 			//Add the Logout Settings
-			add_settings_section('pilotpress-logout-users-display', __('Customer Center Settings', 'pilotpress'), array(&$this, 'settings_section_logout_settings'), 'pilotpress-settings'); 
+			add_settings_section('pilotpress-logout-users-display', __('Logout Settings', 'pilotpress'), array(&$this, 'settings_section_logout_settings'), 'pilotpress-settings'); 
 			add_settings_field('pilotpress_logout_users', __('Would you like to keep user\'s logged into your site longer than normal?', 'pilotpress'), array(&$this, 'display_settings_logout_users'), 'pilotpress-settings', 'pilotpress-logout-users-display');
 			add_settings_field('pilotpress_logout_duration', __('How long would you like a user to be able to stay logged into your site? <br /> <br /> <i>(*Please note that if the browser is closed for a long period the user will have to log in again.</i>)', 'pilotpress'), array(&$this, 'display_settings_logout_duration'), 'pilotpress-settings', 'pilotpress-logout-users-display');
 			
