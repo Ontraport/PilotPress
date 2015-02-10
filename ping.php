@@ -28,13 +28,12 @@ function sessionslap_face($options){
 	//turn on to check if the session slap is working propelry with an alert message
 	$options["alerts"] = 0;
 	$options['hang_duration'] = 5;
-	if (empty($options["pilotpress_logout_duration"]) || !is_numeric($options["pilotpress_logout_duration"]))
-	{
-		$options["pilotpress_logout_duration"] = ini_get("session.gc_maxlifetime");
-		if (!isset($options["pilotpress_logout_duration"]) || empty($options["pilotpress_logout_duration"]) || is_null($options["pilotpress_logout_duration"])){
-			$options["pilotpress_logout_duration"] = (24 * 60); // If the value is empty, or access restricted, use PHP's 24 minute default settings.
-		}
+
+	$options["pilotpress_logout_duration"] = ini_get("session.gc_maxlifetime") / 2;
+	if (!isset($options["pilotpress_logout_duration"]) || empty($options["pilotpress_logout_duration"]) || is_null($options["pilotpress_logout_duration"])){
+		$options["pilotpress_logout_duration"] = (24 * 60) / 2; // If the value is empty, or access restricted, use PHP's 24 minute default settings.
 	}
+
 	?>
 	<script type="text/javascript">
 	jQuery(function($){
