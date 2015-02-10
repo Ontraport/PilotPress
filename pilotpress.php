@@ -349,10 +349,8 @@ Copyright: 2013, Ontraport
 
 
 			//Add the Logout Settings
-			add_settings_section('pilotpress-logout-users-display', __('Customer Center Settings', 'pilotpress'), array(&$this, 'settings_section_logout_settings'), 'pilotpress-settings'); 
-			add_settings_field('pilotpress_logout_users', __('Would you like to keep user\'s logged into your site longer than normal?', 'pilotpress'), array(&$this, 'display_settings_logout_users'), 'pilotpress-settings', 'pilotpress-logout-users-display');
-			add_settings_field('pilotpress_logout_duration', __('How long would you like a user to be able to stay logged into your site? <br /> <br /> <i>(*Please note that if the browser is closed for a long period the user will have to log in again.</i>)', 'pilotpress'), array(&$this, 'display_settings_logout_duration'), 'pilotpress-settings', 'pilotpress-logout-users-display');
-			
+			add_settings_section('pilotpress-logout-users-display', __('Logout Settings', 'pilotpress'), array(&$this, 'settings_section_logout_settings'), 'pilotpress-settings'); 
+			add_settings_field('pilotpress_logout_users', __('Would you like to keep user\'s logged into your site longer than normal? <br /> <br /> <i>(*Please note that if the browser is closed for a long period the user will have to log in again.</i>)', 'pilotpress'), array(&$this, 'display_settings_logout_users'), 'pilotpress-settings', 'pilotpress-logout-users-display');
 
 
 			add_settings_section('pilotpress-settings-advanced', __('Advanced Settings', 'pilotpress'), array(&$this, 'settings_section_advanced'), 'pilotpress-settings'); 
@@ -537,18 +535,6 @@ Copyright: 2013, Ontraport
 			echo  "<option value='0' ".selected( $setting, 0 ).">No</option>";
 			echo  "<option value='1' ".selected( $setting, 1 ).">Yes</option>";
 			echo  "</select>";		
-		}
-
-		/** @brief displays the setting for the logout duration */
-		function display_settings_logout_duration()
-		{
-			$setting = $this->get_setting("pilotpress_logout_duration");
-			if (!$setting){
-				$setting = "";
-			}
-			$output = "<input type='text' name='pilotpress-settings[pilotpress_logout_duration]' value='".$setting."' />";
-
-			echo $output;				
 		}
 
 		/* section output, blank for austerity */
