@@ -791,7 +791,7 @@ Copyright: 2013, Ontraport
 				add_filter('admin_init', array(&$this, 'clean_meta'));
 				add_filter('admin_init', array(&$this, 'flush_rewrite_rules'));
 				add_filter('admin_init', array(&$this, 'user_lockout'));
-				add_action('admin_init', array(&$this, 'admin_load_scripts'));
+				add_action('admin_enqueue_scripts', array(&$this, 'admin_load_scripts'));
 				add_action('admin_notices', array(&$this, 'display_notice'));
 
 				add_action('admin_menu', array(&$this, 'metabox_add'));
@@ -1658,7 +1658,7 @@ Copyright: 2013, Ontraport
 						$user_id = $user->ID;
 						wp_set_current_user($user_id, $username);
 						wp_set_auth_cookie($user_id);
-						do_action('wp_login', $username);
+						do_action('wp_login', $username , $user);
 
 						if(!isset($_SESSION["user_name"])) {
 
@@ -2355,8 +2355,8 @@ Copyright: 2013, Ontraport
 			require_once( plugin_dir_path( __FILE__ ) . "/ping.php");
 			
 			// Append dynamic js to both admin and regular users head.
-			add_action( "admin_head", "sessionslap_face" );
-			add_action( "wp_head", "sessionslap_face" );
+			add_action( "admin_head", "pilotpress_sessionslap_face" );
+			add_action( "wp_head", "pilotpress_sessionslap_face" );
 			
 		}
 			

@@ -22,7 +22,7 @@
  * @since 1.7.1
  *
  */
-function sessionslap_face($options){
+function pilotpress_sessionslap_face($options){
 	$options = get_option("pilotpress-settings");
 
 	//turn on to check if the session slap is working propelry with an alert message
