@@ -59,11 +59,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
-= 1.7.2 =
-* Fixed bug where if your home page is set to a static page and is protected by a membership level it would still show the content.
-
 = 1.7.1 =
 * Fixed bug where featured images would not show up properly when creating a new post/page
+* Fixed bug where if your home page is set to a static page and is protected by a membership level it would still show the content.
 
 = 1.7.0 =
 * Added new admin option to add new WordPress registered users to ONTRAPORT with the option to add Tags or Sequences
@@ -143,11 +141,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Upgrade Notice ==
 
-= 1.7.2 =
-* Fixed bug where if your home page is set to a static page and is protected by a membership level it would still show the content.
-
 = 1.7.1 =
 * Fixed bug where featured images would not show up properly when creating a new post/page
+* Fixed bug where if your home page is set to a static page and is protected by a membership level it would still show the content.
 
 = 1.7.0 =
 * Added new admin option to add new WordPress registered users to ONTRAPORT with the option to add Tags or Sequences
