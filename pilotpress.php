@@ -1964,7 +1964,7 @@ Copyright: 2013, Ontraport
             else
             {
                 $id = $this->get_postid_by_url();
-                if (!empty($id) && get_option('show_on_front') == 'page')
+                if (empty($id) && get_option('show_on_front') == 'page')
                 {
                     $id = get_option('page_on_front');
                 }
@@ -2060,7 +2060,7 @@ Copyright: 2013, Ontraport
 			$user_levels = $this->get_setting("levels","user",true);
 
 			$id = $this->get_postid_by_url();
-			if (!empty($id) && get_option('show_on_front') == 'page')
+			if (empty($id) && get_option('show_on_front') == 'page')
             {
                 $id = get_option('page_on_front');
             }
