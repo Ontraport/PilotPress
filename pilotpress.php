@@ -1659,8 +1659,13 @@ Copyright: 2013, Ontraport
                         setcookie("contact_id", $api_result["contact_id"], (time() + 2419200), COOKIEPATH, $cookie_domain, false);
 												
 						$user_id = $user->ID;
+						$remember = false;
+						if (!empty($_POST["rememberme"]))
+						{
+							$remember = true;
+						}
 						wp_set_current_user($user_id, $username);
-						wp_set_auth_cookie($user_id);
+						wp_set_auth_cookie($user_id ,$remember);
 						do_action('wp_login', $username , $user);
 
 						if(!isset($_SESSION["user_name"])) {
