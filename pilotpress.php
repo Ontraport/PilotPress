@@ -170,8 +170,15 @@ Copyright: 2013, Ontraport
                         }
 					}
 
-					if(isset($_SESSION["contact_id"])) {
-						$api_result = $this->api_call("get_site_settings", array("site" => site_url(), "contact_id" => $_SESSION["contact_id"], "username" => $_SESSION["user_name"]));
+					if(isset($_COOKIE["contact_id"])) {
+						if(!function_exists('get_currentuserinfo'))
+						{
+						    include(ABSPATH . "wp-includes/pluggable.php"); 
+						}
+						global $current_user;
+						get_currentuserinfo();
+						$username = $current_user->user_login;
+						$api_result = $this->api_call("get_site_settings", array("site" => site_url(), "contact_id" => $_COOKIE["contact_id"], "username" => $username));
 					}
 					else {
 						$api_result = $this->api_call("get_site_settings", array("site" => site_url()));
@@ -2238,7 +2245,7 @@ Copyright: 2013, Ontraport
 
 			$page_levels = get_post_meta($id, "_pilotpress_level");
 			$user_levels = $this->get_setting("levels","user",true);
-			
+
 			if(!is_array($user_levels)) {
 				$user_levels = array($user_levels);
 			}
