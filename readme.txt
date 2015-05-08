@@ -11,7 +11,6 @@ PilotPress allows you to have a website, membership site, customer center, and a
 
 == Description ==
 
-[Video: __Intro and Overview__ (4:36)](http://pseudo01.hddn.com/vod/moonray.moonray/PilotPress_2_intro.mp4)
 
 PilotPress is a WordPress plug-in that brings the power of [ONTRAPORT](http://ontraport.com) to the WordPress platform, specifically:
 
@@ -28,8 +27,6 @@ PilotPress is a WordPress plug-in that brings the power of [ONTRAPORT](http://on
 Please note that an [ONTRAPORT](http://ontraport.com) paid account is required for this plugin to function. Data from your WordPress installation will be sent through our API hosted on moon-ray.com.
 
 == Installation ==
-
-[Video: __Installing on an existing WordPress Site__ (3:13)](http://pseudo01.hddn.com/vod/moonray.moonray/PilotPress_3_Installing_to_existin_site.mp4)
 
 1. Upload the PilotPress plugin to the "/wp-content/plugins/" directory
 2. Activate the plugin through the "Plugins" menu in WordPress
@@ -58,6 +55,10 @@ Content that relates to your business, and content that you can successfully sel
 If you have Pilotpress installed, you can create a new page and simply enter "[login_page]" (excluding quotes) and that page will then have a login box for users to use.
 
 == Changelog ==
+
+= 1.7.3 =
+* Fixed issue with logging in where the "remember me" option would not keep users logged in, if/when was browser closed and the session was destoryed
+* Fixed issue with custom log in form going to 404 page if WordPress was hosted on a subdomain
 
 = 1.7.2 =
 * Fixed bug where if your home page is set to a static page and is protected by a membership level it would still show the content.
@@ -144,6 +145,10 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Upgrade Notice ==
 
+= 1.7.3 =
+* Fixed issue with logging in where the "remember me" option would not keep users logged in, if/when was browser closed
+* Fixed issue with custom log in form going to 404 page if WordPress was hosted on a subdomain
+
 = 1.7.2 =
 * Fixed bug where if your home page is set to a static page and is protected by a membership level it would still show the content.
 * Fixes issue where WordPress trimmed the trailing and leading spaces when logging in however PilotPress did not.
@@ -222,8 +227,6 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Using your WordPress site as a Membership Site (aka Protecting and revealing content) ==
-
-[Video: __Protect and Release Content__ (6:46)](http://pseudo01.hddn.com/vod/moonray.moonray/PilotPress_5_protect_and_release_content.mp4)
 
 Below are instructions on how to protect content in your membership site. There are two ways to do this:
 
@@ -331,8 +334,6 @@ __Show Content Based if Contact is Identified__
 > Displays content if visitor has __not__  been identified as a contact through a previous login , or ONTRAPORT defined action (email click , form fillout , etc)
 
 == Creating the Sign-Up Page == 
-
-[Video: __Creating a Sign Up Page and Adding Forms__ (2:32)](http://pseudo01.hddn.com/vod/moonray.moonray/PilotPress%20_6_Create_Signup_pg_and_post_form_to_wp.mp4)
 
 This is where your prospects/clients purchase their membership. It's the page that any sales emails, sales letters, and sales videos would point to.
 
