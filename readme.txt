@@ -11,7 +11,6 @@ PilotPress allows you to have a website, membership site, customer center, and a
 
 == Description ==
 
-[Video: __Intro and Overview__ (4:36)](http://pseudo01.hddn.com/vod/moonray.moonray/PilotPress_2_intro.mp4)
 
 PilotPress is a WordPress plug-in that brings the power of [ONTRAPORT](http://ontraport.com) to the WordPress platform, specifically:
 
@@ -28,8 +27,6 @@ PilotPress is a WordPress plug-in that brings the power of [ONTRAPORT](http://on
 Please note that an [ONTRAPORT](http://ontraport.com) paid account is required for this plugin to function. Data from your WordPress installation will be sent through our API hosted on moon-ray.com.
 
 == Installation ==
-
-[Video: __Installing on an existing WordPress Site__ (3:13)](http://pseudo01.hddn.com/vod/moonray.moonray/PilotPress_3_Installing_to_existin_site.mp4)
 
 1. Upload the PilotPress plugin to the "/wp-content/plugins/" directory
 2. Activate the plugin through the "Plugins" menu in WordPress
@@ -58,6 +55,10 @@ Content that relates to your business, and content that you can successfully sel
 If you have Pilotpress installed, you can create a new page and simply enter "[login_page]" (excluding quotes) and that page will then have a login box for users to use.
 
 == Changelog ==
+
+= 1.7.3 =
+* Fixed issue with logging in where the "remember me" option would not keep users logged in, if/when was browser closed and the session was destroyed
+* Fixed issue with custom login form going to 404 page if WordPress was hosted on a subdomain
 
 = 1.7.2 =
 * Fixed bug where if your home page is set to a static page and is protected by a membership level it would still show the content.
@@ -92,7 +93,7 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Added security upgrade to send passwords hashed to ONTRAPORT for user authentication.
 * Fixed a bug with the "not_contact" shortcode where it would not function if a user was not logged in.
 * Improved page load speeds by moving the ONTRAPORT tracking script into the footer.
-* Fixed a bug where a user not logged in trying to use the affiliate_center would redirect to wp_login.php instead of the PilotPress log in page.
+* Fixed a bug where a user not logged in trying to use the affiliate_center would redirect to wp_login.php instead of the PilotPress login page.
 * Added two additional shortcode attributes to the show_if shortcode - 'not_cookied_contact' and 'is_cookied_contact'
 
 = 1.6.0g =
@@ -144,6 +145,10 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Upgrade Notice ==
 
+= 1.7.3 =
+* Fixed issue with logging in where the "remember me" option would not keep users logged in, if/when was browser closed
+* Fixed issue with custom login form going to 404 page if WordPress was hosted on a subdomain
+
 = 1.7.2 =
 * Fixed bug where if your home page is set to a static page and is protected by a membership level it would still show the content.
 * Fixes issue where WordPress trimmed the trailing and leading spaces when logging in however PilotPress did not.
@@ -177,7 +182,7 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Added security upgrade to send passwords hashed to ONTRAPORT for user authentication.
 * Fixed a bug with the "not_contact" shortcode where it would not function if a user was not logged in.
 * Improved page load speeds by moving the ONTRAPORT tracking script into the footer.
-* Fixed a bug where a user not logged in trying to use the affiliate_center would redirect to wp_login.php instead of the PilotPress log in page.
+* Fixed a bug where a user not logged in trying to use the affiliate_center would redirect to wp_login.php instead of the PilotPress login page.
 * Added two additional shortcode attributes to the show_if shortcode - 'not_cookied_contact' and 'is_cookied_contact'
 
 = 1.6.0g =
@@ -222,8 +227,6 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Using your WordPress site as a Membership Site (aka Protecting and revealing content) ==
-
-[Video: __Protect and Release Content__ (6:46)](http://pseudo01.hddn.com/vod/moonray.moonray/PilotPress_5_protect_and_release_content.mp4)
 
 Below are instructions on how to protect content in your membership site. There are two ways to do this:
 
@@ -278,7 +281,7 @@ If you are creating sequential content, as opposed to just the silver, gold, pla
 
 - - For this rule, you would set the "What Should Happen" section to "Change Field to Value" and then select the "Membership Level" field as the one to have changed. Then, set it to change to the next specific level of membership, in this case, we'd set it to 'Week 2'. It would be the same moving forward to week 3, etc. 
 
-- - Next , you could create an email step to fire immediately after the rule step to notify your contact that they are able to log in and access week 2's content, you may repeat this as many time as you wish. And, you don't have to do it all at once. You might add the first three weeks to start, then add a week or twos worth of additional content at a time later on. The process is the same either way. 
+- - Next , you could create an email step to fire immediately after the rule step to notify your contact that they are able to login and access week 2's content, you may repeat this as many time as you wish. And, you don't have to do it all at once. You might add the first three weeks to start, then add a week or twos worth of additional content at a time later on. The process is the same either way. 
 
 - Note: Be sure to save each step as you go and then save your sequence when you're all through.
 
@@ -331,8 +334,6 @@ __Show Content Based if Contact is Identified__
 > Displays content if visitor has __not__  been identified as a contact through a previous login , or ONTRAPORT defined action (email click , form fillout , etc)
 
 == Creating the Sign-Up Page == 
-
-[Video: __Creating a Sign Up Page and Adding Forms__ (2:32)](http://pseudo01.hddn.com/vod/moonray.moonray/PilotPress%20_6_Create_Signup_pg_and_post_form_to_wp.mp4)
 
 This is where your prospects/clients purchase their membership. It's the page that any sales emails, sales letters, and sales videos would point to.
 
