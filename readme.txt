@@ -57,8 +57,8 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 == Changelog ==
 
 = 1.7.3 =
-* Fixed issue with logging in where the "remember me" option would not keep users logged in, if/when was browser closed and the session was destoryed
-* Fixed issue with custom log in form going to 404 page if WordPress was hosted on a subdomain
+* Fixed issue with logging in where the "remember me" option would not keep users logged in, if/when was browser closed and the session was destroyed
+* Fixed issue with custom login form going to 404 page if WordPress was hosted on a subdomain
 
 = 1.7.2 =
 * Fixed bug where if your home page is set to a static page and is protected by a membership level it would still show the content.
@@ -93,7 +93,7 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Added security upgrade to send passwords hashed to ONTRAPORT for user authentication.
 * Fixed a bug with the "not_contact" shortcode where it would not function if a user was not logged in.
 * Improved page load speeds by moving the ONTRAPORT tracking script into the footer.
-* Fixed a bug where a user not logged in trying to use the affiliate_center would redirect to wp_login.php instead of the PilotPress log in page.
+* Fixed a bug where a user not logged in trying to use the affiliate_center would redirect to wp_login.php instead of the PilotPress login page.
 * Added two additional shortcode attributes to the show_if shortcode - 'not_cookied_contact' and 'is_cookied_contact'
 
 = 1.6.0g =
@@ -147,7 +147,7 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 = 1.7.3 =
 * Fixed issue with logging in where the "remember me" option would not keep users logged in, if/when was browser closed
-* Fixed issue with custom log in form going to 404 page if WordPress was hosted on a subdomain
+* Fixed issue with custom login form going to 404 page if WordPress was hosted on a subdomain
 
 = 1.7.2 =
 * Fixed bug where if your home page is set to a static page and is protected by a membership level it would still show the content.
@@ -182,7 +182,7 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Added security upgrade to send passwords hashed to ONTRAPORT for user authentication.
 * Fixed a bug with the "not_contact" shortcode where it would not function if a user was not logged in.
 * Improved page load speeds by moving the ONTRAPORT tracking script into the footer.
-* Fixed a bug where a user not logged in trying to use the affiliate_center would redirect to wp_login.php instead of the PilotPress log in page.
+* Fixed a bug where a user not logged in trying to use the affiliate_center would redirect to wp_login.php instead of the PilotPress login page.
 * Added two additional shortcode attributes to the show_if shortcode - 'not_cookied_contact' and 'is_cookied_contact'
 
 = 1.6.0g =
@@ -281,7 +281,7 @@ If you are creating sequential content, as opposed to just the silver, gold, pla
 
 - - For this rule, you would set the "What Should Happen" section to "Change Field to Value" and then select the "Membership Level" field as the one to have changed. Then, set it to change to the next specific level of membership, in this case, we'd set it to 'Week 2'. It would be the same moving forward to week 3, etc. 
 
-- - Next , you could create an email step to fire immediately after the rule step to notify your contact that they are able to log in and access week 2's content, you may repeat this as many time as you wish. And, you don't have to do it all at once. You might add the first three weeks to start, then add a week or twos worth of additional content at a time later on. The process is the same either way. 
+- - Next , you could create an email step to fire immediately after the rule step to notify your contact that they are able to login and access week 2's content, you may repeat this as many time as you wish. And, you don't have to do it all at once. You might add the first three weeks to start, then add a week or twos worth of additional content at a time later on. The process is the same either way. 
 
 - Note: Be sure to save each step as you go and then save your sequence when you're all through.
 
