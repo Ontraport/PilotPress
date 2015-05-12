@@ -50,8 +50,7 @@ Copyright: 2013, Ontraport
 	
 			$this->bind_hooks(); /* hook into WP */
 			$this->start_session(); /* use sessions, controversial but easy */
-			$this->load_settings(); /* hitup the API or grab transient */
-	
+			
 			/* use this var, it's handy */
 			$this->uri = get_option('siteurl').'/wp-content/plugins/'.dirname(plugin_basename(__FILE__));
 			
@@ -170,11 +169,8 @@ Copyright: 2013, Ontraport
                         }
 					}
 
-					if(isset($_COOKIE["contact_id"])) {
-						if(!function_exists('get_currentuserinfo'))
-						{
-						    include(ABSPATH . "wp-includes/pluggable.php"); 
-						}
+					//Only make use cookie if not an admin user.
+					if(isset($_COOKIE["contact_id"]) && !current_user_can('manage_options')) {
 						global $current_user;
 						get_currentuserinfo();
 						$username = $current_user->user_login;
@@ -784,6 +780,8 @@ Copyright: 2013, Ontraport
 		private function bind_hooks() {
 
 			add_action("init", array(&$this, "load_scripts"));
+			/* hitup the API or grab transient */
+			add_action("init", array(&$this, "load_settings"));
 			add_action('init', array(&$this,'sessionslap_ping'));
 			add_action('wp_print_styles', array(&$this, 'stylesheets'));
 			add_action('wp_print_footer_scripts', array(&$this, 'tracking'));
@@ -2994,7 +2992,7 @@ Copyright: 2013, Ontraport
 						jQuery(".op-login-form-'.$this->incrementalnumber.' #pp-lf-forgotpw").click(function()
 							{ 
 								jQuery(".op-login-form-'.$this->incrementalnumber.' .login-password, .op-login-form-'.$this->incrementalnumber.' .login-remember").hide(300);
-								jQuery(".op-login-form-'.$this->incrementalnumber.' #pp-loginform").attr( "action", "http://'.$_SERVER["SERVER_NAME"].'/wp-login.php?action=lostpassword");
+								jQuery(".op-login-form-'.$this->incrementalnumber.' #pp-loginform").attr( "action", "'.site_url().'/wp-login.php?action=lostpassword");
 								jQuery(".op-login-form-'.$this->incrementalnumber.' .login-username label").text("Enter your Username or Email");
 								jQuery(".op-login-form-'.$this->incrementalnumber.' .login-username input").attr("name", "user_login");
 								jQuery(".op-login-form-'.$this->incrementalnumber.' #wp-submit").attr("value", "Send me my Password!");
