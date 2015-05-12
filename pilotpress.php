@@ -169,7 +169,7 @@ Copyright: 2013, Ontraport
                         }
 					}
 
-					//Only make use cookie if not an admin user.
+					//Only make use of cookie if not an admin user.
 					if(isset($_COOKIE["contact_id"]) && !current_user_can('manage_options')) {
 						global $current_user;
 						get_currentuserinfo();
