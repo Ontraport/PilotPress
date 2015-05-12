@@ -54,36 +54,6 @@ Copyright: 2013, Ontraport
 			/* use this var, it's handy */
 			$this->uri = get_option('siteurl').'/wp-content/plugins/'.dirname(plugin_basename(__FILE__));
 			
-			/* metaboxes in admin */
-			$this->metaboxes[self::NSPACE."page_box"] = array(
-			    	'id' => self::NSPACE.'page_box',
-			    	'title' => 'PilotPress Options',
-			    	'context' => 'side',
-			    	'priority' => 'high',
-			    	'fields' => array(
-			        	array(
-			            		'name' => 'Access Levels',
-			            		'desc' => 'To have no level, do not check any boxes.',
-			            		'id' => self::NSPACE.'level',
-			            		'type' => 'multi-checkbox',
-			            		'options' => $this->get_setting("membership_levels", "oap")
-			        	),
-						array(
-			            		'name' => 'Show in Navigation',
-			            		'desc' => false,
-			            		'id' => self::NSPACE.'show_in_nav',
-			            		'type' => 'single-checkbox'
-			   			),
-						array(
-			            		'name' => 'On Error',
-			            		'desc' => $this->get_setting("error_redirect_message"),
-			            		'id' => self::NSPACE.'redirect_location',
-			            		'type' => $this->get_setting("error_redirect_field"),
-			            		'options' => array()
-			        	)
-			     	)
-			);
-			
 			/* the various Centers */
 			$this->centers = array(
 				"customer_center" => array(
@@ -796,6 +766,7 @@ Copyright: 2013, Ontraport
 				add_filter('admin_init', array(&$this, 'clean_meta'));
 				add_filter('admin_init', array(&$this, 'flush_rewrite_rules'));
 				add_filter('admin_init', array(&$this, 'user_lockout'));
+				add_action('admin_init', array(&$this, 'load_metaboxes'));
 				add_action('admin_enqueue_scripts', array(&$this, 'admin_load_scripts'));
 				add_action('admin_notices', array(&$this, 'display_notice'));
 
@@ -1835,7 +1806,42 @@ Copyright: 2013, Ontraport
 			global $wpdb;
 			$wpdb->query("DELETE FROM $wpdb->postmeta WHERE meta_key = '_pilotpress_level' AND meta_value = ''");
 		}
-	
+
+		/* Load up the membership level meta boxes but after we have gotten the levels */
+		function load_metaboxes() {
+
+			/* metaboxes in admin */
+			$this->metaboxes[self::NSPACE."page_box"] = array(
+			    	'id' => self::NSPACE.'page_box',
+			    	'title' => 'PilotPress Options',
+			    	'context' => 'side',
+			    	'priority' => 'high',
+			    	'fields' => array(
+			        	array(
+			            		'name' => 'Access Levels',
+			            		'desc' => 'To have no level, do not check any boxes.',
+			            		'id' => self::NSPACE.'level',
+			            		'type' => 'multi-checkbox',
+			            		'options' => $this->get_setting("membership_levels", "oap")
+			        	),
+						array(
+			            		'name' => 'Show in Navigation',
+			            		'desc' => false,
+			            		'id' => self::NSPACE.'show_in_nav',
+			            		'type' => 'single-checkbox'
+			   			),
+						array(
+			            		'name' => 'On Error',
+			            		'desc' => $this->get_setting("error_redirect_message"),
+			            		'id' => self::NSPACE.'redirect_location',
+			            		'type' => $this->get_setting("error_redirect_field"),
+			            		'options' => array()
+			        	)
+			     	)
+			);
+
+		}
+
 		/* shortcodes for conditional ifs */
 		function shortcode_show_if($atts, $content = null) {
 
