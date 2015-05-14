@@ -56,6 +56,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
+= 1.7.4 =
+* Fixed issue where admin user could not connect to the Pilotpress API
+
 = 1.7.3 =
 * Fixed issue with logging in where the "remember me" option would not keep users logged in, if/when was browser closed and the session was destroyed
 * Fixed issue with custom login form going to 404 page if WordPress was hosted on a subdomain
@@ -144,6 +147,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+
+= 1.7.4 =
+* Fixed issue where admin user could not connect to the Pilotpress API
 
 = 1.7.3 =
 * Fixed issue with logging in where the "remember me" option would not keep users logged in, if/when was browser closed
