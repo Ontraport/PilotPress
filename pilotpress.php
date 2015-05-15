@@ -3,7 +3,7 @@
 Plugin Name: PilotPress
 Plugin URI: http://ontraport.com/
 Description: OfficeAutoPilot / Ontraport WordPress integration plugin.
-Version: 1.7.4
+Version: 1.7.5
 Author: Ontraport Inc.
 Author URI: http://ontraport.com/
 Text Domain: pilotpress
@@ -20,7 +20,7 @@ Copyright: 2013, Ontraport
 	
 	class PilotPress {
 
-        const VERSION = "1.7.4";
+        const VERSION = "1.7.5";
 		const WP_MIN = "3.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
@@ -766,7 +766,6 @@ Copyright: 2013, Ontraport
 				add_filter('admin_init', array(&$this, 'clean_meta'));
 				add_filter('admin_init', array(&$this, 'flush_rewrite_rules'));
 				add_filter('admin_init', array(&$this, 'user_lockout'));
-				add_action('admin_init', array(&$this, 'load_metaboxes'));
 				add_action('admin_enqueue_scripts', array(&$this, 'admin_load_scripts'));
 				add_action('admin_notices', array(&$this, 'display_notice'));
 
@@ -1381,6 +1380,7 @@ Copyright: 2013, Ontraport
 		/* this function adds the metaboxes defined in construct() to the WP admin */
 		function metabox_add() {
 			if($this->is_setup()) {
+				load_metaboxes();
 				foreach($this->metaboxes as $id => $details) {
 					foreach($this->get_setting("post_types","wp") as $type) {
 						add_meta_box($details['id'], $details['title'], array($this, "metabox_display"), $type, $details['context'], $details['priority']);
