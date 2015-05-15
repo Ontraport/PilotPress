@@ -1380,7 +1380,7 @@ Copyright: 2013, Ontraport
 		/* this function adds the metaboxes defined in construct() to the WP admin */
 		function metabox_add() {
 			if($this->is_setup()) {
-				load_metaboxes();
+				$this->load_metaboxes();
 				foreach($this->metaboxes as $id => $details) {
 					foreach($this->get_setting("post_types","wp") as $type) {
 						add_meta_box($details['id'], $details['title'], array($this, "metabox_display"), $type, $details['context'], $details['priority']);
