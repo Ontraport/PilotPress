@@ -12,7 +12,6 @@ Copyright: 2013, Ontraport
 
 	if(defined("ABSPATH")) {
 		include_once(ABSPATH.WPINC.'/class-http.php');
-		include_once(ABSPATH.WPINC.'/registration.php');
 		register_activation_hook(__FILE__, "enable_pilotpress");
 		register_deactivation_hook(__FILE__, "disable_pilotpress");
 		$pilotpress = new PilotPress;
@@ -51,6 +50,11 @@ Copyright: 2013, Ontraport
 			$this->bind_hooks(); /* hook into WP */
 			$this->start_session(); /* use sessions, controversial but easy */
 			$this->load_settings(); /* hitup the API or grab transient */
+
+			// Includes new ppprotect class that has enhanced protections for things like categories etc.
+			require_once( plugin_dir_path( __FILE__ ) . 'ppprotect-categories.php');
+			$ppp = new PPProtect();
+			$ppp->ppprotectHooks();
 	
 			/* use this var, it's handy */
 			$this->uri = get_option('siteurl').'/wp-content/plugins/'.dirname(plugin_basename(__FILE__));
@@ -1466,7 +1470,7 @@ Copyright: 2013, Ontraport
 
 				$meta = get_post_meta($post->ID, $field['id']);
 
-				if(is_array($meta) && count($meta) < 2) {
+				if(is_array($meta) && count($meta) < 2  && !empty($meta)) {
 					$meta = $meta[0];
 				}
 
