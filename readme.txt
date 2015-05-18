@@ -56,6 +56,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
+= 1.7.5 =
+* Fixed issue from last release that did not properly show membership levels meta box when creating a new page/post
+
 = 1.7.4 =
 * Fixed issue where admin user could not connect to the Pilotpress API
 
@@ -147,6 +150,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+
+= 1.7.5 =
+* Fixed issue from last release that did not properly show membership levels meta box when creating a new page/post
 
 = 1.7.4 =
 * Fixed issue where admin user could not connect to the Pilotpress API
