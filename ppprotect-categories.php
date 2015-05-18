@@ -81,7 +81,7 @@ class PPProtect
 		add_option( 'ppprotectDbVersion', $ppprotectDbVersion );
 	}
 
-	// Saves ppprotect data in the database
+	// Saves ppprotect data in the ppprotect table in the site's database
 	private function ppprotectInsertInDb( $type, $id, $name, $levels, $redirect, $protectposts )
 	{
 		global $wpdb;
@@ -98,7 +98,7 @@ class PPProtect
 		);
 	}
 
-	// Saves ppprotect data in the database
+	// Gets ppprotect data from the ppprotect table in the site's database
 	private function ppprotectGetFromDb( $itemId )
 	{
 		global $wpdb;
@@ -115,7 +115,7 @@ class PPProtect
 		return $row;
 	}
 
-	// Register & enqueue admin styles
+	// Register & enqueues admin styles
 	public function ppprotectAdminStyles() 
 	{
         wp_register_style( 'ppprotect_admin_css', plugins_url( 'pp-categories-admin-styles.css', __FILE__ ), false );
@@ -144,7 +144,16 @@ class PPProtect
 	/*
 	 * PP Protect Categories
 	 */
- 	// Generates the HTML content to be displayed in the add and edit categories sections
+ 	/**
+	 * @author William DeAngelis
+	 * @param object $tag An object that contains information about a given category
+	 * @var integer $tagId The category ID
+	 * @var array $cLevels An array that contains all of the category permission settings for a given category
+	 * @var array $memLevels An array that contains all of the possible PilotPress permission levels for this site
+	 * @var array $pages An array that contains all of the possible pages a user could redirect users to within this site
+	 *
+	 * @return Generates the HTML content to be displayed in the add and edit categories sections
+	 **/
 	public function ppprotectEditFormFields ( $tag ) 
 	{
 		if ( isset($tag->term_id) )
@@ -161,12 +170,6 @@ class PPProtect
 		}
 
 		$memLevels = $this->ppprotectGetPPMemLevels();
-
-		// Used to test off grid only
-		if ( !isset( $memLevels ) )
-		{
-			$membLevels = array('test1', 'test2', 'test3');
-		}
 
 		$ppprotectCat = '<div class="form-field ppprotect-wrap"><label class="ppp-title" for="ppprotect-category">PilotPress Permissions</label><div class="ppprotect-levels-redirect"><div class="ppprotect-levels-message">1. Select the permission levels of users that can access this category of posts.</div><div class="ppprotect-category-levels">';
 
@@ -223,7 +226,12 @@ class PPProtect
 	    echo $ppprotectCat;
 	}
 
-	// Communicates with PilotPress and gets the site's membership levels
+	/**
+	 * @author William DeAngelis
+	 * @var array $membershipLevels An array containing all of the possible permission levels for the site
+	 *
+	 * @return Communicates with PilotPress and gets the site's membership levels
+	 **/
 	protected function ppprotectGetPPMemLevels()
 	{
 		require_once( plugin_dir_path( __FILE__ ) . '../pilotpress/pilotpress.php' );
@@ -234,7 +242,12 @@ class PPProtect
 	    return $membershipLevels;
 	}
 
-	// Check's the current user's membership level's against others
+	/**
+	 * @author William DeAngelis
+	 * @param string $memLevel A permission level to test if is in the allowed permissions
+	 *
+	 * @return Check's the current user's membership level against those in the allowed permissions
+	 **/
 	protected function ppprotectAccessCheck( $memLevel ) 
 	{			
 		if( isset( $_SESSION['user_levels'] ) && is_array( $_SESSION['user_levels'] ) && in_array( $memLevel, $_SESSION['user_levels'] )) 
@@ -247,7 +260,16 @@ class PPProtect
 		}
 	}
 
-	// Saves the protected category values
+	/**
+	 * @author William DeAngelis
+	 * @param integer $term_id The ID of the category to be saved
+	 * @var string $redirect The URL of the page to redirect the user to when they don't have proper perms
+	 * @var string $protectPosts A checkbox option that tells us whether to protect all the posts in the category or just the category page itself.
+	 * @var string $name The name of the category being protected
+	 * @var array $levels The permission levels used to protect the category
+	 *
+	 * @return No return.
+	 **/
 	public function ppprotectSaveFields( $term_id )
 	{
 		if ( isset( $_POST['ppprotectCat'] ) ) 
@@ -286,7 +308,15 @@ class PPProtect
 		}
 	}
 
-	// Protects categories
+	/**
+	 * @author William DeAngelis
+	 * @var integer $catId The ID of the category in the loop
+	 * @var array $perms An array of all the category's permission options for a given category
+	 * @var array $levels An array that contains all of the user's permission levels
+	 * @var array $userAccessLevels An array that contains the users permission levels IF they match the levels needed to view this post. IF empty then it will use the redirect
+	 *
+	 * @return string Checks the users permission levels and the redirects them if they don't have the proper perms
+	 **/
 	public function ppprotectCategory()
 	{
 		global $wp_query;
@@ -319,7 +349,18 @@ class PPProtect
 		}
 	}
 
-	// Settings to protect the posts on the front end
+	/**
+	 * @author William DeAngelis
+	 * @var integer $postID The ID of the current post
+	 * @var array $catOfPost An array containing all of the categories the post is assigned to
+	 * @var integer $catId The ID of the category in the loop
+	 * @var array $perms An array of all the category's permission options for a given category
+	 * @var array $protectCategories A blank array that gets created here and contains all the possible category permission settings
+	 * @var array $userAccessLevels An array that contains the users permission levels IF they match the levels needed to view this post. IF empty then it will use the redirect
+	 * @var string $selectedOverride Variable set by the user. Two options 'post-override' (Allows the post to override the category settings) and 'category-override' (Allows the category's settings to override the post's.). These options are used here to determine which option is currently selected and to update the option accordingly in the dropdown select.
+	 *
+	 * @return string Checks the users permission levels and the redirects them if they don't have the proper perms
+	 **/
 	public function ppprotectPost()
 	{
 		if (!is_admin() && is_single())
@@ -373,7 +414,13 @@ class PPProtect
 		}
 	}
 
-	// AJAX function that updates the override settings of each post in a category
+	/**
+	 * @author William DeAngelis
+	 *
+	 * @return string After updating the _ppProtectCatOverride setting that determines whether the category or the post's permissions will be used to protect it, it returns the selected option from the db and gives it to AJAX query set in ppprotectAdminCategoryScripts()
+	 *
+	 * @see ppprotectAdminCategoryScripts() The function that uses this function via AJAX to update and check the override setting
+	 **/
 	public function wp_ajax_ppprotectAllowOverride()
 	{
 		if( !empty($_POST) )
@@ -391,7 +438,17 @@ class PPProtect
 	    exit();
 	}
 
-	// Warns users when global cateogry protection settings are taking prescendence and allow them to override them if necessary
+	/**
+	 * @author William DeAngelis
+	 * @var integer $postID The ID of the current post
+	 * @var array $catOfPost An array containing all of the categories the post is assigned to
+	 * @var integer $catId The ID of the category in the loop
+	 * @var array $perms An array of all the category's permission options for a given category
+	 * @var array $protectedCategories An blank array that gets created here and contains all the possible category permission settings
+	 * @var string $selectedOverride Variable set by the user. Two options 'post-override' (Allows the post to override the category settings) and 'category-override' (Allows the category's settings to override the post's.). These options are used here to determine which option is currently selected and to update the option accordingly in the dropdown select.
+	 *
+	 * @return string Warns users when global cateogry protection settings are taking prescendence, provides an interface to see exactly what the category settings will do, and provides an option to override the category's protection settings
+	 **/
 	public function ppprotectPostWarning()
 	{
 		if ( is_admin() )
@@ -429,7 +486,7 @@ class PPProtect
 					$postOverride = '';
 			}
 
-			// If post is protected globally, add a message.
+			// If post is protected globally, change the PP options to reflect the override.
 			if ( !empty($protectedCategories) )
 			{
 				$message = '<div class="ppprotect-protected-global-wrapper inside">
@@ -479,15 +536,23 @@ class PPProtect
 				echo $message;
 
 				// Bind the JS to the footer to control the category override settings
-				add_action( 'admin_footer', array( $this, 'ppprotectAdminFooterScripts') );
+				add_action( 'admin_footer', array( $this, 'ppprotectAdminCategoryScripts') );
 
 			}
 			
 		}		
 	}
 
-	// Add footer scripts to post pages that have category permissions applied to the posts. This js also manages the ability to override the category permissions
-	public function ppprotectAdminFooterScripts()
+	/**
+	 * @author William DeAngelis
+	 * @var integer $postID The ID of the current post
+	 * @var string $selectedOverride Variable set by the user. Two options 'post-override' (Allows the post to override the category settings) and 'category-override' (Allows the category's settings to override the post's.). These options are used here to determine what to display in the post's PP options metabox.
+	 *
+	 * @return string Adds footer scripts to post pages that have category permissions applied to the posts. This js manages the ability to override the category permissions by using an AJAX call to set the $selectedOverride varabile via the wp_ajax_ppprotectAllowOverride function. This variable gets used to control whether the category permission settings or the post's permission settings take prescedence. 
+	 *
+	 * @see wp_ajax_ppprotectAllowOverride() The function that updates the override variable
+	 **/ 
+	public function ppprotectAdminCategoryScripts()
 	{
 		global $post;
 		$postID = $post->ID;
@@ -536,7 +601,11 @@ class PPProtect
 		echo $jsMods;
 	}
 
-	// Inform the user that by choosing to protect all posts in this cateogry the category permissions will override the post permissions.
+	/**
+	 * @author William DeAngelis
+	 *
+	 * @return string Adds a footer script to admin category setting pages. Informs the user that by choosing to protect all posts in this cateogry the category permissions will override the post permissions.
+	 **/
 	public function ppprotectCategoryJS()
 	{
 		$catFoot = '<script type="text/javascript">
