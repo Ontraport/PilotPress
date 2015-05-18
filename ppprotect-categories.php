@@ -48,7 +48,7 @@ class PPProtect
 		$categories = get_current_screen();
 		if ( $categories->base == 'edit-tags' )
 		{
-			// Add JS to alert user when they perform certain actions
+			// Add footer JS on category admin pages to alert the user when they perform certain actions
 			add_action( 'admin_footer', array($this, 'ppprotectCategoryJS') );
 		}
 	}
@@ -319,13 +319,7 @@ class PPProtect
 		}
 	}
 
-	/* 
-	 * Protects category posts
-	 *
-	 * @var array $userAccessLevels The levels of access the user
-	 * @var array $userAccessLevels The levels of access the user
-	 *
-	 */
+	// Settings to protect the posts on the front end
 	public function ppprotectPost()
 	{
 		if (!is_admin() && is_single())
@@ -379,6 +373,7 @@ class PPProtect
 		}
 	}
 
+	// AJAX function that updates the override settings of each post in a category
 	public function wp_ajax_ppprotectAllowOverride()
 	{
 		if( !empty($_POST) )
@@ -396,7 +391,7 @@ class PPProtect
 	    exit();
 	}
 
-	// Warns users when global cateogry protection settings are taking prescendence 
+	// Warns users when global cateogry protection settings are taking prescendence and allow them to override them if necessary
 	public function ppprotectPostWarning()
 	{
 		if ( is_admin() )
@@ -491,6 +486,7 @@ class PPProtect
 		}		
 	}
 
+	// Add footer scripts to post pages that have category permissions applied to the posts. This js also manages the ability to override the category permissions
 	public function ppprotectAdminFooterScripts()
 	{
 		global $post;
@@ -540,7 +536,7 @@ class PPProtect
 		echo $jsMods;
 	}
 
-
+	// Inform the user that by choosing to protect all posts in this cateogry the category permissions will override the post permissions.
 	public function ppprotectCategoryJS()
 	{
 		$catFoot = '<script type="text/javascript">
@@ -548,7 +544,7 @@ class PPProtect
 			{
 				if ( this.checked === true )
 				{
-					var accept = confirm("IMPORTANT - By selecting this option you will override the PilotPress permission settings you may have already added to any of the posts in this category. This means that the settings you just selected here will take prescedence. Once you save this setting you will be able to manually set permissions for each post, but you will have to open each post and select the option \'Set permissions manually\' to do so. Are you sure you want to proceed with this setting?");
+					var accept = confirm("IMPORTANT - By selecting this option you will override the PilotPress permission settings you may have already added to any of the posts in this category. This means that the settings you just selected here will take prescedence. Once you save this setting you will still be able to manually set permissions for each post, but you will have to open each post and select the option \'Set permissions manually\' to do so. Are you sure you want to proceed with this setting?");
 					if ( accept != true )
 					{
 						jQuery(this).prop("checked", false);
