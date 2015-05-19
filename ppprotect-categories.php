@@ -46,10 +46,13 @@ class PPProtect
 		add_action( 'wp_ajax_pp_category_override', array($this, 'wp_ajax_ppprotectAllowOverride') );
 
 		$categories = get_current_screen();
-		if ( $categories->base == 'edit-tags' )
+		if ( isset($categories) )
 		{
-			// Add footer JS on category admin pages to alert the user when they perform certain actions
-			add_action( 'admin_footer', array($this, 'ppprotectCategoryJS') );
+			if ( $categories->base == 'edit-tags' )
+			{
+				// Add footer JS on category admin pages to alert the user when they perform certain actions
+				add_action( 'admin_footer', array($this, 'ppprotectCategoryJS') );
+			}
 		}
 	}
 
