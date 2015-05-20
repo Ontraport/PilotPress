@@ -48,16 +48,9 @@ class PPProtect
 
 		// Add AJAX function to allow users to override each post manually and ignore the category override
 		add_action( 'wp_ajax_pp_category_override', array(&$this, 'wp_ajax_ppprotectAllowOverride') );
-
-		$categories = get_current_screen();
-		if ( isset($categories) )
-		{
-			if ( $categories->base == 'edit-tags' )
-			{
-				// Add footer JS on category admin pages to alert the user when they perform certain actions
-				add_action( 'admin_footer', array(&$this, 'ppprotectCategoryJS') );
-			}
-		}
+		
+		// Add footer JS on category admin pages to alert the user when they perform certain actions
+		add_action( 'admin_footer', array(&$this, 'ppprotectCategoryJS') );
 	}
 
 	// Create a custom table for PPProtect
@@ -620,21 +613,30 @@ class PPProtect
 	 **/
 	public function ppprotectCategoryJS()
 	{
-		$catFoot = '<script type="text/javascript">
-			jQuery(".ppprotect-posts input:checkbox").change(function()
+		$categories = get_current_screen();
+		if ( isset($categories) )
+		{
+			if ( $categories->base == 'edit-tags' )
 			{
-				if ( this.checked === true )
-				{
-					var accept = confirm("IMPORTANT - By selecting this option you will override the PilotPress permission settings you may have already added to any of the posts in this category. This means that the settings you just selected here will take prescedence. Once you save this setting you will still be able to manually set permissions for each post, but you will have to open each post and select the option \'Set permissions manually\' to do so. Are you sure you want to proceed with this setting?");
-					if ( accept != true )
-					{
-						jQuery(this).prop("checked", false);
-					}
-				}
-			});
-		</script>';
 
-		echo $catFoot;
+				$catFoot = '<script type="text/javascript">
+					jQuery(".ppprotect-posts input:checkbox").change(function()
+					{
+						if ( this.checked === true )
+						{
+							var accept = confirm("IMPORTANT - By selecting this option you will override the PilotPress permission settings you may have already added to any of the posts in this category. This means that the settings you just selected here will take prescedence. Once you save this setting you will still be able to manually set permissions for each post, but you will have to open each post and select the option \'Set permissions manually\' to do so. Are you sure you want to proceed with this setting?");
+							if ( accept != true )
+							{
+								jQuery(this).prop("checked", false);
+							}
+						}
+					});
+				</script>';
+
+				echo $catFoot;
+
+			}
+		}
 	}
 
 }
