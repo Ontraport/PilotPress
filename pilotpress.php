@@ -44,16 +44,19 @@ Copyright: 2013, Ontraport
 		private $homepage_url;
 		private $incrementalnumber = 1;
 		private $tagsSequences;
+		//Global ppprotect-category reference
+		private $ppp;
 	
 		function __construct() {
 	
+			// Includes new ppprotect class that has enhanced protections for things like categories etc.
+			require_once( plugin_dir_path( __FILE__ ) . 'ppprotect-categories.php');
+			$this->ppp = new PPProtect();
+
 			$this->bind_hooks(); /* hook into WP */
 			$this->start_session(); /* use sessions, controversial but easy */
 
-			// Includes new ppprotect class that has enhanced protections for things like categories etc.
-			require_once( plugin_dir_path( __FILE__ ) . 'ppprotect-categories.php');
-			$ppp = new PPProtect();
-			$ppp->ppprotectHooks();	
+			$this->ppp->ppprotectHooks();	
 
 			/* use this var, it's handy */
 			$this->uri = get_option('siteurl').'/wp-content/plugins/'.dirname(plugin_basename(__FILE__));
@@ -170,9 +173,13 @@ Copyright: 2013, Ontraport
 						if(isset($api_result["fields"])) {
 							$_SESSION["user_fields"] = $api_result["fields"];
 						}
+
 						if(isset($api_result["membership_level"])) {
 							$_SESSION["user_levels"] = $api_result["membership_level"];
 						}
+
+						$this->ppp->ppprotectSetPPMemLevels($api_result["membership_levels"]);
+
 						$this->status = 1;
 
 						//Lets store the API version into their options table if available
@@ -735,7 +742,7 @@ Copyright: 2013, Ontraport
 					$response = wp_remote_post($endpoint, $post);
 				}
 			}
-		
+
 			if(is_wp_error($response) || $response['response']['code'] == 500) {
 				return false;
 			} else {

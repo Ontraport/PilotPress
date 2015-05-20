@@ -1,6 +1,10 @@
 <?php 
 class PPProtect
 {
+
+	//This is to have PilotPress set the memberhsip levels so we can use them here
+	private $membershipLevels;
+
 	/*
 	 * Admin functions & Plugin setup
 	 */
@@ -16,34 +20,34 @@ class PPProtect
 	public function ppprotectHooks() 
 	{
 		// Creates the PPProtect table
-		register_activation_hook( __FILE__, array($this, 'ppprotectCreateTable') );
+		register_activation_hook( __FILE__, array(&$this, 'ppprotectCreateTable') );
 
 		// Adds admin styles
-		add_action( 'admin_enqueue_scripts', array($this, 'ppprotectAdminStyles') );
+		add_action( 'admin_enqueue_scripts', array(&$this, 'ppprotectAdminStyles') );
 
 		// Add new options into edit-tags.php?taxonomy=category
-		add_action( 'category_edit_form_fields', array($this, 'ppprotectEditFormFields') );
-		add_action( 'category_add_form_fields', array($this, 'ppprotectEditFormFields') );
+		add_action( 'category_edit_form_fields', array(&$this, 'ppprotectEditFormFields') );
+		add_action( 'category_add_form_fields', array(&$this, 'ppprotectEditFormFields') );
 
 		// Saves new ppp category options
-		add_action ( 'created_category', array($this, 'ppprotectSaveFields') );
-		add_action ( 'edited_category', array($this, 'ppprotectSaveFields') );
+		add_action ( 'created_category', array(&$this, 'ppprotectSaveFields') );
+		add_action ( 'edited_category', array(&$this, 'ppprotectSaveFields') );
 
 		// Protect categories by hooking into any loops
-		add_action ( 'loop_start', array($this, 'ppprotectCategory') );
+		add_action ( 'loop_start', array(&$this, 'ppprotectCategory') );
 
 		// Protect posts by hooking into any loops
-		add_action ( 'the_post', array($this, 'ppprotectPost') );
+		add_action ( 'the_post', array(&$this, 'ppprotectPost') );
 
 		// Add admin area warning that post permission levels are being overridden by a category
-		add_action ( 'edit_form_after_editor', array($this, 'ppprotectPostWarning') );
+		add_action ( 'edit_form_after_editor', array(&$this, 'ppprotectPostWarning') );
 
 		// Buffer stuff... to allow for the redirect
-		add_action( 'init', array($this, 'ppprotectObStart') );
-		add_action( 'wp_footer', array($this, 'ppprotectObEnd') );
+		add_action( 'init', array(&$this, 'ppprotectObStart') );
+		add_action( 'wp_footer', array(&$this, 'ppprotectObEnd') );
 
 		// Add AJAX function to allow users to override each post manually and ignore the category override
-		add_action( 'wp_ajax_pp_category_override', array($this, 'wp_ajax_ppprotectAllowOverride') );
+		add_action( 'wp_ajax_pp_category_override', array(&$this, 'wp_ajax_ppprotectAllowOverride') );
 
 		$categories = get_current_screen();
 		if ( isset($categories) )
@@ -51,7 +55,7 @@ class PPProtect
 			if ( $categories->base == 'edit-tags' )
 			{
 				// Add footer JS on category admin pages to alert the user when they perform certain actions
-				add_action( 'admin_footer', array($this, 'ppprotectCategoryJS') );
+				add_action( 'admin_footer', array(&$this, 'ppprotectCategoryJS') );
 			}
 		}
 	}
@@ -230,6 +234,16 @@ class PPProtect
 	}
 
 	/**
+	 * @author Aaron Lamar
+	 *
+	 * @param array $levels of pilotpress membershipLevels
+	 **/
+	public function ppprotectSetPPMemLevels($levels)
+	{
+		$this->membershipLevels = $levels;
+	}
+
+	/**
 	 * @author William DeAngelis
 	 * @var array $membershipLevels An array containing all of the possible permission levels for the site
 	 *
@@ -237,12 +251,7 @@ class PPProtect
 	 **/
 	protected function ppprotectGetPPMemLevels()
 	{
-		require_once( plugin_dir_path( __FILE__ ) . '../pilotpress/pilotpress.php' );
-
-		$pp = new PilotPress();
-	    $membershipLevels = $pp->get_setting("membership_levels", "oap", true);
-
-	    return $membershipLevels;
+	    return $this->membershipLevels;
 	}
 
 	/**
@@ -539,7 +548,7 @@ class PPProtect
 				echo $message;
 
 				// Bind the JS to the footer to control the category override settings
-				add_action( 'admin_footer', array( $this, 'ppprotectAdminCategoryScripts') );
+				add_action( 'admin_footer', array( &$this, 'ppprotectAdminCategoryScripts') );
 
 			}
 			
@@ -627,4 +636,5 @@ class PPProtect
 
 		echo $catFoot;
 	}
+
 }
