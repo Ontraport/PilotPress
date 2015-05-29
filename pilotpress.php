@@ -168,6 +168,10 @@ Copyright: 2013, Ontraport
 						}
 						if(isset($api_result["membership_level"])) {
 							$_SESSION["user_levels"] = $api_result["membership_level"];
+							if(!empty($username))
+							{
+								$_SESSION["user_name"] = $username;
+							}							
 						}
 						$this->status = 1;
 
