@@ -56,6 +56,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
+= 1.7.7 =
+* Fixed session not allowing customer center to show preoperly if browser was closed and re-opened.
+
 = 1.7.6 =
 * Fixed tracking.js not using the 3.0 tracking domain when necessary.
 
@@ -153,6 +156,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+
+= 1.7.7 =
+* Fixed session not allowing customer center to show preoperly if browser was closed and re-opened.
 
 = 1.7.6 =
 * Fixed tracking.js not using the 3.0 tracking domain when necessary.
