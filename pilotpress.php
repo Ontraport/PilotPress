@@ -253,13 +253,25 @@ Copyright: 2013, Ontraport
 		/* ditto getter is also handy */
 		function get_field($key) {
 			foreach($this->get_setting("fields", "user", true) as $group => $fields) {
-				if(isset($fields[$key])) {
+				if(isset($fields[$key])) 
+				{
 					return $fields[$key];
 				}
+				else if (isset($fields[html_entity_decode($key)]))
+				{
+					return $fields[html_entity_decode($key)];
+				}
+				
 			}
+
 			foreach($this->get_setting("default_fields", "oap", true) as $group => $fields) {
-				if(isset($fields[$key])) {
+				if(isset($fields[$key])) 
+				{
 					return $fields[$key];
+				}
+				else if (isset($fields[html_entity_decode($key)]))
+				{
+					return $fields[html_entity_decode($key)];
 				}
 			}
 			return "";
