@@ -1269,7 +1269,7 @@ Copyright: 2013, Ontraport
 					var viral = $('#viral_'+the_video_id).val();
                     var omit_flowplayerjs = false;
 
-                    if($("textarea.wp-editor-area", top.document).val().indexOf("clientvids/flowplayer") !== -1) {
+                    if($("textarea.wp-editor-area", top.document).val().indexOf("oap_flow/flowplayer") !== -1) {
                         omit_flowplayerjs = true;
                     }
 
