@@ -2093,7 +2093,7 @@ Copyright: 2013, Ontraport
 		    		"site" => site_url()
 		    	);
 		    	
-		    	$api_result = $this->api_call("get_merge_fields" , $data);
+		    	$api_result = $this->api_call("get_contact_merge_fields" , $data);
 
     			if(isset($api_result["fields"])) 
     			{
