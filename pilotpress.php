@@ -2,9 +2,9 @@
 /*
 Plugin Name: PilotPress
 Plugin URI: http://ontraport.com/
-Description: OfficeAutoPilot / Ontraport WordPress integration plugin.
+Description: OfficeAutoPilot / ONTRAPORT WordPress integration plugin.
 Version: 1.8.0
-Author: Ontraport Inc.
+Author: ONTRAPORT Inc.
 Author URI: http://ontraport.com/
 Text Domain: pilotpress
 Copyright: 2013, Ontraport

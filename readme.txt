@@ -1,6 +1,6 @@
 === PilotPress ===
 Contributors: ONTRAPORT
-Tags: OfficeAutoPilot, Sendpepper, Moonray, Ontraport, Pilotpress, Oap, Membership Site, Customer Center, Affiliate Center, Integration
+Tags: OfficeAutoPilot, Sendpepper, Moonray, ONTRAPORT, Pilotpress, Oap, Membership Site, Customer Center, Affiliate Center, Integration
 Requires at least: 3.2
 Tested up to: 4.2.2
 Stable tag: trunk
@@ -56,8 +56,13 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
+= 1.8.0 =
+* Decreased page load times and login times dramatically by defferring several database calls to only when you need them instead of every page load.
+* Fixed issue with ONTRAPORT merge codes not merging properly when the name had html entitites.
+* Fixed issue with the Customer Center not properly displaying after closing the browser and you logged in through the Remember Me option.
+
 = 1.7.7 =
-* Fixed session not allowing customer center to show preoperly if browser was closed and re-opened.
+* Fixed session not allowing customer center to show properly if browser was closed and re-opened.
 
 = 1.7.6 =
 * Fixed tracking.js not using the 3.0 tracking domain when necessary.
@@ -157,8 +162,13 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Upgrade Notice ==
 
+= 1.8.0 =
+* Decreased page load times and login times dramatically by defferring several database calls to only when you need them instead of every page load.
+* Fixed issue with ONTRAPORT merge codes not merging properly when the name had html entitites.
+* Fixed issue with the Customer Center not properly displaying after closing the browser and you logged in through the Remember Me option.
+
 = 1.7.7 =
-* Fixed session not allowing customer center to show preoperly if browser was closed and re-opened.
+* Fixed session not allowing customer center to show properly if browser was closed and re-opened.
 
 = 1.7.6 =
 * Fixed tracking.js not using the 3.0 tracking domain when necessary.
