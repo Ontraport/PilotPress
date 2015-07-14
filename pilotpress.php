@@ -3,7 +3,7 @@
 Plugin Name: PilotPress
 Plugin URI: http://ontraport.com/
 Description: OfficeAutoPilot / ONTRAPORT WordPress integration plugin.
-Version: 1.8.0
+Version: 1.8.1
 Author: ONTRAPORT Inc.
 Author URI: http://ontraport.com/
 Text Domain: pilotpress
@@ -16,11 +16,13 @@ Copyright: 2013, Ontraport
 		register_activation_hook(__FILE__, "enable_pilotpress");
 		register_deactivation_hook(__FILE__, "disable_pilotpress");
 		$pilotpress = new PilotPress;
+		//create and load up the PilotPress Text Widget statically
+		add_action( 'widgets_init',array( 'PilotPress_Widget', 'register' ) );
 	}
 	
 	class PilotPress {
 
-        const VERSION = "1.8.0";
+        const VERSION = "1.8.1";
 		const WP_MIN = "3.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
@@ -50,6 +52,9 @@ Copyright: 2013, Ontraport
 	
 			$this->bind_hooks(); /* hook into WP */
 			$this->start_session(); /* use sessions, controversial but easy */
+
+			/* Used for keeping a record of the current shortcodes to be merged */
+			$this->shortcodeFields = array();
 			
 			/* use this var, it's handy */
 			$this->uri = get_option('siteurl').'/wp-content/plugins/'.dirname(plugin_basename(__FILE__));
@@ -2070,7 +2075,6 @@ Copyright: 2013, Ontraport
 		 */
 		function get_merge_field_settings($content)
 		{
-			$this->shortcodeFields = array();
 		    $pattern = get_shortcode_regex();
 		    preg_match_all('/'.$pattern.'/uis', $content, $matches);
 
@@ -3239,6 +3243,139 @@ Copyright: 2013, Ontraport
 		}
 
 	}
+
+
+	//Since we ping this file independent of the WordPress bootstrap lets make sure the class exists...
+	if (class_exists("WP_Widget"))
+	{
+		// Creating the widget 
+		class Pilotpress_Widget extends WP_Widget {
+
+			//Registers the widget with the WordPress Widget API.
+		    public static function register() {
+		        register_widget( __CLASS__ );
+		    }
+
+			public function __construct() {
+
+				parent::__construct(
+					// Base ID of your widget
+					'pilotpress_widget', 
+
+					// Widget name will appear in UI
+					__('PilotPress Text', 'pilotpress_widget_domain'), 
+
+					// Widget description
+					array( 
+						'description' => __( 'An enhanced text area widget that helps you display your ONTRAPORT merge fields', 'pilotpress_widget_domain' )
+					);
+				);
+			}
+
+			// Creating widget front-end
+			public function widget( $args, $instance ) {
+				global $pilotpress;
+				$title = apply_filters( 'widget_title', $instance['title'] );
+				
+				$textarea =  $instance["textarea"];
+				// before and after widget arguments are defined by themes
+				echo $args['before_widget'];
+				if ( ! empty( $title ) )
+				{
+					echo $args['before_title'] . $title . $args['after_title'];
+				}
+				//Lets check and process merge fields if we need too!
+				if (has_shortcode( $textarea , "pilotpress_field") || has_shortcode( $textarea ,"field")  )
+				{
+					$pilotpress->get_merge_field_settings($textarea);
+				}
+				//Apply the default filter in case they have somehting to make PHP work...
+				echo apply_filters( 'widget_text' , do_shortcode($textarea) );
+				
+				echo $args['after_widget'];
+			}
+					
+			// Widget Backend 
+			public function form( $instance ) {
+				global $pilotpress;
+
+				//Handle merge codes
+				$mergeFieldDropDown = "<p>";
+				$mergeFieldDropDown .= "<label for='" . $this->get_field_id( "merge-codes" ) ."'>" . __("Merge Fields:", "pilotpress_widget_domain") . "</label>";
+				$mergeFieldDropDown .= "<select id='" . $this->get_field_id( "merge-codes" ) . "' class='op-merge-codes__select' name='" . $this->get_field_id( "merge-codes" ) . "'>";
+				$mergeFieldDropDown .= "</p>";
+
+				foreach($pilotpress->get_setting("default_fields", "oap", true) as $group => $fields) {
+					
+					$mergeFieldDropDown .= "<option value=''>  " . $group . "</option>";
+					foreach ($fields as $key => $field)
+					{
+						
+						$mergeFieldDropDown .= "<option value='[pilotpress_field name=\"{$key}\"]'>&nbsp;&nbsp;&nbsp;" . $key . "</option>";
+					}
+				}
+
+				$mergeFieldDropDown .= "</select>";
+
+				if ( isset( $instance[ 'title' ] ) ) {
+					$title = $instance[ 'title' ];
+				}
+				else {
+					$title = __( '', 'pilotpress_widget_domain' );
+				}
+				
+				if (isset( $instance[ 'textarea' ] )) {
+					$textarea = $instance[ 'textarea' ];
+				}
+				else {
+					$textarea = __( '', 'pilotpress_widget_domain' );
+				}
+
+				$titleText = "<p>";
+				$titleText .= "<label for='" . $this->get_field_id( 'title' ) ."'>". __( 'Title:' ) ."</label>";
+				$titleText .= "<input class='widefat' id='". $this->get_field_id( 'title' ) ."' name='". $this->get_field_name( 'title' )."' type='text' value='". esc_attr( $title )."' />";
+				$titleText .= "</p>";
+
+				$textAreaText = "<p>";
+				$textAreaText .= "<textarea class='widefat' id='". $this->get_field_id( 'textarea' )."' name='" . $this->get_field_name( 'textarea' ) ."' rows='16' cols='20'>". esc_attr( $textarea ) ."</textarea>";
+				$textAreaText .= "</p>";
+
+				//echo out the actual widget content block
+				echo $mergeFieldDropDown;
+				echo $titleText;
+				echo $textAreaText;
+				
+			}
+				
+			// Updating widget replacing old instances with new
+			public function update( $new_instance, $old_instance ) {
+				$instance = array();
+				$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
+				$instance['textarea'] = ( ! empty( $new_instance['textarea'] ) ) ?  $new_instance['textarea']  : '';
+				return $instance;
+			}
+		} // Class pilotpress_widget ends here
+
+	}
+
+	//Hook into the admin footer so as to load this JS 
+	add_action( 'admin_footer-widgets.php' , "pilotpress_widget_js" );
+
+	function pilotpress_widget_js() {
+		$widgetJavascript = "
+			<script type='text/javascript'>
+				jQuery( document ).ready( function(){
+				     	jQuery( 'body' ).on( 'change', 'select.op-merge-codes__select', function( ev ) {
+							var textarea = jQuery(this).closest( 'form' ).find( 'textarea' );
+							textarea.val(textarea.val() + jQuery(this).val());
+				     	} );
+				 } );
+			</script>
+		";
+		echo $widgetJavascript;
+	}
+
+
 	
 	function enable_pilotpress() {
 		$pilotpress = new PilotPress;
