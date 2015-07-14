@@ -56,6 +56,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
+= 1.8.1 = 
+* Added new PilotPress text widget to allow merge codes to merge easily and without any extra modifications to your theme.
+
 = 1.8.0 =
 * Decreased page load times and login times dramatically by defferring several database calls to only when you need them instead of every page load.
 * Fixed issue with ONTRAPORT merge codes not merging properly when the name had html entitites.
@@ -161,6 +164,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+
+= 1.8.1 = 
+* Added new PilotPress text widget to allow merge codes to merge easily and without any extra modifications to your theme.
 
 = 1.8.0 =
 * Decreased page load times and login times dramatically by defferring several database calls to only when you need them instead of every page load.
