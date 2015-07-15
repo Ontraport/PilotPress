@@ -3268,7 +3268,7 @@ Copyright: 2013, Ontraport
 					// Widget description
 					array( 
 						'description' => __( 'An enhanced text area widget that helps you display your ONTRAPORT merge fields', 'pilotpress_widget_domain' )
-					);
+					)
 				);
 			}
 
