@@ -18,6 +18,8 @@ Copyright: 2013, Ontraport
 		$pilotpress = new PilotPress;
 		//create and load up the PilotPress Text Widget statically
 		add_action( 'widgets_init',array( 'PilotPress_Widget', 'register' ) );
+		//Hook into the admin footer so as to load this JS 
+		add_action( 'admin_footer-widgets.php' , "pilotpress_widget_js" );
 	}
 	
 	class PilotPress {
@@ -3357,9 +3359,6 @@ Copyright: 2013, Ontraport
 		} // Class pilotpress_widget ends here
 
 	}
-
-	//Hook into the admin footer so as to load this JS 
-	add_action( 'admin_footer-widgets.php' , "pilotpress_widget_js" );
 
 	function pilotpress_widget_js() {
 		$widgetJavascript = "
