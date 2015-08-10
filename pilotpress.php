@@ -146,7 +146,7 @@ Copyright: 2013, Ontraport
                         }
 					}
 
-										if ($pilotPressTrackingURL && $pilotPressTrackingURL)
+					if ($pilotPressTrackingURL && $pilotPressTrackingURL)
 					{
 						$this->settings["oap"]["tracking_url"] = $pilotPressTrackingURL;
 						$this->settings["oap"]["tracking"] = $pilotPressTracking;
