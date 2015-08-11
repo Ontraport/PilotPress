@@ -151,7 +151,7 @@ Copyright: 2013, Ontraport
 					$pilotPressTracking = get_transient("pilotpress_tracking");
 					$getSiteSettings = true;
 
-					if ($pilotPressTrackingURL && $pilotPressTracking)
+					if ($pilotPressTrackingURL !== false && $pilotPressTracking !== false)
 					{
 						$this->settings["oap"]["tracking_url"] = $pilotPressTrackingURL;
 						$this->settings["oap"]["tracking"] = $pilotPressTracking;
