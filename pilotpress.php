@@ -3,7 +3,7 @@
 Plugin Name: PilotPress
 Plugin URI: http://ontraport.com/
 Description: OfficeAutoPilot / ONTRAPORT WordPress integration plugin.
-Version: 1.8.1
+Version: 1.8.2
 Author: ONTRAPORT Inc.
 Author URI: http://ontraport.com/
 Text Domain: pilotpress
@@ -24,7 +24,7 @@ Copyright: 2013, Ontraport
 	
 	class PilotPress {
 
-        const VERSION = "1.8.1";
+        const VERSION = "1.8.2";
 		const WP_MIN = "3.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
@@ -146,46 +146,72 @@ Copyright: 2013, Ontraport
                         }
 					}
 
-					//Only make use of cookie if not an admin user.
-					if(isset($_COOKIE["contact_id"]) && !current_user_can('manage_options')) {
-						global $current_user;
-						get_currentuserinfo();
-						$username = $current_user->user_login;
-						$api_result = $this->api_call("get_site_settings", array("site" => site_url(), "contact_id" => $_COOKIE["contact_id"], "username" => $username , "version"=>self::VERSION ));
-					}
-					else {
-						$api_result = $this->api_call("get_site_settings", array("site" => site_url() , "version"=>self::VERSION ));
+					//check if these are stored in the cache first
+					$pilotPressTrackingURL = get_transient("pilotpress_tracking_url");
+					$pilotPressTracking = get_transient("pilotpress_tracking");
+					$getSiteSettings = true;
+
+					if ($pilotPressTrackingURL !== false && $pilotPressTracking !== false)
+					{
+						$this->settings["oap"]["tracking_url"] = $pilotPressTrackingURL;
+						$this->settings["oap"]["tracking"] = $pilotPressTracking;
+						$getSiteSettings = false;
 					}
 
-					if(is_array($api_result)) {
-						$this->settings["oap"] = $api_result;
-						
-						if(isset($this->settings["user"])) {
-							unset($this->settings["user"]);
+					//Check to make sure we really need to even make this API call...
+					if (is_user_logged_in() || $getSiteSettings )
+					{
+						//Only make use of cookie if not an admin user.
+						if(isset($_COOKIE["contact_id"]) && !current_user_can('manage_options')) {
+							global $current_user;
+							get_currentuserinfo();
+							$username = $current_user->user_login;
+							$api_result = $this->api_call("get_site_settings", array("site" => site_url(), "contact_id" => $_COOKIE["contact_id"], "username" => $username , "version"=>self::VERSION ));
 						}
-						
-						if(!$this->get_setting("disablecaching")) {
-							set_transient('pilotpress_cache', $this->settings, 60 * 60 * 12); 
+						else {
+							$api_result = $this->api_call("get_site_settings", array("site" => site_url() , "version"=>self::VERSION ));
 						}
-																	
-						$_SESSION["default_fields"] = $this->settings["oap"]["default_fields"];
 
-						if(isset($api_result["membership_level"])) {
-							$_SESSION["user_levels"] = $api_result["membership_level"];
-							if(!empty($username))
+						if(is_array($api_result)) {
+							$this->settings["oap"] = $api_result;
+							
+							if(isset($this->settings["user"])) {
+								unset($this->settings["user"]);
+							}
+							
+							if(!$this->get_setting("disablecaching")) {
+								set_transient('pilotpress_cache', $this->settings, 60 * 60 * 12); 
+							}
+																		
+							$_SESSION["default_fields"] = $this->settings["oap"]["default_fields"];
+
+							if(isset($api_result["membership_level"])) {
+								$_SESSION["user_levels"] = $api_result["membership_level"];
+								if(!empty($username))
+								{
+									$_SESSION["user_name"] = $username;
+								}							
+							}
+							$this->status = 1;
+
+							//Lets store the API version into their options table if available
+							if (isset($api_result["pilotpress_api_version"]))
 							{
-								$_SESSION["user_name"] = $username;
+								update_option("pilotpress_api_version" , $api_result["pilotpress_api_version"]);
+							}
+
+							//Cache the tracking link and custom domain so we can avoid calling this every page load
+							if (isset($api_result["tracking_url"]))
+							{
+								set_transient('pilotpress_tracking_url', $api_result["tracking_url"],60 * 60 * 24);
+							}
+
+							if (isset($api_result["tracking_url"]))
+							{
+								set_transient('pilotpress_tracking', $api_result["tracking"],60 * 60 * 24);
 							}							
-						}
-						$this->status = 1;
 
-						//Lets store the API version into their options table if available
-						if (isset($api_result["pilotpress_api_version"]))
-						{
-							update_option("pilotpress_api_version" , $api_result["pilotpress_api_version"]);
 						}
-						
-
 					}
 				} else {
 					$this->status = 0;
