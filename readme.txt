@@ -56,6 +56,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
+= 1.8.2 = 
+* Reduced the api calls needed for PilotPress every page load for logged out users.
+
 = 1.8.1 = 
 * Added new PilotPress text widget to allow merge codes to merge easily and without any extra modifications to your theme.
 
@@ -164,6 +167,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+
+= 1.8.2 = 
+* Reduced the api calls needed for PilotPress every page load for logged out users.
 
 = 1.8.1 = 
 * Added new PilotPress text widget to allow merge codes to merge easily and without any extra modifications to your theme.
