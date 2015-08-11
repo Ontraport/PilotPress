@@ -148,10 +148,10 @@ Copyright: 2013, Ontraport
 
 					//check if these are stored in the cache first
 					$pilotPressTrackingURL = get_transient("pilotpress_tracking_url");
-					$pilotPressTracking = get_transient("pilotpress_tracking_url");
+					$pilotPressTracking = get_transient("pilotpress_tracking");
 					$getSiteSettings = true;
 
-					if ($pilotPressTrackingURL && $pilotPressTrackingURL)
+					if ($pilotPressTrackingURL && $pilotPressTracking)
 					{
 						$this->settings["oap"]["tracking_url"] = $pilotPressTrackingURL;
 						$this->settings["oap"]["tracking"] = $pilotPressTracking;
