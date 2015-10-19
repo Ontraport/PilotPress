@@ -83,7 +83,7 @@ function pilotpress_sessionslap_face($options){
 		}
 		
 		<?php
-		if ($options['pilotpress_logout_users']){
+		if (array_key_exists("pilotpress_logout_users", $options) && $options["pilotpress_logout_users"]){
 		?>
 		window.sessionslap.init();
 		<?php
