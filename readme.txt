@@ -174,6 +174,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Upgrade Notice ==
 
+= 1.8.4 = 
+* Adds PilotPress functionality to ONTRApages custom post types
+
 = 1.8.3 = 
 * Fixed issue with the password reset email sending to the user every time they logged in.
 
