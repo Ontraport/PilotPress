@@ -58,6 +58,7 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 = 1.8.4 = 
 * Adds PilotPress functionality to ONTRApages custom post types
+* Fixed issue with nested shortcodes not populating pilotpress_field shortcodes
 
 = 1.8.3 = 
 * Fixed issue with the password reset email sending to the user every time they logged in.
@@ -176,6 +177,7 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 = 1.8.4 = 
 * Adds PilotPress functionality to ONTRApages custom post types
+* Fixed issue with nested shortcodes not populating pilotpress_field shortcodes
 
 = 1.8.3 = 
 * Fixed issue with the password reset email sending to the user every time they logged in.
