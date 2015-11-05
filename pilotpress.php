@@ -2142,7 +2142,7 @@ Copyright: 2013, Ontraport
 			    	);
 			    	
 			    	$api_result = $this->api_call("get_contact_merge_fields" , $data);
-			    	var_dump($api_result);
+			    	
 	    			if(isset($api_result["fields"])) 
 	    			{
 	    				// In order for the get_field() to work later on we need to add these fields to the group list of known merged fields.
