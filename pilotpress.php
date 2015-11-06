@@ -2101,44 +2101,55 @@ Copyright: 2013, Ontraport
 			return $content;
 		}
 
+		
 		/** 
 		 *  @brief Make api call to grab merge fields that are only present in the content
 		 *
 		 *  @param String $content the string to check if merge fields are present
 		 *
 		 */
-		function get_merge_field_settings($content)
+		function get_merge_field_settings($content , $makeApiCall = true)
 		{
 		    $pattern = get_shortcode_regex();
+
 		    preg_match_all('/'.$pattern.'/uis', $content, $matches);
 
 		    for ( $i=0; $i < count($matches[0]); $i++ ) 
 		    {
 		    	$fields = shortcode_parse_atts($matches[3][$i]);
-
+		    	
 		        if ( isset( $matches[2][$i] ) && ($matches[2][$i] == "pilotpress_field" || $matches[2][$i] == "field") ) 
 		        {
 		           $this->shortcodeFields[$fields["name"]] = 1;
 		        }
+		        elseif (!empty($matches[5][$i]))
+		        {
+		        	//call this recursively so we can process shortcodes inside shortcodes
+		        	$this->get_merge_field_settings($matches[5][$i] , false);
+		        }
 		    }
 
-		    //make API call now as well if needed!
-		    if (!empty($this->shortcodeFields) && is_array($this->shortcodeFields) && !empty($_SESSION["user_name"]))
+		    //Since this can be called recursively lets make sure when it does call it we only make this at the initial call of the function
+		    if ($makeApiCall)
 		    {
-		    	$data = array(
-		    		"username" => $_SESSION["user_name"],
-		    		"fields" => $this->shortcodeFields,
-		    		"site" => site_url()
-		    	);
-		    	
-		    	$api_result = $this->api_call("get_contact_merge_fields" , $data);
-
-    			if(isset($api_result["fields"])) 
-    			{
-    				// In order for the get_field() to work later on we need to add these fields to the group list of known merged fields.
-					$_SESSION["user_fields"]["--merged fields--"] = $api_result["fields"];
-					$this->settings["user"]["fields"]["--merged fields--"] = $api_result["fields"];
-				}
+			    //make API call now as well if needed!
+			    if (!empty($this->shortcodeFields) && is_array($this->shortcodeFields) && !empty($_SESSION["user_name"]))
+			    {
+			    	$data = array(
+			    		"username" => $_SESSION["user_name"],
+			    		"fields" => $this->shortcodeFields,
+			    		"site" => site_url()
+			    	);
+			    	
+			    	$api_result = $this->api_call("get_contact_merge_fields" , $data);
+			    	
+	    			if(isset($api_result["fields"])) 
+	    			{
+	    				// In order for the get_field() to work later on we need to add these fields to the group list of known merged fields.
+						$_SESSION["user_fields"]["--merged fields--"] = $api_result["fields"];
+						$this->settings["user"]["fields"]["--merged fields--"] = $api_result["fields"];
+					}
+			    }
 		    }
 		}
 
