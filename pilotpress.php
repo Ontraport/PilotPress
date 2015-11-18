@@ -343,7 +343,7 @@ Copyright: 2013, Ontraport
 			add_settings_section('pilotpress-settings-general', __('General Settings', 'pilotpress'), array(&$this, 'settings_section_general'), 'pilotpress-settings'); 
 			add_settings_field('pilotpress_app_id',   __('Application ID', 'pilotpress'), array(&$this, 'display_settings_app_id'), 'pilotpress-settings', 'pilotpress-settings-general');
 			add_settings_field('pilotpress_api_key', __('API Key', 'pilotpress'), array(&$this, 'display_settings_api_key'), 'pilotpress-settings', 'pilotpress-settings-general');
-			add_settings_field('wp_userlockout', __('Lock users out of Profile editor', 'pilotpress'), array(&$this, 'display_settings_userlockout'), 'pilotpress-settings', 'pilotpress-settings-general');
+			add_settings_field('wp_userlockout', __('Lock all users without Admin role out of profile editor', 'pilotpress'), array(&$this, 'display_settings_userlockout'), 'pilotpress-settings', 'pilotpress-settings-general');
 
 			add_settings_section('settings_section_oap', __(self::$brand . ' Integration Settings', 'pilotpress'), array(&$this, 'settings_section_oap'), 'pilotpress-settings'); 
 			add_settings_field('customer_center',  __('Enable Customer Center', 'pilotpress'), array(&$this, 'display_settings_cc'), 'pilotpress-settings', 'settings_section_oap');
