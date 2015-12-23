@@ -1566,6 +1566,7 @@ Copyright: 2013, Ontraport
 			if(isset($_POST["wp-submit"])) {
 
 				//Wordpress trims trailing and leading spaces before authenticating, lets do the same.
+				$username = sanitize_user($username);
 				$password = trim($password);
 
                 $hashed_password = $username . self::VERSION . $password . self::AUTH_SALT;
