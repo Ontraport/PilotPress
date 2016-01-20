@@ -56,6 +56,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
+= 1.8.5 = 
+* Fixed various notices and added custom filters to override routeable pages returned by PilotPress
+
 = 1.8.4 = 
 * Adds PilotPress functionality to ONTRApages custom post types
 * Fixed issue with nested shortcodes not populating pilotpress_field shortcodes
@@ -174,6 +177,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+
+= 1.8.5 = 
+* Fixed various notices and added custom filters to override routeable pages returned by PilotPress
 
 = 1.8.4 = 
 * Adds PilotPress functionality to ONTRApages custom post types
