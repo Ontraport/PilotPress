@@ -3,7 +3,7 @@
 Plugin Name: PilotPress
 Plugin URI: http://ontraport.com/
 Description: OfficeAutoPilot / ONTRAPORT WordPress integration plugin.
-Version: 1.8.4
+Version: 1.8.5
 Author: ONTRAPORT Inc.
 Author URI: http://ontraport.com/
 Text Domain: pilotpress
@@ -12,7 +12,11 @@ Copyright: 2013, Ontraport
 
 	if(defined("ABSPATH")) {
 		include_once(ABSPATH.WPINC.'/class-http.php');
-		include_once(ABSPATH.WPINC.'/registration.php');
+		global $wp_version;
+		if (version_compare($wp_version,"3.1","<"))
+		{
+			include_once(ABSPATH.WPINC.'/registration.php');
+		}
 		register_activation_hook(__FILE__, "enable_pilotpress");
 		register_deactivation_hook(__FILE__, "disable_pilotpress");
 		$pilotpress = new PilotPress;
@@ -21,10 +25,12 @@ Copyright: 2013, Ontraport
 		//Hook into the admin footer so as to load this JS 
 		add_action( 'admin_footer-widgets.php' , "pilotpress_widget_js" );
 	}
+
+
 	
 	class PilotPress {
 
-        const VERSION = "1.8.4";
+        const VERSION = "1.8.5";
 		const WP_MIN = "3.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
@@ -1493,7 +1499,7 @@ Copyright: 2013, Ontraport
 
 				$meta = get_post_meta($post->ID, $field['id']);
 
-				if(is_array($meta) && count($meta) < 2) {
+				if(is_array($meta) && count($meta) < 2 && array_key_exists(0, $meta)) {
 					$meta = $meta[0];
 				}
 
@@ -1698,6 +1704,7 @@ Copyright: 2013, Ontraport
 						if(!isset($_SESSION["user_name"])) {
 
 							$this->start_session();
+
 
 							foreach($api_result as $key => $value) {
 								$_SESSION[$key] = $value;
@@ -2172,8 +2179,7 @@ Copyright: 2013, Ontraport
 				}
 			}
 			
-			return $array;
-			
+			return apply_filters("pilotpress_get_routeable_pages",$array);
 		}
 	
 		/* this is where we part the seas: if something isn't routable, then tree falls in the woods to no fuss */
