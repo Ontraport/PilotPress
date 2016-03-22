@@ -56,6 +56,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
+= 1.8.6 = 
+* Convert Tracking script to use the one served by our CDN... improves speed
+
 = 1.8.5 = 
 * Fixed various notices and added custom filters to override routeable pages returned by PilotPress
 
