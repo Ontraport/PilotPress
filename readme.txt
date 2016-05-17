@@ -184,7 +184,7 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Upgrade Notice ==
 
-= 1.9 = 
+= 1.9 =
 * Adding category protection to PilotPress
 
 = 1.8.6 = 
