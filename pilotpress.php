@@ -68,7 +68,6 @@ Copyright: 2013, Ontraport
 			$this->bind_hooks(); /* hook into WP */
 			$this->start_session(); /* use sessions, controversial but easy */
 
-
 			$this->ppp->ppprotectHooks();	
 
 			/* Used for keeping a record of the current shortcodes to be merged */
@@ -188,7 +187,6 @@ Copyright: 2013, Ontraport
 							$api_result = $this->api_call("get_site_settings", array("site" => site_url() , "version"=>self::VERSION ));
 						}
 
-
 						if(is_array($api_result)) {
 							$this->settings["oap"] = $api_result;
 							
@@ -208,6 +206,7 @@ Copyright: 2013, Ontraport
 																		
 							$_SESSION["default_fields"] = $this->settings["oap"]["default_fields"];
 
+
 							if(isset($api_result["membership_level"])) {
 								$_SESSION["user_levels"] = $api_result["membership_level"];
 								if(!empty($username))
@@ -217,17 +216,20 @@ Copyright: 2013, Ontraport
 							}
 							$this->status = 1;
 
+
 							//Lets store the API version into their options table if available
 							if (isset($api_result["pilotpress_api_version"]))
 							{
 								update_option("pilotpress_api_version" , $api_result["pilotpress_api_version"]);
 							}
 
+
 							//Cache the tracking link and custom domain so we can avoid calling this every page load
 							if (isset($api_result["tracking_url"]))
 							{
 								set_transient('pilotpress_tracking_url', $api_result["tracking_url"],60 * 60 * 24);
 							}
+
 
 							if (isset($api_result["tracking_url"]))
 							{
