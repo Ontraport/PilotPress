@@ -1,8 +1,8 @@
 === PilotPress ===
 Contributors: ONTRAPORT
-Tags: OfficeAutoPilot, Sendpepper, Moonray, Ontraport, Pilotpress, Oap, Membership Site, Customer Center, Affiliate Center, Integration
+Tags: OfficeAutoPilot, Sendpepper, Moonray, ONTRAPORT, Pilotpress, Oap, Membership Site, Customer Center, Affiliate Center, Integration
 Requires at least: 3.2
-Tested up to: 4.1
+Tested up to: 4.2.2
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -55,6 +55,39 @@ Content that relates to your business, and content that you can successfully sel
 If you have Pilotpress installed, you can create a new page and simply enter "[login_page]" (excluding quotes) and that page will then have a login box for users to use.
 
 == Changelog ==
+
+= 1.8.6 = 
+* Convert Tracking script to use the one served by our CDN... improves speed
+
+= 1.8.5 = 
+* Fixed various notices and added custom filters to override routeable pages returned by PilotPress
+
+= 1.8.4 = 
+* Adds PilotPress functionality to ONTRApages custom post types
+* Fixed issue with nested shortcodes not populating pilotpress_field shortcodes
+
+= 1.8.3 = 
+* Fixed issue with the password reset email sending to the user every time they logged in.
+
+= 1.8.2 = 
+* Reduced the api calls needed for PilotPress every page load for logged out users.
+
+= 1.8.1 = 
+* Added new PilotPress text widget to allow merge codes to merge easily and without any extra modifications to your theme.
+
+= 1.8.0 =
+* Decreased page load times and login times dramatically by defferring several database calls to only when you need them instead of every page load.
+* Fixed issue with ONTRAPORT merge codes not merging properly when the name had html entitites.
+* Fixed issue with the Customer Center not properly displaying after closing the browser and you logged in through the Remember Me option.
+
+= 1.7.7 =
+* Fixed session not allowing customer center to show properly if browser was closed and re-opened.
+
+= 1.7.6 =
+* Fixed tracking.js not using the 3.0 tracking domain when necessary.
+
+= 1.7.5 =
+* Fixed issue from last release that did not properly show membership levels meta box when creating a new page/post
 
 = 1.7.4 =
 * Fixed issue where admin user could not connect to the Pilotpress API
@@ -147,6 +180,39 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+
+= 1.8.6 = 
+* Convert Tracking script to use the one served by our CDN... improves speed
+
+= 1.8.5 = 
+* Fixed various notices and added custom filters to override routeable pages returned by PilotPress
+
+= 1.8.4 = 
+* Adds PilotPress functionality to ONTRApages custom post types
+* Fixed issue with nested shortcodes not populating pilotpress_field shortcodes
+
+= 1.8.3 = 
+* Fixed issue with the password reset email sending to the user every time they logged in.
+
+= 1.8.2 = 
+* Reduced the api calls needed for PilotPress every page load for logged out users.
+
+= 1.8.1 = 
+* Added new PilotPress text widget to allow merge codes to merge easily and without any extra modifications to your theme.
+
+= 1.8.0 =
+* Decreased page load times and login times dramatically by defferring several database calls to only when you need them instead of every page load.
+* Fixed issue with ONTRAPORT merge codes not merging properly when the name had html entitites.
+* Fixed issue with the Customer Center not properly displaying after closing the browser and you logged in through the Remember Me option.
+
+= 1.7.7 =
+* Fixed session not allowing customer center to show properly if browser was closed and re-opened.
+
+= 1.7.6 =
+* Fixed tracking.js not using the 3.0 tracking domain when necessary.
+
+= 1.7.5 =
+* Fixed issue from last release that did not properly show membership levels meta box when creating a new page/post
 
 = 1.7.4 =
 * Fixed issue where admin user could not connect to the Pilotpress API

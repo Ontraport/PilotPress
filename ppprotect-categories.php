@@ -280,7 +280,15 @@ class PPProtect
 		if ( isset( $_POST['ppprotectCat'] ) ) 
 		{
 			$redirect = $_POST['ppprotectRedirect'];
-			$protectPosts = $_POST['ppprotectPosts'];
+
+			if ( isset($_POST['ppprotectPosts']) )
+			{
+				$protectPosts = $_POST['ppprotectPosts'];
+			}
+			else
+			{
+				$protectPosts = '';
+			}
 
 			if ( $protectPosts === 'on' )
 			{

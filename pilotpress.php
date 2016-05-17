@@ -2,9 +2,9 @@
 /*
 Plugin Name: PilotPress
 Plugin URI: http://ontraport.com/
-Description: OfficeAutoPilot / Ontraport WordPress integration plugin.
-Version: 1.7.5
-Author: Ontraport Inc.
+Description: OfficeAutoPilot / ONTRAPORT WordPress integration plugin.
+Version: 1.8.6
+Author: ONTRAPORT Inc.
 Author URI: http://ontraport.com/
 Text Domain: pilotpress
 Copyright: 2013, Ontraport
@@ -12,14 +12,25 @@ Copyright: 2013, Ontraport
 
 	if(defined("ABSPATH")) {
 		include_once(ABSPATH.WPINC.'/class-http.php');
+		global $wp_version;
+		if (version_compare($wp_version,"3.1","<"))
+		{
+			include_once(ABSPATH.WPINC.'/registration.php');
+		}
 		register_activation_hook(__FILE__, "enable_pilotpress");
 		register_deactivation_hook(__FILE__, "disable_pilotpress");
 		$pilotpress = new PilotPress;
+		//create and load up the PilotPress Text Widget statically
+		add_action( 'widgets_init',array( 'PilotPress_Widget', 'register' ) );
+		//Hook into the admin footer so as to load this JS 
+		add_action( 'admin_footer-widgets.php' , "pilotpress_widget_js" );
 	}
+
+
 	
 	class PilotPress {
 
-        const VERSION = "1.7.5";
+        const VERSION = "1.8.6";
 		const WP_MIN = "3.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
@@ -44,6 +55,7 @@ Copyright: 2013, Ontraport
 		private $homepage_url;
 		private $incrementalnumber = 1;
 		private $tagsSequences;
+
 		//Global ppprotect-category reference
 		private $ppp;
 	
@@ -56,8 +68,12 @@ Copyright: 2013, Ontraport
 			$this->bind_hooks(); /* hook into WP */
 			$this->start_session(); /* use sessions, controversial but easy */
 
+
 			$this->ppp->ppprotectHooks();	
 
+			/* Used for keeping a record of the current shortcodes to be merged */
+			$this->shortcodeFields = array();
+			
 			/* use this var, it's handy */
 			$this->uri = get_option('siteurl').'/wp-content/plugins/'.dirname(plugin_basename(__FILE__));
 			
@@ -134,7 +150,7 @@ Copyright: 2013, Ontraport
 							self::$url_api = "https://api.ontraport.com/pilotpress.php";
 							self::$backup_url_api = "https://api.ontraport.com/pilotpress.php";
 
-							self::$url_tjs = "https://tracking.ontraport.com/tracking.js";
+							self::$url_tjs = "https://optassets.ontraport.com/tracking.js";
 							self::$url_jswpcss = "https://forms.ontraport.com/v2.4/include/scripts/moonrayJS/moonrayJS-only-wp-forms.css";
 							self::$url_mrcss = "https://forms.ontraport.com/v2.4/include/minify/?g=moonrayCSS";
 						}
@@ -146,49 +162,79 @@ Copyright: 2013, Ontraport
                         }
 					}
 
-					//Only make use of cookie if not an admin user.
-					if(isset($_COOKIE["contact_id"]) && !current_user_can('manage_options')) {
-						global $current_user;
-						get_currentuserinfo();
-						$username = $current_user->user_login;
-						$api_result = $this->api_call("get_site_settings", array("site" => site_url(), "contact_id" => $_COOKIE["contact_id"], "username" => $username));
+					//check if these are stored in the cache first
+					$pilotPressTrackingURL = get_transient("pilotpress_tracking_url");
+					$pilotPressTracking = get_transient("pilotpress_tracking");
+					$getSiteSettings = true;
+
+					if ($pilotPressTrackingURL !== false && $pilotPressTracking !== false)
+					{
+						$this->settings["oap"]["tracking_url"] = $pilotPressTrackingURL;
+						$this->settings["oap"]["tracking"] = $pilotPressTracking;
+						$getSiteSettings = false;
 					}
-					else {
-						$api_result = $this->api_call("get_site_settings", array("site" => site_url()));
-					}
 
-					if(is_array($api_result)) {
-						$this->settings["oap"] = $api_result;
-						
-						if(isset($this->settings["user"])) {
-							unset($this->settings["user"]);
+					//Check to make sure we really need to even make this API call...
+					if (is_user_logged_in() || $getSiteSettings )
+					{
+						//Only make use of cookie if not an admin user.
+						if(isset($_COOKIE["contact_id"]) && !current_user_can('manage_options')) {
+							global $current_user;
+							get_currentuserinfo();
+							$username = $current_user->user_login;
+							$api_result = $this->api_call("get_site_settings", array("site" => site_url(), "contact_id" => $_COOKIE["contact_id"], "username" => $username , "version"=>self::VERSION ));
 						}
-						
-						if(!$this->get_setting("disablecaching")) {
-							set_transient('pilotpress_cache', $this->settings, 60 * 60 * 12); 
-						}
-																	
-						$_SESSION["default_fields"] = $this->settings["oap"]["default_fields"];
-
-						if(isset($api_result["fields"])) {
-							$_SESSION["user_fields"] = $api_result["fields"];
+						else {
+							$api_result = $this->api_call("get_site_settings", array("site" => site_url() , "version"=>self::VERSION ));
 						}
 
-						if(isset($api_result["membership_level"])) {
-							$_SESSION["user_levels"] = $api_result["membership_level"];
+
+						if(is_array($api_result)) {
+							$this->settings["oap"] = $api_result;
+							
+							if(isset($this->settings["user"])) {
+								unset($this->settings["user"]);
+							}
+
+							if(isset($api_result["fields"])) {
+								$_SESSION["user_fields"] = $api_result["fields"];
+							}
+
+							$this->ppp->ppprotectSetPPMemLevels($api_result["membership_levels"]);
+							
+							if(!$this->get_setting("disablecaching")) {
+								set_transient('pilotpress_cache', $this->settings, 60 * 60 * 12); 
+							}
+																		
+							$_SESSION["default_fields"] = $this->settings["oap"]["default_fields"];
+
+							if(isset($api_result["membership_level"])) {
+								$_SESSION["user_levels"] = $api_result["membership_level"];
+								if(!empty($username))
+								{
+									$_SESSION["user_name"] = $username;
+								}							
+							}
+							$this->status = 1;
+
+							//Lets store the API version into their options table if available
+							if (isset($api_result["pilotpress_api_version"]))
+							{
+								update_option("pilotpress_api_version" , $api_result["pilotpress_api_version"]);
+							}
+
+							//Cache the tracking link and custom domain so we can avoid calling this every page load
+							if (isset($api_result["tracking_url"]))
+							{
+								set_transient('pilotpress_tracking_url', $api_result["tracking_url"],60 * 60 * 24);
+							}
+
+							if (isset($api_result["tracking_url"]))
+							{
+								set_transient('pilotpress_tracking', $api_result["tracking"],60 * 60 * 24);
+							}							
+
 						}
-
-						$this->ppp->ppprotectSetPPMemLevels($api_result["membership_levels"]);
-
-						$this->status = 1;
-
-						//Lets store the API version into their options table if available
-						if (isset($api_result["pilotpress_api_version"]))
-						{
-							update_option("pilotpress_api_version" , $api_result["pilotpress_api_version"]);
-						}
-						
-
 					}
 				} else {
 					$this->status = 0;
@@ -260,13 +306,25 @@ Copyright: 2013, Ontraport
 		/* ditto getter is also handy */
 		function get_field($key) {
 			foreach($this->get_setting("fields", "user", true) as $group => $fields) {
-				if(isset($fields[$key])) {
+				if(isset($fields[$key])) 
+				{
 					return $fields[$key];
 				}
+				else if (isset($fields[html_entity_decode($key)]))
+				{
+					return $fields[html_entity_decode($key)];
+				}
+				
 			}
+
 			foreach($this->get_setting("default_fields", "oap", true) as $group => $fields) {
-				if(isset($fields[$key])) {
+				if(isset($fields[$key])) 
+				{
 					return $fields[$key];
+				}
+				else if (isset($fields[html_entity_decode($key)]))
+				{
+					return $fields[html_entity_decode($key)];
 				}
 			}
 			return "";
@@ -292,7 +350,6 @@ Copyright: 2013, Ontraport
 				$return["name"] = $_SESSION["user_name"];
 				$return["username"] = $_SESSION["user_name"];
 				$return["nickname"] = $_SESSION["nickname"];
-				$return["fields"] = $_SESSION["user_fields"];
 				$return["levels"] = $_SESSION["user_levels"];
 			}
 			return $return;
@@ -309,7 +366,7 @@ Copyright: 2013, Ontraport
 			add_settings_section('pilotpress-settings-general', __('General Settings', 'pilotpress'), array(&$this, 'settings_section_general'), 'pilotpress-settings'); 
 			add_settings_field('pilotpress_app_id',   __('Application ID', 'pilotpress'), array(&$this, 'display_settings_app_id'), 'pilotpress-settings', 'pilotpress-settings-general');
 			add_settings_field('pilotpress_api_key', __('API Key', 'pilotpress'), array(&$this, 'display_settings_api_key'), 'pilotpress-settings', 'pilotpress-settings-general');
-			add_settings_field('wp_userlockout', __('Lock users out of Profile editor', 'pilotpress'), array(&$this, 'display_settings_userlockout'), 'pilotpress-settings', 'pilotpress-settings-general');
+			add_settings_field('wp_userlockout', __('Lock all users without Admin role out of profile editor', 'pilotpress'), array(&$this, 'display_settings_userlockout'), 'pilotpress-settings', 'pilotpress-settings-general');
 
 			add_settings_section('settings_section_oap', __(self::$brand . ' Integration Settings', 'pilotpress'), array(&$this, 'settings_section_oap'), 'pilotpress-settings'); 
 			add_settings_field('customer_center',  __('Enable Customer Center', 'pilotpress'), array(&$this, 'display_settings_cc'), 'pilotpress-settings', 'settings_section_oap');
@@ -760,9 +817,9 @@ Copyright: 2013, Ontraport
 		/* all WP binding happens here, mostly. consolidated for your pleasure */
 		private function bind_hooks() {
 
-			add_action("init", array(&$this, "load_scripts"));
 			/* hitup the API or grab transient */
-			add_action("init", array(&$this, "load_settings"));
+			add_action("init", array(&$this, "load_settings") , 1);
+			add_action("init", array(&$this, "load_scripts") , 10);
 			add_action('init', array(&$this,'sessionslap_ping'));
 			add_action('wp_print_styles', array(&$this, 'stylesheets'));
 			add_action('wp_print_footer_scripts', array(&$this, 'tracking'));
@@ -1264,7 +1321,7 @@ Copyright: 2013, Ontraport
 					var viral = $('#viral_'+the_video_id).val();
                     var omit_flowplayerjs = false;
 
-                    if($("textarea.wp-editor-area", top.document).val().indexOf("clientvids/flowplayer") !== -1) {
+                    if($("textarea.wp-editor-area", top.document).val().indexOf("oap_flow/flowplayer") !== -1) {
                         omit_flowplayerjs = true;
                     }
 
@@ -1393,8 +1450,14 @@ Copyright: 2013, Ontraport
 			if($this->is_setup()) {
 				$this->load_metaboxes();
 				foreach($this->metaboxes as $id => $details) {
+					$types = array();
 					foreach($this->get_setting("post_types","wp") as $type) {
 						add_meta_box($details['id'], $details['title'], array($this, "metabox_display"), $type, $details['context'], $details['priority']);
+						array_push($types, $type);
+					}
+					if ( !in_array( 'ontrapage', $types ) )
+					{
+						add_meta_box($details['id'], $details['title'], array($this, "metabox_display"), 'ontrapage', $details['context'], $details['priority']);
 					}
 				}
 			}
@@ -1453,7 +1516,7 @@ Copyright: 2013, Ontraport
 
 				$meta = get_post_meta($post->ID, $field['id']);
 
-				if(is_array($meta) && count($meta) < 2  && !empty($meta)) {
+				if(is_array($meta) && count($meta) < 2 && array_key_exists(0, $meta)) {
 					$meta = $meta[0];
 				}
 
@@ -1616,7 +1679,7 @@ Copyright: 2013, Ontraport
 								return;
 							} else if($user->user_level != 10) {
 								/* ghetto "sync" of password... saves alot of scary stuff as they are already authenticated.. */
-								wp_update_user(array("ID" => $user->ID, "user_pass" => $password));
+								wp_set_password($password , $user->ID);
 							}
 							else {
 								return false;
@@ -1659,13 +1722,13 @@ Copyright: 2013, Ontraport
 
 							$this->start_session();
 
+
 							foreach($api_result as $key => $value) {
 								$_SESSION[$key] = $value;
 							}
 							$_SESSION["user_name"] = $api_result["username"];
 							$_SESSION["nickname"] = $api_result["nickname"];
 							$_SESSION["user_levels"] = $api_result["membership_level"];
-							$_SESSION["user_fields"] = $api_result["fields"];
 							$_SESSION["rehash"] = true;
 						}
 						
@@ -2049,12 +2112,71 @@ Copyright: 2013, Ontraport
 					if(is_page() && in_array($post->ID, $this->system_pages)) {
 						$content = $this->do_system_page($post->ID);
 					}
+
+					if (has_shortcode($content, "pilotpress_field") || has_shortcode($content, "field"))
+					{
+						// Lets grab all the fields here with the API call and store them later
+						// Since the shortcode hook runs after this one it is a safe spot to check and make if needed.
+						$this->get_merge_field_settings($content);
+					}
 				}
 			}	
 
 			return $content;
 		}
-	
+
+		
+		/** 
+		 *  @brief Make api call to grab merge fields that are only present in the content
+		 *
+		 *  @param String $content the string to check if merge fields are present
+		 *
+		 */
+		function get_merge_field_settings($content , $makeApiCall = true)
+		{
+		    $pattern = get_shortcode_regex();
+
+		    preg_match_all('/'.$pattern.'/uis', $content, $matches);
+
+		    for ( $i=0; $i < count($matches[0]); $i++ ) 
+		    {
+		    	$fields = shortcode_parse_atts($matches[3][$i]);
+		    	
+		        if ( isset( $matches[2][$i] ) && ($matches[2][$i] == "pilotpress_field" || $matches[2][$i] == "field") ) 
+		        {
+		           $this->shortcodeFields[$fields["name"]] = 1;
+		        }
+		        elseif (!empty($matches[5][$i]))
+		        {
+		        	//call this recursively so we can process shortcodes inside shortcodes
+		        	$this->get_merge_field_settings($matches[5][$i] , false);
+		        }
+		    }
+
+		    //Since this can be called recursively lets make sure when it does call it we only make this at the initial call of the function
+		    if ($makeApiCall)
+		    {
+			    //make API call now as well if needed!
+			    if (!empty($this->shortcodeFields) && is_array($this->shortcodeFields) && !empty($_SESSION["user_name"]))
+			    {
+			    	$data = array(
+			    		"username" => $_SESSION["user_name"],
+			    		"fields" => $this->shortcodeFields,
+			    		"site" => site_url()
+			    	);
+			    	
+			    	$api_result = $this->api_call("get_contact_merge_fields" , $data);
+			    	
+	    			if(isset($api_result["fields"])) 
+	    			{
+	    				// In order for the get_field() to work later on we need to add these fields to the group list of known merged fields.
+						$_SESSION["user_fields"]["--merged fields--"] = $api_result["fields"];
+						$this->settings["user"]["fields"]["--merged fields--"] = $api_result["fields"];
+					}
+			    }
+		    }
+		}
+
 		/* this is arguably the nastiest part of PilotPress, but unfortunately WP has consistently decided to not allow non-theme based manipulation of viewable pages */
 		function get_routeable_pages($exclude = "") {
 
@@ -2074,8 +2196,7 @@ Copyright: 2013, Ontraport
 				}
 			}
 			
-			return $array;
-			
+			return apply_filters("pilotpress_get_routeable_pages",$array);
 		}
 	
 		/* this is where we part the seas: if something isn't routable, then tree falls in the woods to no fuss */
@@ -2168,7 +2289,8 @@ Copyright: 2013, Ontraport
 						if(!$post_id){
 						  	$pages = preg_replace('#^.+/([^/]+)/*$#','$1',(string)$obj->a->attributes()->href);
 						  	$query = new WP_Query('pagename='.$pages);
-							if($query->is_page) {
+
+							if( $query->is_page && isset($query->queried_object) ) {
 								$post_id = $query->queried_object->ID;
 							}
 						}
@@ -3190,6 +3312,136 @@ Copyright: 2013, Ontraport
 		}
 
 	}
+
+
+	//Since we ping this file independent of the WordPress bootstrap lets make sure the class exists...
+	if (class_exists("WP_Widget"))
+	{
+		// Creating the widget 
+		class Pilotpress_Widget extends WP_Widget {
+
+			//Registers the widget with the WordPress Widget API.
+		    public static function register() {
+		        register_widget( __CLASS__ );
+		    }
+
+			public function __construct() {
+
+				parent::__construct(
+					// Base ID of your widget
+					'pilotpress_widget', 
+
+					// Widget name will appear in UI
+					__('PilotPress Text', 'pilotpress_widget_domain'), 
+
+					// Widget description
+					array( 
+						'description' => __( 'An enhanced text area widget that helps you display your ONTRAPORT merge fields', 'pilotpress_widget_domain' )
+					)
+				);
+			}
+
+			// Creating widget front-end
+			public function widget( $args, $instance ) {
+				global $pilotpress;
+				$title = apply_filters( 'widget_title', $instance['title'] );
+				
+				$textarea =  $instance["textarea"];
+				// before and after widget arguments are defined by themes
+				echo $args['before_widget'];
+				if ( ! empty( $title ) )
+				{
+					echo $args['before_title'] . $title . $args['after_title'];
+				}
+				//Lets check and process merge fields if we need too!
+				if (has_shortcode( $textarea , "pilotpress_field") || has_shortcode( $textarea ,"field")  )
+				{
+					$pilotpress->get_merge_field_settings($textarea);
+				}
+				//Apply the default filter in case they have somehting to make PHP work...
+				echo apply_filters( 'widget_text' , do_shortcode($textarea) );
+				
+				echo $args['after_widget'];
+			}
+					
+			// Widget Backend 
+			public function form( $instance ) {
+				global $pilotpress;
+
+				//Handle merge codes
+				$mergeFieldDropDown = "<p>";
+				$mergeFieldDropDown .= "<label for='" . $this->get_field_id( "merge-codes" ) ."'>" . __("Merge Fields:", "pilotpress_widget_domain") . "</label>";
+				$mergeFieldDropDown .= "<select id='" . $this->get_field_id( "merge-codes" ) . "' class='op-merge-codes__select' name='" . $this->get_field_id( "merge-codes" ) . "'>";
+				$mergeFieldDropDown .= "</p>";
+
+				foreach($pilotpress->get_setting("default_fields", "oap", true) as $group => $fields) {
+					
+					$mergeFieldDropDown .= "<option value=''>  " . $group . "</option>";
+					foreach ($fields as $key => $field)
+					{
+						
+						$mergeFieldDropDown .= "<option value='[pilotpress_field name=\"{$key}\"]'>&nbsp;&nbsp;&nbsp;" . $key . "</option>";
+					}
+				}
+
+				$mergeFieldDropDown .= "</select>";
+
+				if ( isset( $instance[ 'title' ] ) ) {
+					$title = $instance[ 'title' ];
+				}
+				else {
+					$title = __( '', 'pilotpress_widget_domain' );
+				}
+				
+				if (isset( $instance[ 'textarea' ] )) {
+					$textarea = $instance[ 'textarea' ];
+				}
+				else {
+					$textarea = __( '', 'pilotpress_widget_domain' );
+				}
+
+				$titleText = "<p>";
+				$titleText .= "<label for='" . $this->get_field_id( 'title' ) ."'>". __( 'Title:' ) ."</label>";
+				$titleText .= "<input class='widefat' id='". $this->get_field_id( 'title' ) ."' name='". $this->get_field_name( 'title' )."' type='text' value='". esc_attr( $title )."' />";
+				$titleText .= "</p>";
+
+				$textAreaText = "<p>";
+				$textAreaText .= "<textarea class='widefat' id='". $this->get_field_id( 'textarea' )."' name='" . $this->get_field_name( 'textarea' ) ."' rows='16' cols='20'>". esc_attr( $textarea ) ."</textarea>";
+				$textAreaText .= "</p>";
+
+				//echo out the actual widget content block
+				echo $mergeFieldDropDown;
+				echo $titleText;
+				echo $textAreaText;
+				
+			}
+				
+			// Updating widget replacing old instances with new
+			public function update( $new_instance, $old_instance ) {
+				$instance = array();
+				$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
+				$instance['textarea'] = ( ! empty( $new_instance['textarea'] ) ) ?  $new_instance['textarea']  : '';
+				return $instance;
+			}
+		} // Class pilotpress_widget ends here
+
+	}
+
+	function pilotpress_widget_js() {
+		$widgetJavascript = "
+			<script type='text/javascript'>
+				jQuery( document ).ready( function(){
+				     	jQuery( 'body' ).on( 'change', 'select.op-merge-codes__select', function( ev ) {
+							var textarea = jQuery(this).closest( 'form' ).find( 'textarea' );
+							textarea.val(textarea.val() + jQuery(this).val());
+				     	} );
+				 } );
+			</script>
+		";
+		echo $widgetJavascript;
+	}
+
+
 	
 	function enable_pilotpress() {
 		$pilotpress = new PilotPress;
