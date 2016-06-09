@@ -339,7 +339,7 @@ class PPProtect
 			$catId = $wp_query->queried_object->term_id;
 			$perms = $this->ppprotectGetFromDb( $catId );
 		
-			$userAccessLevels = [];
+			$userAccessLevels = array();
 
 			$levels = json_decode($perms->levels);
 			foreach ( $levels as $level )
@@ -383,8 +383,8 @@ class PPProtect
 			$catOfPost = get_the_category($postID);
 			$selectedOverride = get_post_meta( $postID, '_ppProtectCatOverride', true );
 
-			$userAccessLevels = [];
-			$protectCategories = [];
+			$userAccessLevels = array();
+			$protectCategories = array();
 			foreach ( $catOfPost as $cat )
 			{
 				$catId = $cat->term_id;
@@ -470,7 +470,7 @@ class PPProtect
 			$postID = $post->ID;
 			$catOfPost = get_the_category($postID);
 
-			$protectedCategories = [];
+			$protectedCategories = array();
 			foreach ( $catOfPost as $cat )
 			{
 				$catId = $cat->term_id;
