@@ -194,10 +194,6 @@ Copyright: 2013, Ontraport
 								unset($this->settings["user"]);
 							}
 
-							if(isset($api_result["fields"])) {
-								$_SESSION["user_fields"] = $api_result["fields"];
-							}
-
 							$this->ppp->ppprotectSetPPMemLevels($api_result["membership_levels"]);
 							
 							if(!$this->get_setting("disablecaching")) {

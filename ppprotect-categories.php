@@ -504,7 +504,7 @@ class PPProtect
 			{
 				$message = '<div class="ppprotect-protected-global-wrapper inside">
 					<div class="ppprotect-protected-globally">
-						<div class="ppprotect-global-message">This post has global category permissions set in the following category(s) overriding the permissions usually found here.</div>
+						<div class="ppprotect-global-message">This post has global category permissions set in the following category(s) that take priority over the permissions usually found here.</div>
 						<div class="ppprotect-global-cats">';
 
 				foreach ( $protectedCategories as $protectedCategory )
