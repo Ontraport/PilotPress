@@ -2,11 +2,7 @@
 Contributors: ONTRAPORT
 Tags: OfficeAutoPilot, Sendpepper, Moonray, ONTRAPORT, Pilotpress, Oap, Membership Site, Customer Center, Affiliate Center, Integration
 Requires at least: 3.2
-<<<<<<< HEAD
-Tested up to: 4.5.2
-=======
 Tested up to: 4.2.2
->>>>>>> master
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -60,12 +56,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
-<<<<<<< HEAD
 = 1.9 = 
 * Adding category protection to PilotPress
 
-=======
->>>>>>> master
 = 1.8.6 = 
 * Convert Tracking script to use the one served by our CDN... improves speed
 
@@ -191,12 +184,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Upgrade Notice ==
 
-<<<<<<< HEAD
 = 1.9 =
 * Adding category protection to PilotPress
 
-=======
->>>>>>> master
 = 1.8.6 = 
 * Convert Tracking script to use the one served by our CDN... improves speed
 
