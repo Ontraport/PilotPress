@@ -1,0 +1,111 @@
+.ppp-title {
+    font-weight: bold;
+    font-size: 110%;
+}
+
+.ppprotect-category-levels {
+    display: inline-block;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.ppprotect-cat-level-wrap {
+    display: inline-block;
+    min-width: 50%;
+    max-width: 50%;
+    float: left;
+}
+
+.ppprotect-levels-redirect {
+    display: inline-block;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    width: 95%;
+    max-width: 700px;
+    padding: 10px;
+    border: 1px solid rgb(221, 221, 221);
+    background-color: white;
+}
+
+.ppprotect-levels-message {
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+
+.form-field.ppprotect-wrap {
+    display: inline-block;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    width: 100%;
+}
+
+.ppprotect-all-posts > div:first-child {
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 4px;
+}
+
+#edittag .ppp-title {
+    display: inline-block;
+    width: 200px;
+    float: left;
+    margin-right: 20px;
+}
+
+.ppprotect-global-message {
+    color: #a00;
+}
+
+.ppprotect-global-cats {
+    margin-bottom: 15px;
+    margin-top: 5px;
+}
+
+.ppprotect-main-override {
+    margin-bottom: 5px;
+}
+
+.ppprotect-override-name {
+    margin-bottom: 15px;
+}
+
+.ppprotect-global-cats a {
+    display: inline-block;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    width: 100%;
+}
+
+.ppprotect-override-explanation {
+    margin-top: 15px;
+    font-style: italic;
+}
+
+.ppprotect-override-perms {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.ppprotect-override-perms > div {
+    font-weight: bold;
+}
+
+.ppprotect-override-override {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+.ppprotect-override-override > select {
+    width: 100%;
+    background-color: whitesmoke;
+    color: black;
+}
+
+#_pilotpress_page_box td
+{
+    padding: 0px 0px 15px;
+    font-size: 13px;
+}

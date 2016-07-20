@@ -56,6 +56,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
+= 1.9 = 
+* Adding category protection to PilotPress
+
 = 1.8.6 = 
 * Convert Tracking script to use the one served by our CDN... improves speed
 
@@ -180,6 +183,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+
+= 1.9 =
+* Adding category protection to PilotPress
 
 = 1.8.6 = 
 * Convert Tracking script to use the one served by our CDN... improves speed
