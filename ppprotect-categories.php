@@ -267,6 +267,45 @@ class PPProtect
 
 	/**
 	 * @author William DeAngelis
+	 * @param string $postID The ID of the post to check
+	 *
+	 * @return Check's the ID of a post to check to see if it is being protected by category protection and if true then returns the levels of protection. If false then return false.
+	 **/
+	public function ppprotectCheckForProtection( $postID ) 
+	{			
+		global $wpdb;
+		$table = $wpdb->prefix . 'ppprotect';
+		$protectedCategories = array();
+		$postCategories = wp_get_post_categories( $postID );
+		$result = 0;
+
+		if( $wpdb->get_var("SHOW TABLES LIKE '$table'") === null ) 
+		{
+		    $this->ppprotectCreateTable();
+		}
+
+		$cats = $wpdb->get_results('SELECT itemId FROM ' . $table);
+
+		foreach ( $cats as $cat )
+		{
+			$protectedCategories[] = $cat->itemId;
+		}
+
+		foreach ( $postCategories as $postCategory )
+		{
+			if ( in_array( $postCategory, $protectedCategories ) )
+			{
+				$levels = $wpdb->get_results('SELECT levels FROM ' . $table . ' WHERE itemId = ' . $postCategory);
+
+				$result = implode( ', ', json_decode($levels[0]->levels) );
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @author William DeAngelis
 	 * @param integer $term_id The ID of the category to be saved
 	 * @var string $redirect The URL of the page to redirect the user to when they don't have proper perms
 	 * @var string $protectPosts A checkbox option that tells us whether to protect all the posts in the category or just the category page itself.
