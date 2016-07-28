@@ -1104,11 +1104,11 @@ Copyright: 2013, Ontraport
 						if(count($levels) == 1) {
 							echo $levels[0];
 						} else {
-							echo count($levels)." Levels";
+							echo implode(', ', $levels);
 						}
 					} 
-					else if ( $this->ppp->ppprotectCheckForProtection( $id ) ) {
-						echo 'Category Protection - ' . $this->ppp->ppprotectCheckForProtection( $id );
+					else if ( $catLevels = $this->ppp->ppprotectCheckForProtection( $id ) ) {
+						echo 'Category Protection - ' . $catLevels;
 					}
 					else {
 						echo '(not set)';
