@@ -171,7 +171,7 @@ class PPProtect
 
 		$memLevels = $this->ppprotectGetPPMemLevels();
 
-		$ppprotectCat = '<div class="form-field ppprotect-wrap"><label class="ppp-title" for="ppprotect-category">PilotPress Permissions</label><div class="ppprotect-levels-redirect"><div class="ppprotect-levels-message">1. Select the permission levels of users that can access this category of posts.</div><div class="ppprotect-category-levels">';
+		$ppprotectCat = '<div class="form-field ppprotect-wrap"><label class="ppp-title" for="ppprotect-category">PilotPress Permissions</label><div class="ppprotect-levels-redirect"><div class="ppprotect-levels-message">1. Select the access levels of users that can access this category of posts.</div><div class="ppprotect-category-levels">';
 
 		foreach ( $memLevels as $level )
 		{
@@ -190,7 +190,7 @@ class PPProtect
 	    $ppprotectCat .= '<p><em>(Leave blank to allow access to all users.)</em></p></div>';
 
 	    // Start redirect code
-	    $ppprotectCat .= '<div class="ppprotect-on-error"><div class="ppprotect-levels-message" style="margin-top: 10px;">2. If users don\'t have the above selected permissions, redirect them here.</div><select name="ppprotectRedirect"><option value="">' . esc_attr( __( "Select page" ) ) . '</option>';
+	    $ppprotectCat .= '<div class="ppprotect-on-error"><div class="ppprotect-levels-message" style="margin-top: 10px;">2. If users don\'t have the above selected access levels, redirect to this page on error.</div><select name="ppprotectRedirect"><option value="">' . esc_attr( __( "Select page" ) ) . '</option>';
 							
 		$pages = get_pages(); 
 		foreach ( $pages as $page ) 
@@ -543,7 +543,7 @@ class PPProtect
 			{
 				$message = '<div class="ppprotect-protected-global-wrapper inside">
 					<div class="ppprotect-protected-globally">
-						<div class="ppprotect-global-message">This post has global category permissions set in the following category(s) that take priority over the permissions usually found here.</div>
+						<div class="ppprotect-global-message">This post has global category access permissions set in the following category(s) that take priority over the permissions usually found here.</div>
 						<div class="ppprotect-global-cats">';
 
 				foreach ( $protectedCategories as $protectedCategory )
@@ -561,7 +561,7 @@ class PPProtect
 				}
 
 				$message .= '<div class="ppprotect-override-location">It currently redirects users to:<br /><a href="' . $protectedCategories[0]->redirect . '" target="_blank">' . $protectedCategories[0]->redirect . '</a></div>
-						<div class="ppprotect-override-perms">Users with the following permission levels have access to this post:';
+						<div class="ppprotect-override-perms">Users with the following access levels have access to this post:';
 
 				if ( isset($protectedCategories[0]->levels) && !empty($protectedCategories[0]->levels) )
 				{

@@ -5,17 +5,27 @@
 
 .ppprotect-category-levels {
     display: inline-block;
+    width: 100%;
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     max-height: 200px;
     overflow-y: auto;
 }
+.ppprotect-category-levels p {
+    width: 100%;
+    display: inline-block;
+    margin-top: 5px;
+}
 
 .ppprotect-cat-level-wrap {
-    display: inline-block;
+    display: block;
     min-width: 50%;
     max-width: 50%;
     float: left;
+}
+
+.ppprotect-cat-level-wrap label {
+    display: flex;
 }
 
 .ppprotect-levels-redirect {
@@ -29,11 +39,18 @@
     background-color: white;
 }
 
+.ppprotect-on-error select {
+    width: 100%;
+}
+
 .ppprotect-levels-message {
     margin-bottom: 5px;
     font-weight: 600;
 }
 
+.ppprotect-wrap div {
+    box-sizing: border-box;
+}
 
 .form-field.ppprotect-wrap {
     display: inline-block;
@@ -108,4 +125,44 @@
 {
     padding: 0px 0px 15px;
     font-size: 13px;
+}
+
+.pp-access-level {
+    display: flex;
+    width: 100%;
+    margin-bottom: 3px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.pp-access-level-label {
+    display: inline-block;
+}
+
+#_pilotpress_page_box div {
+    box-sizing: border-box;
+}
+#_pilotpress_page_box table, 
+#_pilotpress_page_box tbody, 
+#_pilotpress_page_box tr, 
+#_pilotpress_page_box td {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.pp-access-level input {
+    margin: 1px 7px 0px 0px;
+}
+
+.pp-access-level-note {
+    display: inline-block;
+    width: 100%;
+    font-style: italic;
+    margin-top: 5px;
+}
+
+.ppprotect-cat-level-wrap label input {
+    margin: 1px 7px 0px 0px;
 }
