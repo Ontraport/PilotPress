@@ -22,6 +22,7 @@
     min-width: 50%;
     max-width: 50%;
     float: left;
+    margin-bottom: 2px;
 }
 
 .ppprotect-cat-level-wrap label {
