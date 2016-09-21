@@ -2239,7 +2239,7 @@ Copyright: 2013, Ontraport
 
 			$level_in = rtrim($level_in,",");
 			if(!empty($level_in)) {
-				$where .= " AND ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_pilotpress_level' AND meta_value IN (" . $wpdb->escape($level_in) . "){$post_extra})";
+				$where .= " AND ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_pilotpress_level' AND meta_value IN (" . $level_in . "){$post_extra})";
 			}			
 			return $where;
 		}
