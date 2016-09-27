@@ -357,48 +357,54 @@ class PPProtect
 	 **/
 	public function ppprotectSaveFields( $term_id )
 	{
+		$redirect = $_POST['ppprotectRedirect'];
+
+		if ( isset($_POST['ppprotectPosts']) )
+		{
+			$protectPosts = $_POST['ppprotectPosts'];
+		}
+		else
+		{
+			$protectPosts = '';
+		}
+
+		if ( $protectPosts === 'on' )
+		{
+			$protectPosts = 1;
+		}
+		else
+		{
+			$protectPosts = 0;
+		}
+
+		$type = 'category';
+
+		if ( isset($_POST['name']))
+		{
+			$name = $_POST['name'];
+		}
+		else
+		{
+			$name = get_cat_name( $term_id );
+		}
+
 		if ( isset( $_POST['ppprotectCat'] ) ) 
 		{
-			$redirect = $_POST['ppprotectRedirect'];
-
-			if ( isset($_POST['ppprotectPosts']) )
-			{
-				$protectPosts = $_POST['ppprotectPosts'];
-			}
-			else
-			{
-				$protectPosts = '';
-			}
-
-			if ( $protectPosts === 'on' )
-			{
-				$protectPosts = 1;
-			}
-			else
-			{
-				$protectPosts = 0;
-			}
-
-			$type = 'category';
-
-			if ( isset($_POST['name']))
-			{
-				$name = $_POST['name'];
-			}
-			else
-			{
-				$name = get_cat_name( $term_id );
-			}
-
 			$pppCategory = array();
+					
 			foreach ( $_POST['ppprotectCat'] as $key => $val )
 			{
 				array_push($pppCategory, $key);
 			}
-			$levels = json_encode($pppCategory);
 
-			$this->ppprotectInsertInDb( $type, $term_id, $name, $levels, $redirect, $protectPosts );
+			$levels = json_encode($pppCategory);
 		}
+		else
+		{
+			$levels = '';
+		}
+
+		$this->ppprotectInsertInDb( $type, $term_id, $name, $levels, $redirect, $protectPosts );
 	}
 
 	/**
