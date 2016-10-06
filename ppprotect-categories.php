@@ -207,7 +207,7 @@ class PPProtect
 		{
 			if ( isset( $checkedLevels ) && in_array( $level, $checkedLevels ) ) 
 			{ 
-				$checked = 'checked'; 
+				$checked = 'checked';
 			} 
 			else 
 			{ 
@@ -412,6 +412,11 @@ class PPProtect
 		else
 		{
 			$levels = '';
+		}
+
+		if ( (!isset($redirect) || $redirect == '') && $levels != '' )
+		{
+			$redirect = '-2';
 		}
 
 		$this->ppprotectInsertInDb( $type, $term_id, $name, $levels, $redirect, $protectPosts );
@@ -865,16 +870,19 @@ class PPProtect
 			{
 
 				$catFoot = '<script type="text/javascript">
-					jQuery(".ppprotect-posts input:checkbox").change(function()
+					jQuery(document).ready(function()
 					{
-						if ( this.checked === true )
+						jQuery(".ppprotect-posts input:checkbox").change(function()
 						{
-							var accept = confirm("IMPORTANT - By selecting this option you will override the PilotPress permission settings you may have already added to any of the posts in this category. This means that the settings you just selected here will take prescedence. Once you save this setting you will still be able to manually set permissions for each post, but you will have to open each post and select the option \'Set permissions manually\' to do so. Are you sure you want to proceed with this setting?");
-							if ( accept != true )
+							if ( this.checked === true )
 							{
-								jQuery(this).prop("checked", false);
+								var accept = confirm("IMPORTANT - By selecting this option you will override the PilotPress permission settings you may have already added to any of the posts in this category. This means that the settings you just selected here will take prescedence. Once you save this setting you will still be able to manually set permissions for each post, but you will have to open each post and select the option \'Set permissions manually\' to do so. Are you sure you want to proceed with this setting?");
+								if ( accept != true )
+								{
+									jQuery(this).prop("checked", false);
+								}
 							}
-						}
+						});
 					});
 				</script>';
 
