@@ -56,6 +56,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
+= 1.9.1 = 
+* Bug fixes to address issue of empty array throwing warning in category protection
+
 = 1.9 = 
 * Adding category protection to PilotPress
 
@@ -183,6 +186,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+
+= 1.9.1 = 
+* Bug fixes to address issue of empty array throwing warning in category protection
 
 = 1.9 =
 * Adding category protection to PilotPress
