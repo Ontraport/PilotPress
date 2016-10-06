@@ -1104,9 +1104,13 @@ Copyright: 2013, Ontraport
 						if(count($levels) == 1) {
 							echo $levels[0];
 						} else {
-							echo count($levels)." Levels";
+							echo implode(', ', $levels);
 						}
-					} else {
+					} 
+					else if ( $catLevels = $this->ppp->ppprotectCheckForProtection( $id ) ) {
+						echo 'Category Protection - ' . $catLevels;
+					}
+					else {
 						echo '(not set)';
 					}
 				}
@@ -1569,9 +1573,9 @@ Copyright: 2013, Ontraport
 								if(is_array($field["options"]) && count($field["options"]) > 0) {
 									foreach ($field['options'] as $key => $option) {
 										if(is_array($meta)) {
-											echo '<input type="checkbox" name="'.$field['id'].'[]" value="'.$option.'" ', in_array($option, $meta) ? ' checked' : '', ' /> ', $option, '<br />';
+											echo '<label class="pp-access-level"><input type="checkbox" name="'.$field['id'].'[]" value="'.$option.'" ', in_array($option, $meta) ? ' checked' : '', ' /><span class="pp-access-level-label"> ', $option, '</span></label>';
 										} else {
-											echo '<input type="checkbox" name="'.$field['id'].'[]" value="'.$option.'" ', $option == $meta ? ' checked' : '', ' /> ', $option, '<br />';
+											echo '<label class="pp-access-level"><input type="checkbox" name="'.$field['id'].'[]" value="'.$option.'" ', $option == $meta ? ' checked' : '', ' /><span class="pp-access-level-label"> ', $option, '</span></label>';
 										}
 				    	  			}
 								}
@@ -1597,7 +1601,7 @@ Copyright: 2013, Ontraport
 			    }
 
 			    if($field["desc"]) {
-					echo '<span>'.$field["desc"].'</span><td>';
+					echo '<span class="pp-access-level-note">'.$field["desc"].'</span>';
 			    }
 
 			    echo '</tr>';
@@ -1891,7 +1895,7 @@ Copyright: 2013, Ontraport
 			    	'fields' => array(
 			        	array(
 			            		'name' => 'Access Levels',
-			            		'desc' => 'To have no level, do not check any boxes.',
+			            		'desc' => '(Leave blank to allow access to all users.)',
 			            		'id' => self::NSPACE.'level',
 			            		'type' => 'multi-checkbox',
 			            		'options' => $this->get_setting("membership_levels", "oap")
@@ -2235,7 +2239,7 @@ Copyright: 2013, Ontraport
 
 			$level_in = rtrim($level_in,",");
 			if(!empty($level_in)) {
-				$where .= " AND ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_pilotpress_level' AND meta_value IN (" . $wpdb->escape($level_in) . "){$post_extra})";
+				$where .= " AND ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_pilotpress_level' AND meta_value IN (" . $level_in . "){$post_extra})";
 			}			
 			return $where;
 		}

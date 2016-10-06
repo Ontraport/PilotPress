@@ -33,6 +33,9 @@ class PPProtect
 		add_action ( 'created_category', array(&$this, 'ppprotectSaveFields') );
 		add_action ( 'edited_category', array(&$this, 'ppprotectSaveFields') );
 
+		// Protect home page and archive page posts
+		add_action( 'pre_get_posts', array(&$this, 'ppprotectHomeAndArchivePosts') );
+
 		// Protect categories by hooking into any loops
 		add_action ( 'loop_start', array(&$this, 'ppprotectCategory') );
 
@@ -51,6 +54,8 @@ class PPProtect
 		
 		// Add footer JS on category admin pages to alert the user when they perform certain actions
 		add_action( 'admin_footer', array(&$this, 'ppprotectCategoryJS') );
+
+		add_action( 'delete_category', array(&$this, 'ppprotectDeleteCategory') );
 	}
 
 	// Create a custom table for PPProtect
@@ -115,6 +120,26 @@ class PPProtect
 		return $row;
 	}
 
+	// Deletes $items from the given $table in the site's database. Returns boolean depending upon the success / failure
+	private function ppprotectDeleteFromDb( $table, $items )
+	{
+		global $wpdb;
+		if( $wpdb->get_var("SHOW TABLES LIKE '$table'") === null ) 
+		{
+		    error_log( 'Cant find table to delete - ' . $table );
+		    return;
+		}
+
+		$row = $wpdb->delete( $table, $items );
+		if ( $row === 0 )
+		{
+			error_log( 'Unable to delete items from the table - Table: ' . $table . ' | Items: ' . json_encode($items) );
+		    return;
+		}
+
+		return $row;
+	}
+
 	// Register & enqueues admin styles
 	public function ppprotectAdminStyles() 
 	{
@@ -171,7 +196,7 @@ class PPProtect
 
 		$memLevels = $this->ppprotectGetPPMemLevels();
 
-		$ppprotectCat = '<div class="form-field ppprotect-wrap"><label class="ppp-title" for="ppprotect-category">PilotPress Permissions</label><div class="ppprotect-levels-redirect"><div class="ppprotect-levels-message">1. Select the permission levels of users that can access this category of posts.</div><div class="ppprotect-category-levels">';
+		$ppprotectCat = '<div class="form-field ppprotect-wrap"><label class="ppp-title" for="ppprotect-category">PilotPress Permissions</label><div class="ppprotect-levels-redirect"><div class="ppprotect-levels-message">1. Select the access levels of users that can access this category of posts.</div><div class="ppprotect-category-levels">';
 
 		foreach ( $memLevels as $level )
 		{
@@ -190,9 +215,25 @@ class PPProtect
 	    $ppprotectCat .= '<p><em>(Leave blank to allow access to all users.)</em></p></div>';
 
 	    // Start redirect code
-	    $ppprotectCat .= '<div class="ppprotect-on-error"><div class="ppprotect-levels-message" style="margin-top: 10px;">2. If users don\'t have the above selected permissions, redirect them here.</div><select name="ppprotectRedirect"><option value="">' . esc_attr( __( "Select page" ) ) . '</option>';
-							
-		$pages = get_pages(); 
+	    $ppprotectCat .= '<div class="ppprotect-on-error"><div class="ppprotect-levels-message" style="margin-top: 10px;">2. If users don\'t have the above selected access levels, redirect to this page on error.</div><select name="ppprotectRedirect"><option value="">' . esc_attr( __( "Select page" ) ) . '</option>';
+
+		$pages = get_pages();
+
+		$selected1 = '';
+		$selected2 = '';
+		if ($redirectTo == '-1')
+		{
+			$selected1 = 'selected="selected"';
+		}
+
+		if ($redirectTo == '-2')
+		{
+			$selected2 = 'selected="selected"';
+		}
+
+		$ppprotectCat .= '<option value="-1" ' . $selected1 . '>(homepage)</option>';
+		$ppprotectCat .= '<option value="-2" ' . $selected2 . '>(login page)</option>';
+
 		foreach ( $pages as $page ) 
 		{
 			if ( isset( $redirectTo ) && $redirectTo == get_page_link( $page->ID ) )
@@ -219,7 +260,7 @@ class PPProtect
 			$pChecked = '';
 		}
 
-		$ppprotectCat .= '<div class="ppprotect-all-posts"><div>3. Also protect all individual posts in this category?</div><div class="ppprotect-posts"><label><input type="checkbox" name="ppprotectPosts" ' . $pChecked . ' /> Yes</label></div></div>';
+		$ppprotectCat .= '<div class="ppprotect-all-posts"><div>3. Protect all individual posts in this category?</div><div class="ppprotect-posts"><label><input type="checkbox" name="ppprotectPosts" ' . $pChecked . ' /> Yes</label></div></div>';
 
 		$ppprotectCat .= '</div></div>'; // End PP Permissions code
 
@@ -267,6 +308,45 @@ class PPProtect
 
 	/**
 	 * @author William DeAngelis
+	 * @param string $postID The ID of the post to check
+	 *
+	 * @return Check's the ID of a post to check to see if it is being protected by category protection and if true then returns the levels of protection. If false then return false.
+	 **/
+	public function ppprotectCheckForProtection( $postID ) 
+	{			
+		global $wpdb;
+		$table = $wpdb->prefix . 'ppprotect';
+		$protectedCategories = array();
+		$postCategories = wp_get_post_categories( $postID );
+		$result = 0;
+
+		if( $wpdb->get_var("SHOW TABLES LIKE '$table'") === null ) 
+		{
+		    $this->ppprotectCreateTable();
+		}
+
+		$cats = $wpdb->get_results('SELECT itemId FROM ' . $table);
+
+		foreach ( $cats as $cat )
+		{
+			$protectedCategories[] = $cat->itemId;
+		}
+
+		foreach ( $postCategories as $postCategory )
+		{
+			if ( in_array( $postCategory, $protectedCategories ) )
+			{
+				$levels = $wpdb->get_results('SELECT levels FROM ' . $table . ' WHERE itemId = ' . $postCategory);
+
+				$result = implode( ', ', json_decode($levels[0]->levels) );
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @author William DeAngelis
 	 * @param integer $term_id The ID of the category to be saved
 	 * @var string $redirect The URL of the page to redirect the user to when they don't have proper perms
 	 * @var string $protectPosts A checkbox option that tells us whether to protect all the posts in the category or just the category page itself.
@@ -277,48 +357,74 @@ class PPProtect
 	 **/
 	public function ppprotectSaveFields( $term_id )
 	{
+		$redirect = $_POST['ppprotectRedirect'];
+
+		if ( isset($_POST['ppprotectPosts']) )
+		{
+			$protectPosts = $_POST['ppprotectPosts'];
+		}
+		else
+		{
+			$protectPosts = '';
+		}
+
+		if ( $protectPosts === 'on' )
+		{
+			$protectPosts = 1;
+		}
+		else
+		{
+			$protectPosts = 0;
+		}
+
+		$type = 'category';
+
+		if ( isset($_POST['name']))
+		{
+			$name = $_POST['name'];
+		}
+		else
+		{
+			$name = get_cat_name( $term_id );
+		}
+
 		if ( isset( $_POST['ppprotectCat'] ) ) 
 		{
-			$redirect = $_POST['ppprotectRedirect'];
-
-			if ( isset($_POST['ppprotectPosts']) )
-			{
-				$protectPosts = $_POST['ppprotectPosts'];
-			}
-			else
-			{
-				$protectPosts = '';
-			}
-
-			if ( $protectPosts === 'on' )
-			{
-				$protectPosts = 1;
-			}
-			else
-			{
-				$protectPosts = 0;
-			}
-
-			$type = 'category';
-
-			if ( isset($_POST['name']))
-			{
-				$name = $_POST['name'];
-			}
-			else
-			{
-				$name = get_cat_name( $term_id );
-			}
-
 			$pppCategory = array();
+					
 			foreach ( $_POST['ppprotectCat'] as $key => $val )
 			{
 				array_push($pppCategory, $key);
 			}
-			$levels = json_encode($pppCategory);
 
-			$this->ppprotectInsertInDb( $type, $term_id, $name, $levels, $redirect, $protectPosts );
+			$levels = json_encode($pppCategory);
 		}
+		else
+		{
+			$levels = '';
+		}
+
+		$this->ppprotectInsertInDb( $type, $term_id, $name, $levels, $redirect, $protectPosts );
+	}
+
+	/**
+	 * @author William DeAngelis
+	 * @var integer $id The ID of the category to be deleted
+	 *
+	 * @return boolean $response True or false if the category was deleted from the ppprotect table
+	 **/
+	public function ppprotectDeleteCategory( $id )
+	{
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'ppprotect';
+
+		$id = intval($id);
+		$items = array( 'itemId' => $id );
+
+		$response = $this->ppprotectDeleteFromDb( $table, $items );
+
+		return $response;
 	}
 
 	/**
@@ -333,8 +439,8 @@ class PPProtect
 	public function ppprotectCategory()
 	{
 		global $wp_query;
-		
-		if ( isset($wp_query->queried_object->term_id) )
+
+		if ( isset($wp_query->queried_object) && isset($wp_query->queried_object->term_id) && $wp_query->queried_object->slug !== 'uncategorized' )
 		{
 			$catId = $wp_query->queried_object->term_id;
 			$perms = $this->ppprotectGetFromDb( $catId );
@@ -355,6 +461,12 @@ class PPProtect
 			{
 				if ( !current_user_can('administrator') ) 
 				{
+					if ( $perms->redirect == '-1' || $perms->redirect == '-2' ) 
+					{
+						wp_redirect( home_url() );
+						exit;
+					}
+
 					wp_redirect( $perms->redirect ); 
 					exit;
 				}
@@ -418,6 +530,18 @@ class PPProtect
 					{
 						if ( $protectedCat->protectposts == 1 )
 						{
+							if ( $protectedCat->redirect == '-1' ) 
+							{
+								wp_redirect( home_url() );
+								exit;
+							}
+							else if ( $protectedCat->redirect == '-2' ) 
+							{
+								add_filter('the_content', array(&$this, 'ppprotectLoginPage'));
+								add_filter( 'comments_open', array(&$this, 'ppprotectCloseComments'), 10, 2 );
+								return;
+							}
+
 							wp_redirect( $protectedCat->redirect );
 							exit;
 						}
@@ -426,6 +550,84 @@ class PPProtect
 			}
 		}
 	}
+
+
+	/**
+	 * @author William DeAngelis
+	 * @var object $content The content being filtered
+	 *
+	 * @return string $lp Removes the page content and replaces it with the login_page shortcode content which is a basic WP login form
+	 *
+	 **/
+	public function ppprotectLoginPage( $content )
+	{
+		$lp = do_shortcode('[login_page]');
+		return $lp;
+	}
+
+
+	/**
+	 * @author William DeAngelis
+	 * @var boolean $open If the page has comments enabled
+	 * @var integer $post_id The id of the page
+	 *
+	 * @return string $open Disables comments on this page
+	 *
+	 **/
+	public function ppprotectCloseComments( $open, $post_id )
+	{
+		$open = false;
+		return $open;
+	}
+
+
+	/**
+	 * @author William DeAngelis
+	 * @var object $query The query being called
+	 *
+	 * @return string The modified query with protected categories being protected.
+	 *
+	 **/
+	function ppprotectHomeAndArchivePosts( $query ) 
+	{
+	    if ( ($query->is_home() && $query->is_main_query()) || is_archive() ) 
+	    {
+	        global $wpdb;
+			$table = $wpdb->prefix . 'ppprotect';
+			$protectedCategories = array();
+			$postCategories = get_terms('category', array('hide_empty' => false) );
+			$result = 0;
+
+			if( $wpdb->get_var("SHOW TABLES LIKE '$table'") === null ) 
+			{
+			    $this->ppprotectCreateTable();
+			}
+
+			$cats = $wpdb->get_results('SELECT itemId,levels FROM ' . $table . ' WHERE protectposts = 1');
+			$protectedCategories = array();
+			foreach ( $cats as $key => $value )
+			{
+				
+				if( isset( $_SESSION['user_levels'] ) && is_array( $_SESSION['user_levels'] ) ) 
+				{
+					$perm = array_intersect( json_decode($value->levels), $_SESSION['user_levels'] );
+					if ( empty($perm) )
+					{
+						array_push( $protectedCategories, '-' . $value->itemId );
+					}
+				}
+				else
+				{
+					array_push( $protectedCategories, '-' . $value->itemId );
+				}
+
+			}
+			$protectedCategories = implode(',', $protectedCategories);
+
+			$query->set( 'cat', $protectedCategories );
+	    }
+	}
+
 
 	/**
 	 * @author William DeAngelis
@@ -504,7 +706,7 @@ class PPProtect
 			{
 				$message = '<div class="ppprotect-protected-global-wrapper inside">
 					<div class="ppprotect-protected-globally">
-						<div class="ppprotect-global-message">This post has global category permissions set in the following category(s) that take priority over the permissions usually found here.</div>
+						<div class="ppprotect-global-message">This post has global category access permissions set in the following category(s) that take priority over the permissions usually found here.</div>
 						<div class="ppprotect-global-cats">';
 
 				foreach ( $protectedCategories as $protectedCategory )
@@ -521,8 +723,25 @@ class PPProtect
 						<div class="ppprotect-override-name"><a href="' . site_url() . '/wp-admin/edit-tags.php?action=edit&taxonomy=category&tag_ID=' . $protectedCategories[0]->itemId . '">' . $protectedCategories[0]->name . '</a></div>';
 				}
 
-				$message .= '<div class="ppprotect-override-location">It currently redirects users to:<br /><a href="' . $protectedCategories[0]->redirect . '" target="_blank">' . $protectedCategories[0]->redirect . '</a></div>
-						<div class="ppprotect-override-perms">Users with the following permission levels have access to this post:';
+				if ( $protectedCategories[0]->redirect == '-1' || $protectedCategories[0]->redirect == '-2' )
+				{
+					if ( $protectedCategories[0]->redirect == '-1' )
+					{
+						$redirect = '(homepage)';
+					}
+					else
+					{
+						$redirect = '(login page)';
+					}
+					
+					$message .= '<div class="ppprotect-override-location">It currently redirects users to the:<br />' . $redirect . '</div>
+						<div class="ppprotect-override-perms">Users with the following access levels have access to this post:';
+				}
+				else
+				{
+					$message .= '<div class="ppprotect-override-location">It currently redirects users to:<br /><a href="' . $protectedCategories[0]->redirect . '" target="_blank">' . $protectedCategories[0]->redirect . '</a></div>
+						<div class="ppprotect-override-perms">Users with the following access levels have access to this post:';
+				}
 
 				if ( isset($protectedCategories[0]->levels) && !empty($protectedCategories[0]->levels) )
 				{
