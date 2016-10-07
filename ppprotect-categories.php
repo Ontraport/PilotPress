@@ -194,15 +194,20 @@ class PPProtect
 			}
 		}
 
-		$memLevels = $this->ppprotectGetPPMemLevels();
+		if ( !is_array( $this->membershipLevels) || empty( $this->membershipLevels ) )
+		{
+			return;
+		}
 
+		$memLevels = $this->ppprotectGetPPMemLevels();
+		
 		$ppprotectCat = '<div class="form-field ppprotect-wrap"><label class="ppp-title" for="ppprotect-category">PilotPress Permissions</label><div class="ppprotect-levels-redirect"><div class="ppprotect-levels-message">1. Select the access levels of users that can access this category of posts.</div><div class="ppprotect-category-levels">';
 
 		foreach ( $memLevels as $level )
 		{
 			if ( isset( $checkedLevels ) && in_array( $level, $checkedLevels ) ) 
 			{ 
-				$checked = 'checked'; 
+				$checked = 'checked';
 			} 
 			else 
 			{ 
@@ -212,7 +217,7 @@ class PPProtect
 			$ppprotectCat .= '<div class="ppprotect-cat-level-wrap"><label><input type="checkbox" name="ppprotectCat[' . $level . ']" ' . $checked . ' /> ' . $level . '</label></div>';
 		}
 
-	    $ppprotectCat .= '<p><em>(Leave blank to allow access to all users.)</em></p></div>';
+		$ppprotectCat .= '<p><em>(Leave blank to allow access to all users.)</em></p></div>';
 
 	    // Start redirect code
 	    $ppprotectCat .= '<div class="ppprotect-on-error"><div class="ppprotect-levels-message" style="margin-top: 10px;">2. If users don\'t have the above selected access levels, redirect to this page on error.</div><select name="ppprotectRedirect"><option value="">' . esc_attr( __( "Select page" ) ) . '</option>';
@@ -357,6 +362,11 @@ class PPProtect
 	 **/
 	public function ppprotectSaveFields( $term_id )
 	{
+		if ( !is_array( $this->membershipLevels) || empty( $this->membershipLevels ) )
+		{
+			return;
+		}
+
 		$redirect = $_POST['ppprotectRedirect'];
 
 		if ( isset($_POST['ppprotectPosts']) )
@@ -404,6 +414,11 @@ class PPProtect
 			$levels = '';
 		}
 
+		if ( (!isset($redirect) || $redirect == '') && $levels != '' )
+		{
+			$redirect = '-2';
+		}
+
 		$this->ppprotectInsertInDb( $type, $term_id, $name, $levels, $redirect, $protectPosts );
 	}
 
@@ -415,6 +430,11 @@ class PPProtect
 	 **/
 	public function ppprotectDeleteCategory( $id )
 	{
+		if ( !is_array( $this->membershipLevels) || empty( $this->membershipLevels ) )
+		{
+			return;
+		}
+
 		global $wpdb;
 
 		$table = $wpdb->prefix . 'ppprotect';
@@ -447,12 +467,15 @@ class PPProtect
 		
 			$userAccessLevels = array();
 
-			$levels = json_decode($perms->levels);
-			foreach ( $levels as $level )
+			$levels = json_decode($perms->levels);			
+			if( is_array( $levels ) )
 			{
-				if ( $this->ppprotectAccessCheck($level) === 1 )
+				foreach ( $levels as $level )
 				{
-					array_push($userAccessLevels, $level);
+					if ( $this->ppprotectAccessCheck($level) === 1 )
+					{
+						array_push($userAccessLevels, $level);
+					}
 				}
 			}
 
@@ -847,16 +870,19 @@ class PPProtect
 			{
 
 				$catFoot = '<script type="text/javascript">
-					jQuery(".ppprotect-posts input:checkbox").change(function()
+					jQuery(document).ready(function()
 					{
-						if ( this.checked === true )
+						jQuery(".ppprotect-posts input:checkbox").change(function()
 						{
-							var accept = confirm("IMPORTANT - By selecting this option you will override the PilotPress permission settings you may have already added to any of the posts in this category. This means that the settings you just selected here will take prescedence. Once you save this setting you will still be able to manually set permissions for each post, but you will have to open each post and select the option \'Set permissions manually\' to do so. Are you sure you want to proceed with this setting?");
-							if ( accept != true )
+							if ( this.checked === true )
 							{
-								jQuery(this).prop("checked", false);
+								var accept = confirm("IMPORTANT - By selecting this option you will override the PilotPress permission settings you may have already added to any of the posts in this category. This means that the settings you just selected here will take prescedence. Once you save this setting you will still be able to manually set permissions for each post, but you will have to open each post and select the option \'Set permissions manually\' to do so. Are you sure you want to proceed with this setting?");
+								if ( accept != true )
+								{
+									jQuery(this).prop("checked", false);
+								}
 							}
-						}
+						});
 					});
 				</script>';
 
