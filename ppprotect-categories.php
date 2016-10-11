@@ -464,34 +464,37 @@ class PPProtect
 		{
 			$catId = $wp_query->queried_object->term_id;
 			$perms = $this->ppprotectGetFromDb( $catId );
-		
-			$userAccessLevels = array();
 
-			$levels = json_decode($perms->levels);			
-			if( is_array( $levels ) )
+			if ( isset( $perms ) && $perms != null )
 			{
-				foreach ( $levels as $level )
+				$userAccessLevels = array();
+
+				$levels = json_decode($perms->levels);			
+				if( is_array( $levels ) )
 				{
-					if ( $this->ppprotectAccessCheck($level) === 1 )
+					foreach ( $levels as $level )
 					{
-						array_push($userAccessLevels, $level);
+						if ( $this->ppprotectAccessCheck($level) === 1 )
+						{
+							array_push($userAccessLevels, $level);
+						}
 					}
 				}
-			}
 
-			// If user does not have any access levels granted... redirect them
-			if ( empty($userAccessLevels) )
-			{
-				if ( !current_user_can('administrator') ) 
+				// If user does not have any access levels granted... redirect them
+				if ( empty($userAccessLevels) )
 				{
-					if ( $perms->redirect == '-1' || $perms->redirect == '-2' ) 
+					if ( !current_user_can('administrator') ) 
 					{
-						wp_redirect( home_url() );
+						if ( $perms->redirect == '-1' || $perms->redirect == '-2' ) 
+						{
+							wp_redirect( home_url() );
+							exit;
+						}
+
+						wp_redirect( $perms->redirect ); 
 						exit;
 					}
-
-					wp_redirect( $perms->redirect ); 
-					exit;
 				}
 			}
 		}
