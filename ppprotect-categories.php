@@ -37,17 +37,13 @@ class PPProtect
 		add_action( 'pre_get_posts', array(&$this, 'ppprotectHomeAndArchivePosts') );
 
 		// Protect categories by hooking into any loops
-		add_action ( 'loop_start', array(&$this, 'ppprotectCategory') );
+		add_action ( 'template_redirect', array(&$this, 'ppprotectCategory') );
 
 		// Protect posts by hooking into any loops
 		add_action ( 'the_post', array(&$this, 'ppprotectPost') );
 
 		// Add admin area warning that post permission levels are being overridden by a category
 		add_action ( 'edit_form_after_editor', array(&$this, 'ppprotectPostWarning') );
-
-		// Buffer stuff... to allow for the redirect
-		add_action( 'init', array(&$this, 'ppprotectObStart') );
-		add_action( 'wp_footer', array(&$this, 'ppprotectObEnd') );
 
 		// Add AJAX function to allow users to override each post manually and ignore the category override
 		add_action( 'wp_ajax_pp_category_override', array(&$this, 'wp_ajax_ppprotectAllowOverride') );
@@ -150,19 +146,7 @@ class PPProtect
 	// Callback buffer
 	public function ppprotectCallback($buffer)
 	{
- 		return $buffer;
-		}
-
-		// Start buffering
-		public function ppprotectObStart()
-	{
-		ob_start( array($this, "ppprotectCallback") );
-	}
-
-	// End buffering
-	public function ppprotectObEnd()
-	{
-		ob_end_flush();
+		return $buffer;
 	}
 
 
@@ -460,7 +444,9 @@ class PPProtect
 	{
 		global $wp_query;
 
-		if ( isset($wp_query->queried_object) && isset($wp_query->queried_object->term_id) && $wp_query->queried_object->slug !== 'uncategorized' )
+		if ( isset($wp_query->queried_object) && 
+			isset($wp_query->queried_object->term_id) && 
+			$wp_query->queried_object->slug !== 'uncategorized' )
 		{
 			$catId = $wp_query->queried_object->term_id;
 			$perms = $this->ppprotectGetFromDb( $catId );
@@ -481,18 +467,20 @@ class PPProtect
 					}
 				}
 
+				// TODO - Find another way to do this without the buffer ish.
 				// If user does not have any access levels granted... redirect them
 				if ( empty($userAccessLevels) )
 				{
+
 					if ( !current_user_can('administrator') ) 
 					{
 						if ( $perms->redirect == '-1' || $perms->redirect == '-2' ) 
 						{
-							wp_redirect( home_url() );
+							wp_safe_redirect( home_url() ); 
 							exit;
 						}
 
-						wp_redirect( $perms->redirect ); 
+						wp_safe_redirect( $perms->redirect ); 
 						exit;
 					}
 				}

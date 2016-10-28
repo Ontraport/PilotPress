@@ -56,6 +56,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 
 == Changelog ==
 
+= 1.9.3 = 
+* Bug fixes to address login issues and possible conflicts with other plugins
+
 = 1.9.2 = 
 * Bug fixes to address php notices being generated when protecting a category with no permissions set
 
@@ -189,6 +192,9 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+= 1.9.3 = 
+* Bug fixes to address login issues and possible conflicts with other plugins
+
 = 1.9.2 = 
 * Bug fixes to address php notices being generated when protecting a category with no permissions set
 
