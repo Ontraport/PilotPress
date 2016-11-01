@@ -524,11 +524,14 @@ class PPProtect
 				if ( isset($perms) )
 				{
 					$levels = json_decode($perms->levels);
-					foreach ( $levels as $level )
+					if ( isset($levels) )
 					{
-						if ( $this->ppprotectAccessCheck($level) === 1 )
+						foreach ( $levels as $level )
 						{
-							array_push($userAccessLevels, $level);
+							if ( $this->ppprotectAccessCheck($level) === 1 )
+							{
+								array_push($userAccessLevels, $level);
+							}
 						}
 					}
 				}
