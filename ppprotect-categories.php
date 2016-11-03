@@ -451,7 +451,7 @@ class PPProtect
 			$catId = $wp_query->queried_object->term_id;
 			$perms = $this->ppprotectGetFromDb( $catId );
 
-			if ( isset( $perms ) && $perms != null )
+			if ( isset( $perms ) && $perms != null && !empty($perms->levels) )
 			{
 				$userAccessLevels = array();
 
@@ -475,11 +475,11 @@ class PPProtect
 					{
 						if ( $perms->redirect == '-1' || $perms->redirect == '-2' ) 
 						{
-							wp_safe_redirect( home_url() ); 
+							wp_safe_redirect( home_url() );
 							exit;
 						}
 
-						wp_safe_redirect( $perms->redirect ); 
+						wp_safe_redirect( $perms->redirect );
 						exit;
 					}
 				}
