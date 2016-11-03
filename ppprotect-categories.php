@@ -467,7 +467,6 @@ class PPProtect
 					}
 				}
 
-				// TODO - Find another way to do this without the buffer ish.
 				// If user does not have any access levels granted... redirect them
 				if ( empty($userAccessLevels) )
 				{
