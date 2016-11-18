@@ -3,7 +3,7 @@
 Plugin Name: PilotPress
 Plugin URI: http://ontraport.com/
 Description: OfficeAutoPilot / ONTRAPORT WordPress integration plugin.
-Version: 1.9.4
+Version: 1.9.5
 Author: ONTRAPORT Inc.
 Author URI: http://ontraport.com/
 Text Domain: pilotpress
@@ -30,7 +30,7 @@ Copyright: 2013, Ontraport
 	
 	class PilotPress {
 
-        const VERSION = "1.9.4";
+        const VERSION = "1.9.5";
 		const WP_MIN = "3.0";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
@@ -2186,7 +2186,7 @@ Copyright: 2013, Ontraport
 
 			$array = array('-1' => "(homepage)", "-2" => "(login page)");
 			
-			$query = $wpdb->get_results("SELECT ID, post_title FROM $wpdb->posts WHERE post_status = 'publish' AND (post_type = 'page' OR post_type ='oaplesson') AND post_title != ''");
+			$query = $wpdb->get_results("SELECT ID, post_title FROM $wpdb->posts WHERE post_status = 'publish' AND (post_type = 'page' OR post_type ='oaplesson' OR post_type ='ontrapage') AND post_title != ''");
 			
 			foreach($query as $index => $page) {
 				$array[$page->ID] = $page->post_title;
