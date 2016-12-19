@@ -3,7 +3,7 @@
 Plugin Name: PilotPress
 Plugin URI: http://ontraport.com/
 Description: OfficeAutoPilot / ONTRAPORT WordPress integration plugin.
-Version: 1.9.5
+Version: 1.9.6
 Author: ONTRAPORT Inc.
 Author URI: http://ontraport.com/
 Text Domain: pilotpress
@@ -30,8 +30,8 @@ Copyright: 2013, Ontraport
 	
 	class PilotPress {
 
-        const VERSION = "1.9.5";
-		const WP_MIN = "3.0";
+        const VERSION = "1.9.6";
+		const WP_MIN = "3.6";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
         const AUTH_SALT = "M!E%VxpKvuQHn!PTPOTohtLbnOl&)5&0mb(Uj^c#Zz!-0898yfS#7^xttNW(x1ia";
@@ -1136,15 +1136,26 @@ Copyright: 2013, Ontraport
 			global $wpdb;
 
 			if(wp_verify_nonce($_POST['nonce'], basename(__FILE__))) {
-					
+				
+				$data = $_POST;
+				$data["site"] = site_url();
 
-				if(($_POST["oguser"] != $_POST["username"]) && username_exists($_POST["username"])) {
+				$return = $this->api_call("update_cc_details", $data);
+
+				if( ($_POST["oguser"] != $_POST["username"]) && 
+					username_exists($_POST["username"]) || 
+					( 
+						array_key_exists("username_exists",$return) &&
+						$return["username_exists"]	
+					)
+				)
+				{
 					echo "display_notice('Error: That username is taken. Please try another username.');";
 					die();
 				}			
 					
 				$current_user = wp_get_current_user();
-				$return = $this->api_call("update_cc_details", $_POST);
+				
 				if(isset($return["updateUser"])) {
 					$wpdb->query("UPDATE {$wpdb->users} SET user_login = '" . $wpdb->escape($_POST["username"]) . "' WHERE ID = '".$current_user->ID."'");
 					if($_POST["nickname"] == $_POST["oguser"]) {
