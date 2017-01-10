@@ -320,14 +320,16 @@ class PPProtect
 		{
 			$protectedCategories[] = $cat->itemId;
 		}
-
+ 
 		foreach ( $postCategories as $postCategory )
 		{
 			if ( in_array( $postCategory, $protectedCategories ) )
 			{
 				$levels = $wpdb->get_results('SELECT levels FROM ' . $table . ' WHERE itemId = ' . $postCategory);
-
-				$result = implode( ', ', json_decode($levels[0]->levels) );
+				if ($levels)
+				{
+					$result = implode( ', ', json_decode($levels[0]->levels) );
+				}
 			}
 		}
 
@@ -639,8 +641,10 @@ class PPProtect
 
 			}
 			$protectedCategories = implode(',', $protectedCategories);
-
-			$query->set( 'cat', $protectedCategories );
+			if ($protectedCategories)
+			{
+				$query->set( 'cat', $protectedCategories );
+			}
 	    }
 	}
 
