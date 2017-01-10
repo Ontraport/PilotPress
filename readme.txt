@@ -7,7 +7,7 @@ Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-PilotPress allows you to have a website, membership site, customer center, and an affiliate center integrated together with Office Autopilot.
+PilotPress allows you to have a website, membership site, customer center, and an affiliate center integrated together with ONTRAPORT.
 
 == Description ==
 
