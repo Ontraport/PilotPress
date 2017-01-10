@@ -57,7 +57,7 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 == Changelog ==
 = 1.9.7 = 
 * Fixed bug with filtering posts in the admin dashboard not filtering properly on criteria
-* Fixed show_if has_any shortcode not hiding/showing correctly
+* Fixed show_if has_any shortcode not hiding/showing content correctly
 * Fixed warnings showing up in Posts if no membership levels were selected for category protection 
 
 = 1.9.6 = 
@@ -207,7 +207,7 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 == Upgrade Notice ==
 = 1.9.7 = 
 * Fixed bug with filtering posts in the admin dashboard not filtering properly on criteria
-* Fixed show_if has_any shortcode not hiding/showing correctly
+* Fixed show_if has_any shortcode not hiding/showing content correctly
 * Fixed warnings showing up in Posts if no membership levels were selected for category protection 
 
 = 1.9.6 = 
