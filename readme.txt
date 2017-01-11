@@ -7,7 +7,7 @@ Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-PilotPress allows you to have a website, membership site, customer center, and an affiliate center integrated together with Office Autopilot.
+PilotPress allows you to have a website, membership site, customer center, and an affiliate center integrated together with ONTRAPORT.
 
 == Description ==
 
@@ -55,6 +55,11 @@ Content that relates to your business, and content that you can successfully sel
 If you have Pilotpress installed, you can create a new page and simply enter "[login_page]" (excluding quotes) and that page will then have a login box for users to use.
 
 == Changelog ==
+= 1.9.7 = 
+* Fixed bug with filtering posts in the admin dashboard not filtering properly on criteria
+* Fixed show_if has_any shortcode not hiding/showing content correctly
+* Fixed warnings showing up in Posts if no membership levels were selected for category protection 
+
 = 1.9.6 = 
 * Added message when username already exists when you try to update it.
 
@@ -200,6 +205,11 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+= 1.9.7 = 
+* Fixed bug with filtering posts in the admin dashboard not filtering properly on criteria
+* Fixed show_if has_any shortcode not hiding/showing content correctly
+* Fixed warnings showing up in Posts if no membership levels were selected for category protection 
+
 = 1.9.6 = 
 * Added message when username already exists when you try to update it.
 
@@ -417,9 +427,9 @@ __Show Content Based on Membership Level__
 
 > Displays content only for members who are logged in and do NOT have at least ONE of the membership levels listed
 
-[show_if not_all="Many,levels"] content [/show_if]
+[show_if not_any="Many,levels"] content [/show_if]
 
-> Displays content only for members who are logged in and do NOT have ALL of the membership levels listed
+> Displays content for members who are logged in and are missing any of the memberships listed.
 
 __Show Content Based on Tags__
 
