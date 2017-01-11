@@ -326,7 +326,7 @@ class PPProtect
 			if ( in_array( $postCategory, $protectedCategories ) )
 			{
 				$levels = $wpdb->get_results('SELECT levels FROM ' . $table . ' WHERE itemId = ' . $postCategory);
-				if ($levels)
+				if ($levels && $levels[0] && $levels[0]->levels)
 				{
 					$result = implode( ', ', json_decode($levels[0]->levels) );
 				}
