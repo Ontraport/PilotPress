@@ -354,13 +354,13 @@ Below are instructions on how to protect content in your membership site. There 
 
 1. First, you can drip content out over time (in a week-by-week type format). 
 
-2. Second, you can choose to reveal more content based on your customers' membership levels like Silver, Gold, and Platinum etc.  You will first need to have either added the Pilotpress plugin to your existing WordPress site or have started a new WordPress site within Office Autopilot. Watch the 'Protect and Release Content' video to learn how to do both.
+2. Second, you can choose to reveal more content based on your customers' membership levels like Silver, Gold, and Platinum etc.  You will first need to have either added the Pilotpress plugin to your existing WordPress site or have started a new WordPress site within ONTRAPORT. Watch the 'Protect and Release Content' video to learn how to do both.
 
 __Setting the Minimum Membership Level to view a page or post on your WordPress site__
 
 Once you have created your membership levels (which you did during the WordPress site creation or when you added the plugin to your existing site), you will notice that those membership levels also appeared in the right-hand margin of your WordPress posts / pages under "PilotPress Options." These options are used to limit access to the specified page or post. This is where you will set a minimum membership level to view the page or post. Check off the levels that you want, check the 'Show in Navigation' box if you want this page title to appear in your navigation menu, and finally set your 'On Error' redirect. The 'On Error' redirect is that page that your users will be sent to in the case that they don't have the proper membership levels.
 
-For time release posts or pages, you will set the minimum membership needed to view the post off to the right, and then create a sequence right within Office Autopilot that members will be automatically subscribed to when they sign up for your site.  As they move along on the sequence, say from week 1, to week 2, their membership level will change accordingly and they will be able to view the next week's content.
+For time release posts or pages, you will set the minimum membership needed to view the post off to the right, and then create a sequence right within ONTRAPORT that members will be automatically subscribed to when they sign up for your site.  As they move along on the sequence, say from week 1, to week 2, their membership level will change accordingly and they will be able to view the next week's content.
 
 __Setting up your system to release new content__
 
@@ -409,7 +409,7 @@ If you are creating sequential content, as opposed to just the silver, gold, pla
 
 == Showing/Hiding Sections of Content on a Page ==
 
-That's right, you can not only show or hide pages based on membership levels, but you can show or hide a portion of a page based on a few different criteria. PilotPress comes with the ability to reveal content using Shortcodes. These nifty little tags can be placed around blocks of text, forms, etc to allow you to personalize the content of the page based on membership level, tags or even if the contact is currently being tracked by OAP. We realize that this is a bit cumbersome...and, given our commitment to giving you an awesome membership site with "no code to mess with, no-how", will have this feature usable right within the User Interface in a future PilotPress update, but it does work for now.
+That's right, you can not only show or hide pages based on membership levels, but you can show or hide a portion of a page based on a few different criteria. PilotPress comes with the ability to reveal content using Shortcodes. These nifty little tags can be placed around blocks of text, forms, etc to allow you to personalize the content of the page based on membership level, tags or even if the contact is currently being tracked by ONTRAPORT. We realize that this is a bit cumbersome...and, given our commitment to giving you an awesome membership site with "no code to mess with, no-how", will have this feature usable right within the User Interface in a future PilotPress update, but it does work for now.
  
 The Shortcodes currently available for use in PilotPress are as follows:
 
@@ -465,7 +465,7 @@ This is where your prospects/clients purchase their membership. It's the page th
 
 3. Once you have added your sales content to the page, you'll insert the order form your prospects will fill out in order to convert themselves into customers. 
 
-4. You will achieve this by clicking the "Office Autopilot" or "Add Media" button. (If you haven't already created the order form or forms for your membership site, you need to now, before moving on). 
+4. You will achieve this by clicking the "ONTRAPORT" or "Add Media" button. (If you haven't already created the order form or forms for your membership site, you need to now, before moving on). 
 
 5. Next, you will simply select the order form you created earlier and paste it on the page. If you're offering multiple levels, like, silver, gold, and platinum, you may want to create separate pages for each that contains the respective order forms. This will give the pages a cleaner look (just link to the order page for each membership level from the main page). 
 
@@ -478,16 +478,16 @@ Once filled out, this form will take the customer to the "Thank-you" page which 
 
 == Adding Forms within WordPress ==
 
-The WordPress integration allows you to add Office Autopilot Smartforms, Order Forms, Affiliate Signup Forms, and Upsell forms to your WordPress pages.
+The WordPress integration allows you to add ONTRAPORT Smartforms, Order Forms, Affiliate Signup Forms, and Upsell forms to your WordPress pages.
 
-To achieve this, you will first need to have added the PilotPress plugin to your existing WordPress site, or have started a new WordPress site within Office Autopilot.
+To achieve this, you will first need to have added the PilotPress plugin to your existing WordPress site, or have started a new WordPress site within ONTRAPORT.
 
 1. Log into your WordPress account.
 
-2. When adding a new post or page, you will notice that there is a new icon for "Add Office Autopilot Form".
+2. When adding a new post or page, you will notice that there is a new icon for "Add ONTRAPORT Form".
 
 3. Click on the icon.
 
-4. Once clicked, this will bring up all the Smartforms, Order Forms, Affiliate Signup Forms, and Upsell Forms that you have created in Office Autopilot.
+4. Once clicked, this will bring up all the Smartforms, Order Forms, Affiliate Signup Forms, and Upsell Forms that you have created in ONTRAPORT.
 
-5. When you select one, it will grab the code and insert the form right onto your page in the location where the cursor is. If you know some HTML, you can edit the way the form looks here using HTML mode. Otherwise, you'll need to edit the form from within the form editor in Office Autopilot 
+5. When you select one, it will grab the code and insert the form right onto your page in the location where the cursor is. If you know some HTML, you can edit the way the form looks here using HTML mode. Otherwise, you'll need to edit the form from within the form editor in ONTRAPORT 
