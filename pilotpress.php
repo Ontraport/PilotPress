@@ -2,12 +2,12 @@
 /*
 Plugin Name: PilotPress
 Plugin URI: http://ontraport.com/
-Description: OfficeAutoPilot / ONTRAPORT WordPress integration plugin.
-Version: 1.9.7
+Description: ONTRAPORT WordPress integration plugin.
+Version: 1.9.8
 Author: ONTRAPORT Inc.
 Author URI: http://ontraport.com/
 Text Domain: pilotpress
-Copyright: 2013, Ontraport
+Copyright: 2017, Ontraport
 */
 
 	if(defined("ABSPATH")) {
@@ -30,7 +30,7 @@ Copyright: 2013, Ontraport
 	
 	class PilotPress {
 
-        const VERSION = "1.9.7";
+        const VERSION = "1.9.8";
 		const WP_MIN = "3.6";
 		const NSPACE = "_pilotpress_";
 		const URL_JQCSS = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css";
@@ -1156,9 +1156,12 @@ Copyright: 2013, Ontraport
 					
 				$current_user = wp_get_current_user();
 				
-				if(isset($return["updateUser"])) {
-					$wpdb->query("UPDATE {$wpdb->users} SET user_login = '" . $wpdb->escape($_POST["username"]) . "' WHERE ID = '".$current_user->ID."'");
-					if($_POST["nickname"] == $_POST["oguser"]) {
+				if(isset($return["updateUser"])) 
+				{
+					$wpdb->query($wpdb->prepare("UPDATE {$wpdb->users} SET `user_login` = %s WHERE `ID` = %d", $_POST['username'], $current_user->ID));
+
+					if($_POST["nickname"] == $_POST["oguser"]) 
+					{
 						wp_update_user(array("ID" => $current_user->ID, "nickname" => $_POST["username"], "display_name" => $_POST["username"]));
 					}
 					$this->end_session();
@@ -2349,8 +2352,10 @@ Copyright: 2013, Ontraport
 					}
 				}
 
-				if(!empty($wp->query_vars["name"])) {
-					$id = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name = '" . $wpdb->escape($wp->query_vars["name"]) . "'");									
+				if(!empty($wp->query_vars["name"])) 
+				{
+					$id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->posts} WHERE post_name = %s", $wp->query_vars["name"]));
+
 					if(!empty($id)) {
 						return $id;
 					} else {
@@ -2489,16 +2494,18 @@ Copyright: 2013, Ontraport
 				$post_id = wp_insert_post($post);
 				add_post_meta($post_id, PilotPress::NSPACE."system_page", $name);
 				add_post_meta($post_id, PilotPress::NSPACE."redirect_location", "-2");
-				$wpdb->query("DELETE FROM $wpdb->posts WHERE post_status = 'trash' AND post_name = '" . $wpdb->escape($name) . "'");
-				$wpdb->query("UPDATE $wpdb->posts SET post_name = '{$name}' WHERE ID = '" . $wpdb->escape($post_id) . "'");
+				$wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->posts} WHERE `post_status` = 'trash' AND `post_name` = %s", $name));
+				$wpdb->query($wpdb->prepare("UPDATE {$wpdb->posts } SET `post_name` = %s WHERE `ID` = %d", $name, $post_id));
 				$this->flush_rewrite_rules();
 			}
 		}
 	
 		/* banished. */
-		function delete_system_page($name) {
+		function delete_system_page($name) 
+		{
 			global $wpdb;
-			$pages = $wpdb->get_results("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_pilotpress_system_page' AND meta_value = '" . $wpdb->escape($name) . "'", ARRAY_A);
+			$pages = $wpdb->get_results($wpdb->prepare("SELECT `post_id` FROM {$wpdb->postmeta} WHERE `meta_key` = '_pilotpress_system_page' AND `meta_value` = %s",$name), ARRAY_A);
+			
 			if(!empty($pages)) {
 				foreach($pages as $page) {
 					delete_post_meta($page["post_id"], "_pilotpress_system_page");
