@@ -1,8 +1,8 @@
 === PilotPress ===
 Contributors: ONTRAPORT
-Tags: OfficeAutoPilot, Sendpepper, Moonray, ONTRAPORT, Pilotpress, Oap, Membership Site, Customer Center, Affiliate Center, Integration
+Tags: ONTRAPORT, OfficeAutoPilot, Sendpepper, Moonray, ONTRAPORT, Pilotpress, Oap, Membership Site, Customer Center, Affiliate Center, Integration
 Requires at least: 3.6
-Tested up to: 4.6.1
+Tested up to: 4.7.5
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -55,6 +55,10 @@ Content that relates to your business, and content that you can successfully sel
 If you have Pilotpress installed, you can create a new page and simply enter "[login_page]" (excluding quotes) and that page will then have a login box for users to use.
 
 == Changelog ==
+= 1.9.8 = 
+* Fixed some deprecated methods
+* Updated Documentation
+
 = 1.9.7 = 
 * Fixed bug with filtering posts in the admin dashboard not filtering properly on criteria
 * Fixed show_if has_any shortcode not hiding/showing content correctly
@@ -205,6 +209,10 @@ If you have Pilotpress installed, you can create a new page and simply enter "[l
 * Invalid login inputs on custom login pages now stay at the custom login page, forgotten password function does not cause accounts to go out of sync
 
 == Upgrade Notice ==
+= 1.9.8 = 
+* Fixed some deprecated methods
+* Updated Documentation
+
 = 1.9.7 = 
 * Fixed bug with filtering posts in the admin dashboard not filtering properly on criteria
 * Fixed show_if has_any shortcode not hiding/showing content correctly
